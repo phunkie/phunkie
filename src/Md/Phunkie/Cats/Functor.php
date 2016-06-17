@@ -2,6 +2,7 @@
 
 namespace Md\Phunkie\Cats;
 
+use Md\Phunkie\Cats\Functor\Invariant;
 use Md\Phunkie\Types\Kind;
 
 /**
@@ -9,6 +10,7 @@ use Md\Phunkie\Types\Kind;
  */
 trait Functor
 {
+    use Invariant;
     /**
      * @param Function1<A,B> $f
      * @return Kind<F,B>

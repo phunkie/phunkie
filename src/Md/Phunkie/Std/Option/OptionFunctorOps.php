@@ -20,4 +20,9 @@ trait OptionFunctorOps
             default: return Some($f($this->get()));
         }
     }
+
+    public function imap(callable $f,callable $g): Kind
+    {
+        return $this->map($f);
+    }
 }

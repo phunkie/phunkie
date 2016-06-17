@@ -15,4 +15,9 @@ trait Function1FunctorOps
     {
         return $this->andThen($f);
     }
+
+    public function imap(callable $f,callable $g): Kind
+    {
+        return $this->map($f);
+    }
 }

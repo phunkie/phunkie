@@ -12,4 +12,9 @@ trait ImmListFunctorOps
     {
         return ImmList(...array_map($f, $this->values));
     }
+
+    public function imap(callable $f,callable $g): Kind
+    {
+        return $this->map($f);
+    }
 }
