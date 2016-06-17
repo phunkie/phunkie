@@ -9,7 +9,7 @@
         "psr-0": {
             "": ["src/"]
         },
-        "files": ["src/Md/Phunkie/Ops/common.php"]
+        "files": ["src/Md/Phunkie/Functions/common.php"]
     },
     "config": {
         "bin-dir": "bin"

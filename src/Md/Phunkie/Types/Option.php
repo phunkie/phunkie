@@ -2,8 +2,8 @@
 
 namespace Md\Phunkie\Types;
 
-use Md\Phunkie\Std\Option\OptionEqOps;
-use Md\Phunkie\Std\Option\OptionFunctorOps;
+use Md\Phunkie\Ops\Option\OptionEqOps;
+use Md\Phunkie\Ops\Option\OptionFunctorOps;
 
 abstract class Option implements Kind
 {

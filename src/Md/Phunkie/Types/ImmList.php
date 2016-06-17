@@ -2,8 +2,8 @@
 
 namespace Md\Phunkie\Types;
 
-use Md\Phunkie\Std\ImmList\ImmListEqOps;
-use Md\Phunkie\Std\ImmList\ImmListFunctorOps;
+use Md\Phunkie\Ops\ImmList\ImmListEqOps;
+use Md\Phunkie\Ops\ImmList\ImmListFunctorOps;
 
 class ImmList implements Kind
 {

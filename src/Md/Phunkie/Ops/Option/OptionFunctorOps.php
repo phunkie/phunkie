@@ -1,6 +1,6 @@
 <?php
 
-namespace Md\Phunkie\Std\Option;
+namespace Md\Phunkie\Ops\Option;
 
 use Md\Phunkie\Cats\Functor;
 use Md\Phunkie\Types\Kind;

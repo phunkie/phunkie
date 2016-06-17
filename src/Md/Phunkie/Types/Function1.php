@@ -2,8 +2,8 @@
 
 namespace Md\Phunkie\Types;
 
-use Md\Phunkie\Std\Function1\Function1EqOps;
-use Md\Phunkie\Std\Function1\Function1FunctorOps;
+use Md\Phunkie\Ops\Function1\Function1EqOps;
+use Md\Phunkie\Ops\Function1\Function1FunctorOps;
 
 class Function1 implements Kind
 {

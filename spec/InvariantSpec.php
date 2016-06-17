@@ -4,6 +4,7 @@ namespace spec;
 
 use Eris\TestTrait;
 use Md\Phunkie\Laws\InvariantLaws;
+use Md\Phunkie\Types\Function1;
 use Md\PropertyTesting\Generator\RandomKindGenerator;
 use PhpSpec\ObjectBehavior;
 

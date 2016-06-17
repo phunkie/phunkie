@@ -1,6 +1,6 @@
 <?php
 
-namespace Md\Phunkie\Std\ImmList;
+namespace Md\Phunkie\Ops\ImmList;
 
 use Md\Phunkie\Cats\Functor;
 use Md\Phunkie\Types\Kind;
