@@ -1,5 +1,17 @@
 {
     "name": "md/phunkie",
+    "description":  "Functional structures library for PHP",
+    "license":      "MIT",
+    "type":         "library",
+    "authors":      [
+        {
+            "name":      "Marcello Duarte",
+            "homepage":  "http://marcelloduarte.net/"
+        }
+    ],
+    "require": {
+        "php": ">=7.0"
+    },
     "require-dev": {
         "phpspec/phpspec": "~2.5",
         "bossa/phpspec2-expect": "~1.0.3",

@@ -1,6 +1,6 @@
 <?php
 
-namespace spec;
+namespace spec\Md\Phunkie\Cats;
 
 use Eris\TestTrait;
 use Md\Phunkie\Laws\FunctorLaws;

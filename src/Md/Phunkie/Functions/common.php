@@ -1,7 +1,7 @@
 <?php
 
-require_once __DIR__ . "/function1.php";
-require_once __DIR__ . "/immlist.php";
-require_once __DIR__ . "/kleisli.php";
-require_once __DIR__ . "/option.php";
-require_once __DIR__ . "/unit.php";
+array_map (function($file) { require_once $file; }, glob(__DIR__ .'/*'));
+
+const Option = 'Option';
+const ImmList = 'ImmList';
+const Function1 = 'Function1';
