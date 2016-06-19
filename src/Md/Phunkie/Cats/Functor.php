@@ -4,6 +4,7 @@ namespace Md\Phunkie\Cats;
 
 use Md\Phunkie\Cats\Functor\Invariant;
 use Md\Phunkie\Types\Kind;
+use Md\Phunkie\Types\Pair;
 
 /**
  * Functor<Kind<F,A>>
@@ -34,4 +35,6 @@ trait Functor
      * @return Kind<Unit>
      */
     public function void($b) { return $this->map(function($ignored) use ($b) { return Unit(); }); }
+
+    public function zipWith($f): Kind { return $this->map(function($a) use ($f) { return Pair($a, $f($a)); }); }
 }
