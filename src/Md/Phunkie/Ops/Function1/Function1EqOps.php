@@ -10,11 +10,11 @@ use Md\Phunkie\Types\Option;
 trait Function1EqOps
 {
     use Eq;
-    public function eqv(Kind $rhs, Option $arg): bool
+    public function eqv(Kind $rhs, Option $arg = null): bool
     {
-        switch($rhs instanceof Function1) {
-            case true: return $this->__invoke($arg->getOrElse(null)) == $rhs->__invoke($arg->getOrElse(null));
-            case false: return false;
+        switch(true) {
+            case ($rhs instanceof Function1): return $this->__invoke($arg->getOrElse(null)) == $rhs->__invoke($arg->getOrElse(null));
+            default: return false;
         }
     }
 }

@@ -3,6 +3,7 @@
 namespace Md\Phunkie\Ops\Option;
 
 use Md\Phunkie\Cats\Functor;
+use Md\Phunkie\Ops\FunctorOps;
 use Md\Phunkie\Types\Kind;
 use Md\Phunkie\Types\None;
 
@@ -11,7 +12,7 @@ use Md\Phunkie\Types\None;
  */
 trait OptionFunctorOps
 {
-    use Functor;
+    use FunctorOps;
     public function map(callable $f): Kind
     {
         switch (true) {

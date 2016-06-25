@@ -2,12 +2,12 @@
 
 namespace Md\Phunkie\Ops\ImmList;
 
-use Md\Phunkie\Cats\Functor;
+use Md\Phunkie\Ops\FunctorOps;
 use Md\Phunkie\Types\Kind;
 
 trait ImmListFunctorOps
 {
-    use Functor;
+    use FunctorOps;
     public function map(callable $f): Kind
     {
         return ImmList(...array_map($f, $this->values));

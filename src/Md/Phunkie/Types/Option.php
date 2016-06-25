@@ -4,14 +4,14 @@ namespace Md\Phunkie\Types;
 
 use Md\Phunkie\Cats\Show;
 use function Md\Phunkie\Functions\get_value_to_show;
+use Md\Phunkie\Ops\Option\OptionApplicativeOps;
 use Md\Phunkie\Ops\Option\OptionEqOps;
-use Md\Phunkie\Ops\Option\OptionFunctorOps;
 
 abstract class Option implements Kind
 {
     use Show;
     const kind = "Option";
-    use OptionFunctorOps, OptionEqOps;
+    use OptionApplicativeOps, OptionEqOps;
     abstract public function getOrElse($t);
     abstract public function get();
     abstract public function isDefined(): bool;

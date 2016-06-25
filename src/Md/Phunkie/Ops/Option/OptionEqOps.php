@@ -9,7 +9,7 @@ use Md\Phunkie\Types\Option;
 trait OptionEqOps
 {
     use Eq;
-    public function eqv(Kind $rhs, Option $args): bool
+    public function eqv(Kind $rhs): bool
     {
         return $this == $rhs;
     }

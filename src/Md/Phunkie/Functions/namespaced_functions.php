@@ -37,8 +37,12 @@ function get_value_to_show($value)
 
 function is_showable($value): bool {
     if (!is_object($value)) return false;
-    $usesShowTrait = function($class) {return in_array(Show::class, class_uses($class));};
-    $classAndParents = array_merge([get_class($value)], class_parents($value));
+    return object_class_uses_trait($value, Show::class);
+}
+
+function object_class_uses_trait($object, $trait): bool {
+    $usesShowTrait = function($class) use ($trait) {return in_array($trait, class_uses($class));};
+    $classAndParents = array_merge([get_class($object)], class_parents($object));
     $countOfShowTraitUsage = array_sum(array_map($usesShowTrait , $classAndParents));
     return (bool)$countOfShowTraitUsage;
 }

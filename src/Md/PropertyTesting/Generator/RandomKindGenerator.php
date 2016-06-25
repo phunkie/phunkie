@@ -20,7 +20,7 @@ trait RandomKindGenerator
         return new OneOfGen([
             new ListGen(new OneOfGen([new IntGen()])),
             new MapGen(function($x) { return Option($x); }, new IntGen()),
-            ElementsGen::fromArray([Function1('strlen')])
+            ElementsGen::fromArray([Function1('gettype')])
         ]);
     }
 

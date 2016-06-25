@@ -51,6 +51,8 @@ php> show(None()->map(function($x) { return $x + 1;}));
 None
 php> show(ImmList(1,2,3)->map(function($x) { return $x + 1;}));
 List(2,3,4)
+php> show(ImmList(1,2,3)->zipWith(function($x) { return $x + 1;}));
+List(Pair(1,2),Pair(2,3),Pair(3,4))
 ```
 
 Functor Composite

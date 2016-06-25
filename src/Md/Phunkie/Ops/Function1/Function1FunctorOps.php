@@ -2,7 +2,7 @@
 
 namespace Md\Phunkie\Ops\Function1;
 
-use Md\Phunkie\Cats\Functor;
+use Md\Phunkie\Ops\FunctorOps;
 use Md\Phunkie\Types\Kind;
 
 /**
@@ -10,7 +10,7 @@ use Md\Phunkie\Types\Kind;
  */
 trait Function1FunctorOps
 {
-    use Functor;
+    use FunctorOps;
     public function map(callable $f): Kind
     {
         return $this->andThen($f);

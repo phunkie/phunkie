@@ -5,7 +5,7 @@ namespace Md\Phunkie\Types;
 use Md\Phunkie\Cats\Show;
 use function \Md\Phunkie\Functions\get_value_to_show;
 
-class Pair
+final class Pair
 {
     use Show;
     private $ta;

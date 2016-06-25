@@ -3,16 +3,22 @@
 namespace Md\Phunkie\Types;
 
 use Md\Phunkie\Cats\Show;
+use Md\Phunkie\Ops\Function1\Function1ApplicativeOps;
 use Md\Phunkie\Ops\Function1\Function1EqOps;
-use Md\Phunkie\Ops\Function1\Function1FunctorOps;
 
-class Function1 implements Kind
+final class Function1 implements Kind
 {
-    use Function1FunctorOps, Function1EqOps, Show;
+    use Function1ApplicativeOps, Function1EqOps, Show;
     const kind = "Function1";
     private $reflection;
+    private $f;
 
-    public function __construct(callable $f) { $this->reflection = new \ReflectionFunction($f); }
+    public function __construct(callable $f) {
+        $this->reflection = new \ReflectionFunction($f);
+        $this->f = $f;
+    }
+
+    public function get() { return $this->f; }
 
     public function __invoke($a) { return $this->invokeFunctionOnArg($a); }
 
@@ -36,8 +42,8 @@ class Function1 implements Kind
 
     function toString(): string
     {
-        $type = $this->reflection->getParameters()[0]->getType() ?: "mixed";
-        $returnType = $this->reflection->getReturnType() ?: "mixed";
-        return "Function1($type=>$returnType)";
+        return sprintf("Function1(%s=>%s)",
+            $this->reflection->getParameters()[0]->getType() ?: "?",
+            $this->reflection->getReturnType() ?: "?");
     }
 }

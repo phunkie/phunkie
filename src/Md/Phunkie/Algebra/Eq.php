@@ -7,5 +7,5 @@ use Md\Phunkie\Types\Option;
 
 trait Eq
 {
-    abstract public function eqv(Kind $rhs, Option $args): bool;
+    abstract public function eqv(Kind $rhs): bool;
 }
