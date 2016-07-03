@@ -126,25 +126,35 @@ List(5,6,7,6,7,8,7,8,9)
 Monad
 -----
 ```bash
->php show(ImmList(1,2,3)->flatMap(function($x) { return Some($x + 1); }));
+php> show(ImmList(1,2,3)->flatMap(function($x) { return Some($x + 1); }));
 List(2,3,4)
->php show(ImmList(1,2,3)->flatMap(function($x) { return $x % 2 === 0 ? None() : Some($x + 1); }));
+php> show(ImmList(1,2,3)->flatMap(function($x) { return $x % 2 === 0 ? None() : Some($x + 1); }));
 List(2,4)
->php show(ImmList(1,2,3)->flatMap(function($x) { return None(); }));
+php> show(ImmList(1,2,3)->flatMap(function($x) { return None(); }));
 List()
->php show(ImmList(1,2,3)->flatMap(function($x) { return ImmList($x + 1, $x + 2); }));
+php> show(ImmList(1,2,3)->flatMap(function($x) { return ImmList($x + 1, $x + 2); }));
 List(2,3,3,4,4,5)
->php show(Some(1)->flatMap(function($x) { return Some($x + 1); }));
+php> show(Some(1)->flatMap(function($x) { return Some($x + 1); }));
 Some(2)
->php show(Some(1)->flatMap(function($x) { return None(); }));
+php> show(Some(1)->flatMap(function($x) { return None(); }));
 None
->php show(None()->flatMap(function($x) { return Some(42); }));
+php> show(None()->flatMap(function($x) { return Some(42); }));
 None
->php show(ImmList(1,2,3)->flatMap(function($x) { return ImmList(Some($x + 1)); }));>php show
+php> show(ImmList(1,2,3)->flatMap(function($x) { return ImmList(Some($x + 1)); }));>php show
 List(Some(2),Some(3),Some(4))
 
->php show(Some(Some(42))->flatten());
+php> show(Some(Some(42))->flatten());
 Some(42)
->php show(ImmList(ImmList(1,2,3))->flatten());
+php> show(ImmList(ImmList(1,2,3))->flatten());
 List(1,2,3)
+```
+
+Kleisli
+-------
+```bash
+php> $f = kleisli(function($x) { return Some($x + 1); });
+php> $g = kleisli(function($x) { return Some($x + 4); });
+php> $x = $k->andThen($g);
+php> show(($x->run)(3));
+Some(8)
 ```
