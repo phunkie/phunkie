@@ -70,3 +70,19 @@ php> show($fa->map(Option(ImmList(1,2,3)), function($x) { return $x + 1; }));
 Some(List(2,3,4))
 ```
 
+Applicative
+-----------
+```bash
+php> show(None()->pure(42));
+Some(42)
+php> show(ImmList()->pure(42));
+List(42)
+php> show(Some(1)->apply(Some(function($x) { return $x + 1;})));
+Some(2)
+php> show(None()->apply(Some(function($x) { return $x + 1;})));
+None
+php> show(ImmList(1,2,3)->apply(ImmList(function($x) { return $x + 1;})));
+List(2,3,4)
+php> show(ImmList()->apply(ImmList(function($x) { return $x + 1;})));show
+List()
+```
