@@ -20,10 +20,9 @@ trait FunctorOps
     public function as($b): Kind { return $this->map(function($ignored) use ($b) { return $b; }); }
 
     /**
-     * @param B $b
      * @return Kind<Unit>
      */
-    public function void($b): Kind { return $this->map(function($ignored) use ($b) { return Unit(); }); }
+    public function void(): Kind { return $this->map(function($ignored) { return Unit(); }); }
 
     public function zipWith($f): Kind { return $this->map(function($a) use ($f) { return Pair($a, $f($a)); }); }
 }

@@ -29,10 +29,9 @@ interface Functor extends Invariant
     public function as($b): Kind;
 
     /**
-     * @param B $b
      * @return Kind<Unit>
      */
-    public function void($b): Kind;
+    public function void(): Kind;
 
     public function zipWith($f): Kind;
 }
