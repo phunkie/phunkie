@@ -3,10 +3,7 @@
 namespace Md\Phunkie\Ops\Option;
 
 use BadMethodCallException;
-use Md\Phunkie\Cats\Applicative;
-use Md\Phunkie\Types\{
-    ImmList, Kind, Option, None
-};
+use Md\Phunkie\Types\{Kind, Option, None};
 
 /**
  * @mixin Option

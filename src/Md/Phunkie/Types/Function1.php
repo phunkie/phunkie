@@ -14,8 +14,13 @@ final class Function1 implements Kind
     private $f;
 
     public function __construct(callable $f) {
-        $this->reflection = new \ReflectionFunction($f);
-        $this->f = $f;
+        if (method_exists($f, '__invoke')) {
+            $this->reflection = new \ReflectionMethod($f, '__invoke');
+            $this->f = $f;
+        } else {
+            $this->reflection = new \ReflectionFunction($f);
+            $this->f = $f;
+        }
     }
 
     public function get() { return $this->f; }
@@ -38,7 +43,13 @@ final class Function1 implements Kind
 
     public static function identity(): Function1 { return Function1(function($x) { return $x; }); }
 
-    private function invokeFunctionOnArg($arg) { return $this->reflection->invoke($arg); }
+    private function invokeFunctionOnArg($arg) {
+        try {
+            return $this->reflection->invoke($arg);
+        } catch (\ReflectionException $e) {
+            return call_user_func($this->f, $arg);
+        }
+    }
 
     function toString(): string
     {

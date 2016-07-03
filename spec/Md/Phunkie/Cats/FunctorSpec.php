@@ -27,7 +27,7 @@ class FunctorSpec extends ObjectBehavior
     {
         $this->forAll(
             $this->genRandomFA(),
-            $this->genFunctionIntToString(),
+            $this->genFunctionStringToInt(),
             $this->genFunctionStringToInt()
         )->then(function($fa, $f, $g) {
             expect($this->covariantComposition($fa, $f, $g))->toBe(true);

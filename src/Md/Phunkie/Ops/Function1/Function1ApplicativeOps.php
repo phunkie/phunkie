@@ -9,7 +9,7 @@ use Md\Phunkie\Types\None;
 trait Function1ApplicativeOps
 {
     use Function1FunctorOps;
-    public function pure(callable $a): Kind
+    public function pure($a): Kind
     {
         return Function1($a);
     }
@@ -26,7 +26,7 @@ trait Function1ApplicativeOps
             case (!$f instanceof Function1):
                 throw new \BadMethodCallException;
             case ($f instanceof Function1):
-                return $this->andThen($f);
+                return Function1(function($x) use ($f) { return $f->invokeFunctionOnArg($this->invokeFunctionOnArg($x)); });
         }
     }
 }

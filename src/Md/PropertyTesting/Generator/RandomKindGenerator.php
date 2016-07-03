@@ -8,7 +8,6 @@ use Md\PropertyTesting\Generator\ImmListGenerator as ListGen;
 use Md\Phunkie\Types\Kind;
 
 use Eris\Generator\IntegerGenerator as IntGen;
-use Eris\Generator\StringGenerator as StringGen;
 use Eris\Generator\ElementsGenerator as ElementsGen;
 use Eris\Generator\OneOfGenerator as OneOfGen;
 use Eris\Generator\MapGenerator as MapGen;
@@ -20,7 +19,7 @@ trait RandomKindGenerator
         return new OneOfGen([
             new ListGen(new OneOfGen([new IntGen()])),
             new MapGen(function($x) { return Option($x); }, new IntGen()),
-            ElementsGen::fromArray([Function1('gettype')])
+            ElementsGen::fromArray([Function1(function($x):string { return gettype($x);})])
         ]);
     }
 
@@ -31,17 +30,17 @@ trait RandomKindGenerator
 
     private function genFunctionStringToInt(): ElementsGen
     {
-        return ElementsGen::fromArray([Function1(function (string $x) { return strlen($x); })]);
+        return ElementsGen::fromArray([Function1(function (string $x):int { return strlen($x); })]);
     }
 
     private function genFunctionStringToBool(): ElementsGen
     {
-        return ElementsGen::fromArray([Function1(function (string $x) { return strlen($x) % 2 === 0; })]);
+        return ElementsGen::fromArray([Function1(function (string $x): bool { return strlen($x) % 2 === 0; })]);
     }
 
     private function genFunctionBoolToString(): ElementsGen
     {
-        return ElementsGen::fromArray([Function1(function(bool $x) { return strlen($x) % 2 === 0; })]);
+        return ElementsGen::fromArray([Function1(function(bool $x): string { return $x ? 'true' : 'false'; })]);
     }
 
     private function genFunctionIntToFString(mixed $f): mixed

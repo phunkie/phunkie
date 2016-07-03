@@ -28,14 +28,14 @@ trait ImmListApplicativeOps
         switch(true) {
             case $f == None() : return None();
             case $f instanceof Option:
-                throw new TypeError(sprintf("apply takes List<callable>, Option<%s> given", gettype($f->get())));
+                throw new TypeError(sprintf("`apply` takes List<callable>, Option<%s> given", gettype($f->get())));
             case !$this instanceof ImmList: throw new BadMethodCallException();
             case $this == ImmList(): return ImmList();
             case $f instanceof ImmList:
                 $result = [];
                 foreach($this->toArray() as $a) {
                     foreach ($f->toArray() as $ff) {
-                        if (!is_callable($ff)) throw new TypeError(sprintf("apply takes List<callable>, List<%s> given", gettype($ff)));
+                        if (!is_callable($ff)) throw new TypeError(sprintf("`apply` takes List<callable>, List<%s> given", gettype($ff)));
                         $result[] = call_user_func($ff, $a);
                     }
                 }

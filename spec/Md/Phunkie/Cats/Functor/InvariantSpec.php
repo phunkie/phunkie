@@ -17,8 +17,7 @@ class InvariantSpec extends ObjectBehavior
         $this->forAll(
             $this->genRandomFA()
         )->then(function($fa) {
-            $arg = $fa instanceof Function1 ? Some(42) : None();
-            expect($this->invariantIdentity($fa, $arg))->toBe(true);
+            expect($this->invariantIdentity($fa))->toBe(true);
         });
     }
 
@@ -26,7 +25,7 @@ class InvariantSpec extends ObjectBehavior
     {
         $this->forAll(
             $this->genRandomFA(),
-            $this->genFunctionIntToString(),
+            $this->genFunctionStringToInt(),
             $this->genFunctionStringToInt(),
             $this->genFunctionStringToBool(),
             $this->genFunctionBoolToString()
