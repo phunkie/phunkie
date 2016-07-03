@@ -45,4 +45,9 @@ trait ImmListApplicativeOps
                 return $this->map($f->get());
         }
     }
+
+    public function map2(Kind $fb, callable $f): Kind
+    {
+        return $this->apply($fb->map(function($b) use ($f) { return function($a) use ($f, $b) { return $f($a, $b);};}));
+    }
 }

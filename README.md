@@ -85,4 +85,8 @@ php> show(ImmList(1,2,3)->apply(ImmList(function($x) { return $x + 1;})));
 List(2,3,4)
 php> show(ImmList()->apply(ImmList(function($x) { return $x + 1;})));show
 List()
+php> show(Some(1)->map2(Some(2), function($x, $y) { return $x + $y; }));
+Some(3)
+php> show(ImmList(1,2,3)->map2(ImmList(4,5,6), function($x, $y) { return $x + $y; }));
+List(5,6,7,6,7,8,7,8,9)
 ```

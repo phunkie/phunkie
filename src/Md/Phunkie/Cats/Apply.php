@@ -11,4 +11,11 @@ interface Apply extends Functor
      * @return Kind<B>
      */
     public function apply(Kind $f): Kind;
+
+    /**
+     * @param Kind<B> $fb
+     * @param (A,B) => C $f
+     * @return Kind<C>
+     */
+    public function map2(Kind $fb, callable $f): Kind;
 }
