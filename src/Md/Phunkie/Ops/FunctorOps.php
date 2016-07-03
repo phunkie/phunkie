@@ -11,7 +11,7 @@ trait FunctorOps
      * @param Function1<A,B> $f
      * @return Function1<Kind<F,A>, Kind<F,B>>
      */
-    public function lift($f): callable { return function (Functor $fa) use ($f) { return $fa->map($f); }; }
+    public function lift($f): callable { return function ($fa) use ($f) { return $fa->map($f); }; }
 
     /**
      * @param B $b

@@ -2,11 +2,13 @@
 
 namespace Md\Phunkie\Types;
 
+use Md\Phunkie\Cats\Applicative;
+use Md\Phunkie\Cats\Functor;
 use Md\Phunkie\Cats\Show;
 use Md\Phunkie\Ops\Function1\Function1ApplicativeOps;
 use Md\Phunkie\Ops\Function1\Function1EqOps;
 
-final class Function1 implements Kind
+final class Function1 implements Kind, Applicative
 {
     use Function1ApplicativeOps, Function1EqOps, Show;
     const kind = "Function1";

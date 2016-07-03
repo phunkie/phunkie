@@ -4,6 +4,7 @@ namespace Md\Phunkie\Cats\Functor;
 
 use Md\Phunkie\Cats\Functor;
 use Md\Phunkie\Cats\Show;
+use Md\Phunkie\Ops\FunctorOps;
 use Md\Phunkie\Types\Function1;
 use Md\Phunkie\Types\ImmList;
 use Md\Phunkie\Types\Kind;
@@ -11,7 +12,7 @@ use Md\Phunkie\Types\Option;
 
 class FunctorComposite
 {
-    use Show;
+    use Show,FunctorOps;
     protected $kinds = [];
 
     public function __construct(string $kind)

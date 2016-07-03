@@ -2,12 +2,13 @@
 
 namespace Md\Phunkie\Types;
 
+use Md\Phunkie\Cats\Applicative;
 use Md\Phunkie\Cats\Show;
 use function Md\Phunkie\Functions\get_value_to_show;
 use Md\Phunkie\Ops\Option\OptionApplicativeOps;
 use Md\Phunkie\Ops\Option\OptionEqOps;
 
-abstract class Option implements Kind
+abstract class Option implements Kind, Applicative
 {
     use Show;
     const kind = "Option";

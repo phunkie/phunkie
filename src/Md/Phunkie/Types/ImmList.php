@@ -2,12 +2,13 @@
 
 namespace Md\Phunkie\Types;
 
+use Md\Phunkie\Cats\Applicative;
 use Md\Phunkie\Cats\Show;
 use function Md\Phunkie\Functions\get_value_to_show;
 use Md\Phunkie\Ops\ImmList\ImmListApplicativeOps;
 use Md\Phunkie\Ops\ImmList\ImmListEqOps;
 
-final class ImmList implements Kind
+final class ImmList implements Kind, Applicative
 {
     use Show;
     const kind = "ImmList";

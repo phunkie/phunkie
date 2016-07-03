@@ -33,5 +33,9 @@ interface Functor extends Invariant
      */
     public function void(): Kind;
 
+    /**
+     * @param Function1<A,B> $f
+     * @return Kind<Pair<A,B>>
+     */
     public function zipWith($f): Kind;
 }
