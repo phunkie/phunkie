@@ -23,6 +23,34 @@ php> show(ImmList(2,3,4));
 List(1,2,3)
 php> show(ImmList(Some(1), None(), Some(3)));
 List(Some(1),None,Some(3))
+
+php> show(head(ImmList(1,2,3)));
+1
+php> show(tail(ImmList(1,2,3)));
+List(2,3)
+php> show(init(ImmList(1,2,3)));
+List(1,2)
+php> show(last(ImmList(1,2,3)));
+3
+php> show(reverse(ImmList(1,2,3)));
+List(3,2,3)
+php> show(length(ImmList(1,2,3)))
+3
+
+php> $isNotGreen = function($x) { return $x != "Green"; };
+
+php> $colours = ImmList("Black", "Red", "Green");
+php> $notGreen = $colours->filter($isNotGreen);
+php> show($notGreen);
+List("Black","Red")
+
+php> $greenAndNot = $colours->partition($isNotGreen);
+php> show($greenAndNot);
+List(List("Black","Red"),List("Green"))
+
+php> $zipped = ImmList("A","B","C")->zip(ImmList(1,2,3));
+php> show($zipped);
+List(Pair("A",1),Pair("B",1),Pair("C",1))
 ```
 
 Function1
@@ -53,6 +81,10 @@ php> show(ImmList(1,2,3)->map(function($x) { return $x + 1;}));
 List(2,3,4)
 php> show(ImmList(1,2,3)->zipWith(function($x) { return $x + 1;}));
 List(Pair(1,2),Pair(2,3),Pair(3,4))
+
+php> $x = map(function($x) { return $x + 1;}, Some(42));
+php> show($x);
+Some(43)
 ```
 
 Functor Composite

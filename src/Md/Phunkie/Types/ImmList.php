@@ -8,6 +8,7 @@ use function Md\Phunkie\Functions\get_value_to_show;
 use Md\Phunkie\Ops\ImmList\ImmListApplicativeOps;
 use Md\Phunkie\Ops\ImmList\ImmListEqOps;
 use Md\Phunkie\Ops\ImmList\ImmListMonadOps;
+use Md\Phunkie\Types\ImmList\NoSuchElementException;
 
 final class ImmList implements Kind, Applicative
 {
@@ -31,6 +32,10 @@ final class ImmList implements Kind, Applicative
     {
         switch($property) {
             case 'length': return count($this->values);
+            case 'head': return $this->head();
+            case 'tail': return $this->tail();
+            case 'init': return $this->init();
+            case 'last': return $this->last();
         }
         throw new \Error("value $property is not a member of ImmList");
     }
@@ -94,5 +99,42 @@ final class ImmList implements Kind, Applicative
             }
         }
         return ImmList(ImmList(...$trues), ImmList(...$falses));
+    }
+
+    public function head()
+    {
+        if ($this->isEmpty()) {
+            throw new NoSuchElementException("head of empty list");
+        }
+        return $this->values[0];
+    }
+
+    public function tail()
+    {
+        if ($this->isEmpty()) {
+            throw new \BadMethodCallException("tail of empty list");
+        }
+        return ImmList(...array_slice($this->values,1));
+    }
+
+    public function init()
+    {
+        if ($this->isEmpty()) {
+            throw new \BadMethodCallException("empty init");
+        }
+        return ImmList(...array_slice($this->values,0,-1));
+    }
+
+    public function last()
+    {
+        if ($this->isEmpty()) {
+            throw new NoSuchElementException("last of empty list");
+        }
+        return $this->values[count($this->values) - 1];
+    }
+
+    public function reverse()
+    {
+        return ImmList(...array_reverse($this->values));
     }
 }
