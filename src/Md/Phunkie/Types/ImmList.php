@@ -7,12 +7,13 @@ use Md\Phunkie\Cats\Show;
 use function Md\Phunkie\Functions\get_value_to_show;
 use Md\Phunkie\Ops\ImmList\ImmListApplicativeOps;
 use Md\Phunkie\Ops\ImmList\ImmListEqOps;
+use Md\Phunkie\Ops\ImmList\ImmListMonadOps;
 
 final class ImmList implements Kind, Applicative
 {
     use Show;
     const kind = "ImmList";
-    use ImmListApplicativeOps, ImmListEqOps;
+    use ImmListApplicativeOps, ImmListEqOps, ImmListMonadOps;
     private $values;
     public function __construct(...$values) { $this->values = $values; }
     private function isEmpty(): bool { return count($this->values) == 0; }
