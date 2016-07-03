@@ -72,14 +72,14 @@ final class ImmList implements Kind, Applicative
      * @param int $index
      * @return ImmList<ImmList<T>>
      */
-    public function splitAt(int $index)
+    public function splitAt(int $index): Pair
     {
         switch(true) {
-            case ($this->isEmpty()): return ImmList(ImmList(), ImmList());
-            case ($index == 0): return ImmList(ImmList(), clone $this);
-            case ($index >= count($this->values)): return ImmList(clone $this, ImmList());
+            case ($this->isEmpty()): return Pair(ImmList(), ImmList());
+            case ($index == 0): return Pair(ImmList(), clone $this);
+            case ($index >= count($this->values)): return Pair(clone $this, ImmList());
             default:
-                return ImmList(ImmList(...array_slice($this->values, 0, $index)), ImmList(...array_slice($this->values, $index)));
+                return Pair(ImmList(...array_slice($this->values, 0, $index)), ImmList(...array_slice($this->values, $index)));
         }
     }
 
