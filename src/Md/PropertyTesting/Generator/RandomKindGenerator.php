@@ -3,7 +3,6 @@
 namespace Md\PropertyTesting\Generator;
 
 use Eris\Generator;
-use Md\PropertyTesting\Generator\ImmListGenerator as ListGen;
 
 use Md\Phunkie\Types\Kind;
 
@@ -11,13 +10,19 @@ use Eris\Generator\IntegerGenerator as IntGen;
 use Eris\Generator\ElementsGenerator as ElementsGen;
 use Eris\Generator\OneOfGenerator as OneOfGen;
 use Eris\Generator\MapGenerator as MapGen;
+use Eris\Generator\SequenceGenerator as SequenceGen;
 
 trait RandomKindGenerator
 {
     private function genRandomFA(): Generator
     {
         return new OneOfGen([
-            new ListGen(new OneOfGen([new IntGen()])),
+            new MapGen(
+                function($sequence) {
+                    return ImmList(...$sequence);
+                },
+                new SequenceGen(new OneOfGen([new IntGen()]))
+            ),
             new MapGen(function($x) { return Option($x); }, new IntGen()),
             ElementsGen::fromArray([Function1(function($x):string { return gettype($x);})])
         ]);
