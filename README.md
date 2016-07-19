@@ -87,6 +87,12 @@ php> show($x);
 Some(43)
 ```
 
+Foldable
+--------
+```bash
+php> $xs = ImmList(1,2,3)
+```
+
 Functor Composite
 -----------------
 ```bash
@@ -157,4 +163,40 @@ php> $g = kleisli(function($x) { return Some($x + 4); });
 php> $x = $k->andThen($g);
 php> show(($x->run)(3));
 Some(8)
+```
+
+Monoid
+------
+```bash
+php> show(combine(1,1));
+2
+php> show(combine("a","b"));
+"ab"
+php> show(combine([1,2,3], [4,5,6]));
+[1,2,3,4,5,6]
+php> show(combine(true, false));
+false
+php> show(combine(ImmList(1,2,3), ImmList(4,5,6)));
+List(1,2,3,4,5,6)
+php> show(combine(Some(4), Some(2)));
+6
+php> show(combine(Some("4"), Some("2")));
+"42"
+php> ImmList(1,2,3)->combine(ImmList(4,5,6));
+List(1,2,3,4,5,6)
+
+php> $option = Option(42);
+php> zero($option);
+None
+php> show($option->zero());
+None
+
+php> $list = ImmList(1,2,3)
+php> show($list->zero());
+List()
+
+php> show(zero(rand(1,45)));
+0
+php> show(zero([1,2,3]));
+[]
 ```
