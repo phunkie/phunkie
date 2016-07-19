@@ -2,10 +2,8 @@
 
 namespace Md\Phunkie\Ops\ImmList;
 
-use Md\Phunkie\Algebra\Monoid;
 use function Md\Phunkie\Functions\semigroup\combine;
 use function Md\Phunkie\Functions\semigroup\zero;
-use Md\Phunkie\Types\Function1;
 use Md\Phunkie\Types\ImmList;
 use function Md\Phunkie\Functions\currying\curry;
 

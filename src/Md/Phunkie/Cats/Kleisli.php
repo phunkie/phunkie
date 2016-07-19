@@ -2,6 +2,8 @@
 
 namespace Md\Phunkie\Cats;
 
+use function Md\Phunkie\Functions\kleisli\kleisli as k;
+
 /**
  * Represents a Function1 `A => F[B]`.
  */
@@ -16,7 +18,7 @@ class Kleisli
 
     public function andThen(Kleisli $f): Kleisli
     {
-        return kleisli(function($a) use ($f) {
+        return k(function($a) use ($f) {
             $g = call_user_func($this->run, $a);
             return $g->flatMap($f->run);
         });
