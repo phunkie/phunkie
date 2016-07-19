@@ -90,7 +90,23 @@ Some(43)
 Foldable
 --------
 ```bash
-php> $xs = ImmList(1,2,3)
+php> $sum = ImmList(1,2,3)->foldLeft(0)(function($x, $y) { return $x + $y; });
+php> show($sum);
+6
+php> $letters = ImmList("a", "b", "c")->foldLeft("letters:")(function($x, $y) { return $x . $y; });
+php> show($letters);
+"letters:abc"
+php> $letters = ImmList("a", "b", "c")->foldRight("<--")(function($x, $y) { return $x . $y; });
+php> show($letters);
+"abc<--"
+```
+
+Currying
+--------
+```bash
+php>  $curried = ImmList(1,2,3)->foldLeft(0)(_);
+php> show($curried(function($x, $y) { return $x + $y; }));
+6
 ```
 
 Functor Composite
