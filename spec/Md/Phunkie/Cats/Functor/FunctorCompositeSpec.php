@@ -3,7 +3,7 @@
 namespace spec\Md\Phunkie\Cats\Functor;
 
 use Md\Phunkie\Cats\Functor\FunctorComposite;
-use function Md\Phunkie\Functions\is_showable;
+use function Md\Phunkie\Functions\show\is_showable;
 use Md\Phunkie\Types\Function1;
 use Md\Phunkie\Types\ImmList;
 use Md\Phunkie\Types\Option;

@@ -43,6 +43,16 @@ final class Function1 implements Kind, Applicative
         });
     }
 
+    public function zero()
+    {
+        return Function1::identity();
+    }
+
+    public function combine(callable $g)
+    {
+        return $this->compose($g);
+    }
+
     public static function identity(): Function1 { return Function1(function($x) { return $x; }); }
 
     private function invokeFunctionOnArg($arg) {

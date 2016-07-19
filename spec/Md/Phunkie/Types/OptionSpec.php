@@ -3,8 +3,8 @@
 namespace spec\Md\Phunkie\Types;
 
 use Md\Phunkie\Cats\Show;
-use function Md\Phunkie\Functions\get_value_to_show;
-use function Md\Phunkie\Functions\object_class_uses_trait;
+use function Md\Phunkie\Functions\show\get_value_to_show;
+use function Md\Phunkie\Functions\show\object_class_uses_trait;
 use Md\Phunkie\Types\None;
 use Md\Phunkie\Types\Some;
 use PhpSpec\ObjectBehavior;

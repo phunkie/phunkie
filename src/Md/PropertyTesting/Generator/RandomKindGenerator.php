@@ -14,11 +14,26 @@ use Eris\Generator\MapGenerator as MapGen;
 
 trait RandomKindGenerator
 {
+    private function genOption($gen): Generator
+    {
+        return new MapGen(function($x) { return Option($x); }, $gen);
+    }
+
+    private function genImmList($gen): Generator
+    {
+        return new ListGen($gen);
+    }
+
+    private function genFunction1()
+    {
+        return ElementsGen::fromArray([Function1(function($x):string { return gettype($x);})]);
+    }
+
     private function genRandomFA(): Generator
     {
         return new OneOfGen([
-            new ListGen(new OneOfGen([new IntGen()])),
-            new MapGen(function($x) { return Option($x); }, new IntGen()),
+            $this->genImmList(new OneOfGen([new IntGen()])),
+            $this->genOption(new IntGen()),
             ElementsGen::fromArray([Function1(function($x):string { return gettype($x);})])
         ]);
     }

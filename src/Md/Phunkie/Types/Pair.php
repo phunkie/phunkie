@@ -3,7 +3,7 @@
 namespace Md\Phunkie\Types;
 
 use Md\Phunkie\Cats\Show;
-use function \Md\Phunkie\Functions\get_value_to_show;
+use function \Md\Phunkie\Functions\show\get_value_to_show;
 
 final class Pair
 {

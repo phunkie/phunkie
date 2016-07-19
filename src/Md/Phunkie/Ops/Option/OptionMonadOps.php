@@ -8,7 +8,7 @@ trait OptionMonadOps
 {
     public function flatMap(callable $f): Kind
     {
-        return $this->isEmpty() ? None() : ($f($this->get()) ?: None());
+        return $this->isEmpty() ? None() : $f($this->get());
     }
 
     public function flatten(): Kind

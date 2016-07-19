@@ -4,21 +4,38 @@ namespace Md\Phunkie\Types;
 
 use Md\Phunkie\Cats\Applicative;
 use Md\Phunkie\Cats\Show;
-use function Md\Phunkie\Functions\get_value_to_show;
+use function Md\Phunkie\Functions\show\get_value_to_show;
 use Md\Phunkie\Ops\ImmList\ImmListApplicativeOps;
 use Md\Phunkie\Ops\ImmList\ImmListEqOps;
+use Md\Phunkie\Ops\ImmList\ImmListFoldableOps;
 use Md\Phunkie\Ops\ImmList\ImmListMonadOps;
+use Md\Phunkie\Ops\ImmList\ImmListMonoidOps;
 use Md\Phunkie\Types\ImmList\NoSuchElementException;
 
 final class ImmList implements Kind, Applicative
 {
     use Show;
+    use ImmListApplicativeOps,
+        ImmListEqOps,
+        ImmListMonadOps,
+        ImmListFoldableOps,
+        ImmListMonoidOps;
+
     const kind = "ImmList";
-    use ImmListApplicativeOps, ImmListEqOps, ImmListMonadOps;
     private $values;
-    public function __construct(...$values) { $this->values = $values; }
-    private function isEmpty(): bool { return count($this->values) == 0; }
-    public function toString(): string {
+
+    public function __construct(...$values)
+    {
+        $this->values = $values;
+    }
+
+    public function isEmpty(): bool
+    {
+        return count($this->values) == 0;
+    }
+
+    public function toString(): string
+    {
         return "List(". implode(",", $this->map(function($e) { return get_value_to_show($e); })->values) . ")";
     }
 
@@ -26,7 +43,10 @@ final class ImmList implements Kind, Applicative
      * @param callable $condition
      * @return ImmList<T>
      */
-    public function filter(callable $condition) { return ImmList(...array_filter($this->values, $condition)); }
+    public function filter(callable $condition)
+    {
+        return ImmList(...array_filter($this->values, $condition));
+    }
 
     public function __get($property)
     {
@@ -75,9 +95,9 @@ final class ImmList implements Kind, Applicative
     public function splitAt(int $index): Pair
     {
         switch(true) {
-            case ($this->isEmpty()): return Pair(ImmList(), ImmList());
-            case ($index == 0): return Pair(ImmList(), clone $this);
-            case ($index >= count($this->values)): return Pair(clone $this, ImmList());
+            case $this->isEmpty(): return Pair(ImmList(), ImmList());
+            case $index == 0: return Pair(ImmList(), clone $this);
+            case $index >= count($this->values): return Pair(clone $this, ImmList());
             default:
                 return Pair(ImmList(...array_slice($this->values, 0, $index)), ImmList(...array_slice($this->values, $index)));
         }
@@ -88,7 +108,7 @@ final class ImmList implements Kind, Applicative
         $trues = $falses = [];
         foreach ($this->values as $value) {
             switch ($result = call_user_func($condition, $value)) {
-                case (true):
+                case true:
                     $trues[] = $value;
                     break;
                 case false:
