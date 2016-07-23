@@ -3,8 +3,11 @@
 namespace Md\Phunkie\Ops\Option;
 
 use Md\Phunkie\Cats\Functor;
+use function Md\Phunkie\Functions\pattern_matching\matching;
+use function Md\Phunkie\Functions\pattern_matching\on;
 use Md\Phunkie\Ops\FunctorOps;
 use Md\Phunkie\Types\Kind;
+use Md\Phunkie\Types\Lazy;
 use Md\Phunkie\Types\None;
 
 /**

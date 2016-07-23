@@ -2,13 +2,15 @@
 
 namespace Md\Phunkie\Ops\Function1;
 
+use function Md\Phunkie\Functions\pattern_matching\matching;
+use function Md\Phunkie\Functions\pattern_matching\on;
 use Md\Phunkie\Types\Function1;
 use Md\Phunkie\Types\Kind;
-use Md\Phunkie\Types\None;
 
 trait Function1ApplicativeOps
 {
     use Function1FunctorOps;
+
     public function pure($a): Kind
     {
         return Function1($a);
@@ -21,13 +23,14 @@ trait Function1ApplicativeOps
      * @return Function1<A,C>
      */
     public function apply(Kind $f): Kind {
-        switch (true) {
-            case ($f instanceof None): return None(); break;
-            case (!$f instanceof Function1):
-                throw new \BadMethodCallException;
-            case ($f instanceof Function1):
-                return Function1(function($x) use ($f) { return $f->invokeFunctionOnArg($this->invokeFunctionOnArg($x)); });
-        }
+
+        return matching($f,
+            on(None)->returns(None()),
+            on(Function1(_))->returns(Function1(function($x) use ($f) {
+                return $f->invokeFunctionOnArg($this->invokeFunctionOnArg($x));
+            })),
+            on(_)->throws(new \BadMethodCallException)
+        );
     }
 
     public function map2(Kind $fb, callable $f): Kind

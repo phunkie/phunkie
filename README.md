@@ -46,7 +46,7 @@ List("Black","Red")
 
 php> $greenAndNot = $colours->partition($isNotGreen);
 php> show($greenAndNot);
-List(List("Black","Red"),List("Green"))
+Pair(List("Black","Red"),List("Green"))
 
 php> $zipped = ImmList("A","B","C")->zip(ImmList(1,2,3));
 php> show($zipped);
@@ -215,4 +215,43 @@ php> show(zero(rand(1,45)));
 0
 php> show(zero([1,2,3]));
 []
+```
+
+Pattern Matching
+----------------
+```bash
+php > $result = matching(1 + 1,
+php (     on(3)->returns(2),
+php (     on(2)->returns(3)
+php ( );
+php > show($result);
+3
+
+php > $result = matching(1 + 1,
+php (     on(3)->returns(2),
+php (     on(4)->returns(4),
+php (     on(_)->returns(6)
+php ( );
+php > show($result);
+6
+
+php > matching(1 + 1,
+php (     on(3)->returns(2),
+php (     on(4)->returns(4)
+php ( );
+PHP Exception: \Md\Phunkie\Functions\pattern_matching\MatchError No matches found
+
+php > $result = matching(Some(1 + 1),
+php (     on(None)->returns(2),
+php (     on(Some(_))->returns(10)
+php ( );
+php > show($result);
+10
+
+php > $result = matching(Success(22),
+php (     on(Success(_))->returns(2),
+php (     on(Failure(_))->returns(10)
+php ( );
+php > show($result);
+2
 ```

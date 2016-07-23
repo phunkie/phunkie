@@ -2,24 +2,23 @@
 
 namespace Md\Phunkie\Functions\currying;
 
+use function Md\Phunkie\Functions\pattern_matching\matching;
+use function Md\Phunkie\Functions\pattern_matching\on;
+
 function curry($declaredArgs, $passedArgs, $f) {
     $countOfPassedArgs = count($passedArgs);
     $countOfDeclaredArgs = count($declaredArgs);
-    $lastArgument = $passedArgs[$countOfPassedArgs - 1];
     $passedSameNumber = count($declaredArgs) == $countOfPassedArgs;
-    $moreArgsDeclaredThanPassed = $countOfPassedArgs - $countOfDeclaredArgs == 1;
 
-    if ($passedSameNumber) {
-        return function($x) use ($f) {
-            if ($x == _) return $f;
-            else return $f($x);
-        };
-
-    } else if($moreArgsDeclaredThanPassed) {
-        return $f($lastArgument);
-    }
-
-    throw new \BadFunctionCallException("Wrong number of arguments in curried function: " .
-        "expected: $countOfDeclaredArgs or " . ($countOfDeclaredArgs + 1) .
-        " found: " . $countOfPassedArgs);
+    return matching(
+        on($passedSameNumber)->returns(function($x) use ($f) {
+            return matching(true,
+                on($x == _)->returns($f),
+                on(_)->returns($f($x))
+            );
+        }),
+        on(_)->throws(new \BadFunctionCallException("Wrong number of arguments in curried function: " .
+            "expected: $countOfDeclaredArgs or " . ($countOfDeclaredArgs + 1) .
+            " found: " . $countOfPassedArgs))
+    );
 }

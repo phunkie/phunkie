@@ -2,99 +2,62 @@
 
 namespace Md\Phunkie\Functions\semigroup;
 
+use function Md\Phunkie\Functions\pattern_matching\matching;
+use function Md\Phunkie\Functions\pattern_matching\on;
+use Md\Phunkie\Types\Lazy;
 use Md\Phunkie\Types\Unit;
 use TypeError;
 
 function combine($a, $b) {
-    switch(true) {
-        case ($a instanceof Unit):
-            return $b;
-        case ($b instanceof Unit):
-            return $a;
-        case (gettype($a) == gettype($b)):
-            switch (gettype($a)) {
-                case "int":
-                case "integer":
-                case "double":
-                case "float":
-                    return $a + $b;
-                case "string":
-                    return $a . $b;
-                case "bool":
-                case "boolean":
-                    return $a && $b;
-                case "array":
-                    return array_merge($a, $b);
-                case "object":
-                    if (is_callable($a)) {
-                        if (method_exists($a, "combine")) {
-                            return $a->combine($b);
-                        }
-                        return function () use ($a, $b) {
-                            return $a($b(...func_get_args()));
-                        };
-                    }
-                    if (get_class($a) == get_class($b)) {
-                        if (method_exists($a, 'combine')) {
-                            return $a->combine($b);
-                        }
-                    }
-                    $aParents = [];
-                    $parent = $a;
-                    while (false !== $parent) {
-                        $parent = get_parent_class($parent);
-                        $aParents[] = $parent;
-                    }
-                    $bParents = [];
-                    $parent = $b;
-                    while (false !== $parent) {
-                        $parent = get_parent_class($parent);
-                        $bParents[] = $parent;
-                    }
-                    foreach (array_intersect($aParents, $bParents) as $parent) {
-                        if (method_exists($parent, 'combine')) {
-                            return $a->combine($b);
-                        }
-                    }
-                    break;
-            }
-            break;
-        default:
-            throw new TypeError("combining members of different semigroups");
-            break;
-    }
-    if (is_object($a)) {
-        throw new TypeError("combine is not defined for " . get_class($a));
-    }
-    throw new TypeError("combine is not defined for type " . gettype($a));
+    $combineForObjects = new Lazy(function() use($a, $b) {
+        if (method_exists($a, 'combine')) return $a->combine($b);
+        if (is_callable($a)) { return function () use ($a, $b) { return $a($b(...func_get_args())); }; }
+        foreach (array_intersect(get_parent_classes($a), get_parent_classes($b)) as $parent)
+            if (method_exists($parent, 'combine')) return $a->combine($b);
+    });
+
+    return matching(
+        on($a instanceof Unit)->returns($b),
+        on($b instanceof Unit)->returns($a),
+        on(gettype($a) != gettype($b) && is_object($a))->throws(new Lazy(function()use($a,$b){ return new TypeError("combine is not defined for " . get_class($a)); })),
+        on(gettype($a) != gettype($b))->throws(new TypeError("combine is not defined for type " . gettype($a))),
+        on(gettype($a) == gettype($b))->returns(
+            matching(gettype($a),
+                on("int")->or("integer")->or("double")->or("float")->returns(new Lazy(function()use($a,$b){ return $a + $b;})),
+                on("string")->returns(new Lazy(function()use($a,$b){ return $a . $b;})),
+                on("bool")->or("boolean")->returns(new Lazy(function()use($a,$b){ return $a && $b;})),
+                on("array")->returns(new Lazy(function()use($a,$b){ return array_merge($a, $b);})),
+                on("object")->returns($combineForObjects)
+            )
+        ),
+        on(_)->throws(new TypeError("combining members of different semigroups"))
+    );
 }
 
 function zero($a) {
-    switch(gettype($a)) {
-        case "int":
-        case "integer":
-            return 0;
-        case "double":
-        case "float":
-            return 0.0;
-        case "string":
-            return "";
-        case "bool":
-        case "boolean":
-            return true;
-        case "array":
-            return [];
-        case "object":
-            if (is_callable($a)) {
-                if (method_exists($a, "zero")) {
-                    return $a->zero();
-                }
-                $identity = function($x) { return $x; };
-                return $identity;
-            }
-            if (method_exists($a, "zero")) {
-                return $a->zero();
-            }
+    $zeroForObjects = function($a) {
+        if (method_exists($a, "zero")) return $a->zero();
+        if (is_callable($a)) return function($x) { return $x; };
+    };
+
+    return matching(gettype($a),
+        on("int")->or("integer")->returns(0),
+        on("double")->or("float")->returns(0.0),
+        on("string")->returns(""),
+        on("bool")->or("boolean")->returns(true),
+        on("array")->returns([]),
+        on("object")->returns($zeroForObjects($a)),
+        on(_)->throws(new TypeError("zero is not defined for type " . gettype($a)))
+    );
+}
+
+function get_parent_classes($object)
+{
+    $parents = [];
+    $parent = $object;
+    while (false !== $parent) {
+        $parent = get_parent_class($parent);
+        $parents[] = $parent;
     }
-    throw new TypeError("zero is not defined for type " . gettype($a));
+    return $parents;
 }
