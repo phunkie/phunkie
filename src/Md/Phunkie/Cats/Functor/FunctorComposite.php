@@ -4,6 +4,8 @@ namespace Md\Phunkie\Cats\Functor;
 
 use Md\Phunkie\Cats\Functor;
 use Md\Phunkie\Cats\Show;
+use function Md\Phunkie\Functions\pattern_matching\matching;
+use function Md\Phunkie\Functions\pattern_matching\on;
 use Md\Phunkie\Ops\FunctorOps;
 use Md\Phunkie\Types\Function1;
 use Md\Phunkie\Types\ImmList;
@@ -17,15 +19,10 @@ class FunctorComposite
 
     public function __construct(string $kind)
     {
-        switch ($kind) {
-            case ImmList::kind:
-            case Option::kind:
-            case Function1::kind:
-                $this->kinds[] = $kind;
-                break;
-            default:
-                throw new \RuntimeException("Composing functor of kind $kind is not supported");
-        }
+        $this->kinds[] = matching($kind,
+            on(ImmList::kind)->or(Option::kind)->or(Function1::kind)->returns($kind),
+            on(_)->throws(new \RuntimeException("Composing functor of kind $kind is not supported"))
+        );
     }
 
     public function map(Kind $fa, callable $f)

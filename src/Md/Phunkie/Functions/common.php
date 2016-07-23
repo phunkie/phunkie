@@ -6,3 +6,4 @@ const Option = 'Option';
 const ImmList = 'ImmList';
 const Function1 = 'Function1';
 const _ = "_";
+const None = 'None';

@@ -103,7 +103,7 @@ final class ImmList implements Kind, Applicative
         }
     }
 
-    public function partition(callable $condition): ImmList
+    public function partition(callable $condition): Pair
     {
         $trues = $falses = [];
         foreach ($this->values as $value) {
@@ -118,7 +118,7 @@ final class ImmList implements Kind, Applicative
                     throw new \BadMethodCallException(sprintf("partition must be passed a callable returning a boolean, %s returned", gettype($result)));
             }
         }
-        return ImmList(ImmList(...$trues), ImmList(...$falses));
+        return Pair(ImmList(...$trues), ImmList(...$falses));
     }
 
     public function head()
