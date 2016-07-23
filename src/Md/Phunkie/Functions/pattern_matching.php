@@ -59,7 +59,9 @@ function matching_with_values_and_conditions($args)
     return false;
 }
 
-function on($condition) { return new Condition($condition); }
+function on($condition) {
+    return new Condition($condition);
+}
 
 final class ConditionPair
 {
