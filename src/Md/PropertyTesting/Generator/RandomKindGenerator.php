@@ -3,12 +3,12 @@
 namespace Md\PropertyTesting\Generator;
 
 use Eris\Generator;
-use Md\PropertyTesting\Generator\ImmListGenerator as ListGen;
 
 use Md\Phunkie\Types\Kind;
 
 use Eris\Generator\IntegerGenerator as IntGen;
 use Eris\Generator\ElementsGenerator as ElementsGen;
+use Eris\Generator\SequenceGenerator as SequenceGen;
 use Eris\Generator\OneOfGenerator as OneOfGen;
 use Eris\Generator\MapGenerator as MapGen;
 
@@ -21,7 +21,12 @@ trait RandomKindGenerator
 
     private function genImmList($gen): Generator
     {
-        return new ListGen($gen);
+        return new MapGen(
+            function($sequence) {
+                return ImmList(...$sequence);
+            },
+            new SequenceGen(new OneOfGen([$gen]))
+        );
     }
 
     private function genFunction1()

@@ -4,6 +4,8 @@
 namespace Md\Phunkie\Ops\Option;
 
 
+use function Md\Phunkie\Functions\pattern_matching\matching;
+use function Md\Phunkie\Functions\pattern_matching\on;
 use function Md\Phunkie\Functions\semigroup\combine;
 use Md\Phunkie\Types\Option;
 use RuntimeException;
@@ -20,13 +22,11 @@ trait OptionMonoidOps
 
     public function combine(Option $b)
     {
-        if (!$this instanceof Option) {
-            throw new RuntimeException("Options ops imported to non-option");
-        }
-        switch(true) {
-            case $this->isEmpty() : return $b;
-            case $b->isEmpty() : return $this;
-            default: return Some(combine($this->get(), $b->get()));
-        }
+        return matching(
+            on(!$this instanceof Option)->throws(new RuntimeException("Options ops imported to non-option")),
+            on($this->isEmpty())->returns($b),
+            on($b->isEmpty())->returns($this),
+            on(_)->returns(Lazy(function() use ($b) { return Some(combine($this->get(), $b->get())); }))
+        );
     }
 }
