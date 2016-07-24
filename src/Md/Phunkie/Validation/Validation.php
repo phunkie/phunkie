@@ -2,27 +2,25 @@
 
 namespace Md\Phunkie\Validation;
 
-use function Md\Phunkie\Functions\pattern_matching\matching;
-use function Md\Phunkie\Functions\pattern_matching\on;
 use TypeError;
 
 abstract class Validation
 {
     public function isRight(): bool
     {
-        return matching($this,
-            on(Failure(_))->returns(false),
-            on(Success(_))->returns(true),
-            on(_)->throws(new TypeError("Validation cannot be extended outside namespace"))
-        );
+        switch (true) {
+            case $this instanceof Failure: return false;
+            case $this instanceof Success: return true;
+            default: throw new TypeError("Validation cannot be extended outside namespace");
+        }
     }
 
     public function isLeft(): bool
     {
-        return matching($this,
-            on(Success(_))->returns(false),
-            on(Failure(_))->returns(true),
-            on(_)->throws(new TypeError("Validation cannot be extended outside namespace"))
-        );
+        switch (true) {
+            case $this instanceof Success: return false;
+            case $this instanceof Failure: return true;
+            default: throw new TypeError("Validation cannot be extended outside namespace");
+        }
     }
 }

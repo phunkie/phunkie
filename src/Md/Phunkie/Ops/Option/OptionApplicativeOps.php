@@ -3,8 +3,6 @@
 namespace Md\Phunkie\Ops\Option;
 
 use BadMethodCallException;
-use function Md\Phunkie\Functions\pattern_matching\matching;
-use function Md\Phunkie\Functions\pattern_matching\on;
 use Md\Phunkie\Types\{Kind, Option, None};
 
 /**
@@ -15,13 +13,12 @@ trait OptionApplicativeOps
     use OptionFunctorOps;
     public function pure($a): Kind { return Option($a); }
     public function apply(Kind $f): Kind {
-        return matching(
-            on(!$this instanceof Option)->throws(new BadMethodCallException()),
-            on($this->isEmpty())->returns(None()),
-            on($f instanceof None)->returns(None()),
-            on($f instanceof Option && is_callable($f->get()))->
-                returns($this->map($f->get()))
-        );
+        switch (true) {
+            case !$this instanceof Option: throw new BadMethodCallException();
+            case $this->isEmpty(): return None();
+            case $f instanceof None: return None();
+            case $f instanceof Option && is_callable($f->get()): return $this->map($f->get());
+        }
     }
 
     public function map2(Kind $fb, callable $f): Kind

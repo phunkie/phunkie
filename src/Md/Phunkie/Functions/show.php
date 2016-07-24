@@ -3,8 +3,6 @@
 namespace Md\Phunkie\Functions\show {
 
     use Md\Phunkie\Cats\Show;
-    use function Md\Phunkie\Functions\pattern_matching\matching;
-    use function Md\Phunkie\Functions\pattern_matching\on;
 
     function show($value)
     {
@@ -13,21 +11,19 @@ namespace Md\Phunkie\Functions\show {
 
     function get_value_to_show($value)
     {
-        return matching(
-            on(is_showable($value))->returns(Lazy(function() use($value) { return $value->show(); })),
-            on(is_object($value) && method_exists($value, '__toString'))->returns(Lazy(function() use($value) { return (string)$value;})),
-            on(is_string($value))->returns(Lazy(function() use($value) { return '"' . $value . '"';})),
-            on(is_int($value))->or(is_double($value))->or(is_float($value))->or(is_long($value))->returns($value),
-            on(is_resource($value))->returns(Lazy(function() use($value) { return (string)$value;})),
-            on(is_bool($value))->returns(Lazy(function() use($value) { return $value ? 'true' : 'false';})),
-            on(is_null($value))->returns('null'),
-            on(is_array($value))->returns(Lazy(function() use($value) { return "[" . implode(",", array_map(function ($e) {
-                    return get_value_to_show($e);
-                }, $value)) . "]";})),
-            on(is_callable($value))->returns("<function>"),
-            on(is_object($value))->returns(Lazy(function() use($value) { return get_class($value) . "@" . substr(ltrim(spl_object_hash($value), "0"), 0, 7);})),
-            on(_)->returns($value)
-        );
+        switch (true) {
+            case is_showable($value): return $value->show();
+            case is_object($value) && method_exists($value, '__toString'): return (string)$value;
+            case is_string($value): return '"' . $value . '"';
+            case is_int($value):case is_double($value): case is_float($value): case is_long($value): return $value;
+            case is_resource($value): return (string)$value;
+            case is_bool($value): return $value ? 'true' : 'false';
+            case is_null($value): return 'null';
+            case is_array($value): return "[" . implode(",", array_map(function ($e) { return get_value_to_show($e); }, $value)) . "]";
+            case is_callable($value): return "<function>";
+            case is_object($value): return get_class($value) . "@" . substr(ltrim(spl_object_hash($value), "0"), 0, 7);
+            default: return $value;
+        }
     }
 
     function is_showable($value): bool

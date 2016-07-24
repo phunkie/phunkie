@@ -3,10 +3,7 @@
 namespace Md\Phunkie\Ops\ImmList;
 
 use BadMethodCallException;
-use Md\Phunkie\Cats\Applicative;
 use Md\Phunkie\Cats\Functor;
-use function Md\Phunkie\Functions\pattern_matching\matching;
-use function Md\Phunkie\Functions\pattern_matching\on;
 use Md\Phunkie\Types\Function1;
 use Md\Phunkie\Types\ImmList;
 use Md\Phunkie\Types\Kind;
@@ -39,15 +36,15 @@ trait ImmListApplicativeOps
             return ImmList(...$result);
         };
 
-        return matching(
-            on($f == None())->returns(None()),
-            on($f instanceof Option)->throws(Lazy(function() use ($f) { return new TypeError(sprintf("`apply` takes List<callable>, Option<%s> given", gettype($f->get())));})),
-            on(!$this instanceof ImmList)->throws(new BadMethodCallException()),
-            on($this == ImmList())->returns(ImmList()),
-            on($f instanceof ImmList)->returns(Lazy($apply)),
-            on($f instanceof Function1 && is_callable($f->get()))->or($f instanceof Option && is_callable($f->get()))
-                ->returns(Lazy(function() use ($f) { return $this->map($f->get());}))
-        );
+        switch (true) {
+            case $f == None(): return None();
+            case $f instanceof Option: throw new TypeError(sprintf("`apply` takes List<callable>, Option<%s> given", gettype($f->get())));
+            case !$this instanceof ImmList: throw new BadMethodCallException();
+            case $this == ImmList(): return ImmList();
+            case $f instanceof ImmList: return $apply();
+            case $f instanceof Function1 && is_callable($f->get()): case $f instanceof Option && is_callable($f->get()):
+                return $this->map($f->get());
+        }
     }
 
     public function map2(Kind $fb, callable $f): Kind

@@ -3,8 +3,6 @@
 namespace Md\Phunkie\Cats;
 
 use function Md\Phunkie\Functions\kleisli\kleisli as k;
-use function Md\Phunkie\Functions\pattern_matching\matching;
-use function Md\Phunkie\Functions\pattern_matching\on;
 
 /**
  * Represents a Function1 `A => F[B]`.
@@ -28,10 +26,13 @@ class Kleisli
 
     public function __get($arg)
     {
-        return matching($arg,
-            on("run")->returns($this->run),
-            on(_)->throws(new \InvalidArgumentException("Invalid property $arg for Kleisli"))
-        );
+        switch ($arg) {
+            case "run":
+                return $this->run;
+                break;
+            default:
+                throw new \InvalidArgumentException("Invalid property $arg for Kleisli");
+        }
     }
 
     public function __set($name, $value)

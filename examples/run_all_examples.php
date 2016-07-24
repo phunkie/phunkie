@@ -10,7 +10,6 @@ require_once __DIR__ . "/functor.php";
 require_once __DIR__ . "/functor_composite.php";
 require_once __DIR__ . "/applicative.php";
 require_once __DIR__ . "/monad.php";
-require_once __DIR__ . "/pattern_matching.php";
 
 function printLn($value) { show($value); echo PHP_EOL; }
 
@@ -21,4 +20,3 @@ functor_examples();
 functor_composite_examples();
 applicative_examples();
 monad_examples();
-pattern_matching_examples();

@@ -21,11 +21,12 @@ class Tuple
             throw new Error("$arg is not a member of Tuple");
         }
 
-        if (!is_numeric(substr($arg, 1))) {
+        $key = substr($arg, 1);
+        if (!is_numeric($key)) {
             throw new Error("$arg is not a member of Tuple");
         }
 
-        $key = ((integer) substr($arg, 1)) - 1;
+        $key = ((integer) $key) - 1;
         if (!array_key_exists($key, $this->values)) {
             throw new Error("$arg is not a member of Tuple");
         }
@@ -41,5 +42,10 @@ class Tuple
     public function toString(): string
     {
         return "(" . implode(",", $this->values) . ")";
+    }
+
+    public function getArity()
+    {
+        return count($this->values);
     }
 }

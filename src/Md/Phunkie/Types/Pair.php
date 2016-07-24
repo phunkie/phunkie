@@ -32,6 +32,11 @@ final class Pair
         throw new \TypeError("Pairs are immutable");
     }
 
+    public function getArity()
+    {
+        return 2;
+    }
+
     function toString(): string
     {
         return "Pair(" . get_value_to_show($this->ta) . "," . get_value_to_show($this->tb) . ")";

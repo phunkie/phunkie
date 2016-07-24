@@ -4,8 +4,6 @@ namespace Md\Phunkie\Types;
 
 use Md\Phunkie\Cats\Applicative;
 use Md\Phunkie\Cats\Show;
-use function Md\Phunkie\Functions\pattern_matching\matching;
-use function Md\Phunkie\Functions\pattern_matching\on;
 use function Md\Phunkie\Functions\show\get_value_to_show;
 use Md\Phunkie\Ops\ImmList\ImmListApplicativeOps;
 use Md\Phunkie\Ops\ImmList\ImmListEqOps;
@@ -96,14 +94,14 @@ final class ImmList implements Kind, Applicative
      */
     public function splitAt(int $index): Pair
     {
-        $default = function() use ($index) { return Pair(ImmList(...array_slice($this->values, 0, $index)),
-                                                         ImmList(...array_slice($this->values, $index))); };
-        return matching(
-            on($this->isEmpty())               ->returns(Pair(ImmList(), ImmList())),
-            on($index == 0)                    ->returns(Pair(ImmList(), clone $this)),
-            on($index >= count($this->values)) ->returns(Pair(clone $this, ImmList())),
-            on(_)                              ->returns(Lazy($default))
-        );
+        switch (true) {
+            case $this->isEmpty():               return Pair(ImmList(), ImmList());
+            case $index == 0:                    return Pair(ImmList(), clone $this);
+            case $index >= count($this->values): return Pair(clone $this, ImmList());
+            default:
+                return Pair(ImmList(...array_slice($this->values, 0, $index)),
+                            ImmList(...array_slice($this->values, $index)));
+        }
     }
 
     public function partition(callable $condition): Pair
