@@ -218,3 +218,50 @@ php> show(zero(rand(1,45)));
 php> show(zero([1,2,3]));
 []
 ```
+
+Pattern Matching
+----------------
+
+###Working withLists
+
+```php
+<?php
+use Md\Phunkie\Types\ImmList;
+use function Md\Phunkie\PatternMatching\Referenced\_Cons as Cons;
+use function Md\Phunkie\PatternMatching\Referenced\_ConsX as ConsX;
+
+function sum(ImmList $list): int { $on = match($list); switch(true) {
+    case $on(Nil): return 0;
+    case $on(ConsX($x, Nil)): return $x;
+    case $on(Cons($x, $xs)): return $x + sum($xs);}
+}
+```
+
+###Validation monads wildcards
+
+```php
+<?php
+
+$boom = function () { return Failure(Nel(new \Exception("Boom!"))); };
+$on = match($boom()); switch (true) {
+    case $on(Success(_)): return 2; break;
+    case $on(Failure(_)): return 10; break;
+}
+
+$yay = function () { return Success("yay!"); };
+$on = match($yay()); switch (true) {
+    case $on(Failure(_)): return 2; break;
+    case $on(Success(_)): return 10; break;
+}
+```
+
+###Option wildcards
+
+```php
+<?php
+
+$on = match(None()); switch (true) {
+    case $on(None): return 10; break;
+    case $on(Some(_)): return 2; break;
+}
+```

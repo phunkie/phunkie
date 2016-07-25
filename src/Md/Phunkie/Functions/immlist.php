@@ -1,7 +1,6 @@
 <?php
 
 namespace {
-
     use Md\Phunkie\Types\Cons;
     use Md\Phunkie\Types\ImmList;
     use Md\Phunkie\Types\Nil;
@@ -18,7 +17,7 @@ namespace {
         return new Nil();
     }
 
-    function Cons($head, $tail): ImmList
+    function Cons($head, $tail)
     {
         if ($head == Nil) $head = Nil();
         if ($tail == Nil) $tail = Nil();
