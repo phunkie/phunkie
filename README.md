@@ -197,9 +197,9 @@ false
 php> show(combine(ImmList(1,2,3), ImmList(4,5,6)));
 List(1,2,3,4,5,6)
 php> show(combine(Some(4), Some(2)));
-6
+Some(6)
 php> show(combine(Some("4"), Some("2")));
-"42"
+Some("42")
 php> ImmList(1,2,3)->combine(ImmList(4,5,6));
 List(1,2,3,4,5,6)
 
