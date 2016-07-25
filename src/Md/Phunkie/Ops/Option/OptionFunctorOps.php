@@ -13,13 +13,11 @@ use Md\Phunkie\Types\None;
 trait OptionFunctorOps
 {
     use FunctorOps;
-    public function map(callable $f): Kind
-    {
-        switch (true) {
-            case $this->isEmpty(): return None();
-            case ($f($this->get()) instanceof None): return None();
-            default: return Some($f($this->get()));
-        }
+
+    public function map(callable $f): Kind { switch (true) {
+        case $this->isEmpty(): return None();
+        case ($f($this->get()) instanceof None): return None();
+        default: return Some($f($this->get())); }
     }
 
     public function imap(callable $f,callable $g): Kind

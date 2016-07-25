@@ -10,9 +10,8 @@ use Md\Phunkie\Ops\ImmList\ImmListEqOps;
 use Md\Phunkie\Ops\ImmList\ImmListFoldableOps;
 use Md\Phunkie\Ops\ImmList\ImmListMonadOps;
 use Md\Phunkie\Ops\ImmList\ImmListMonoidOps;
-use Md\Phunkie\Types\ImmList\NoSuchElementException;
 
-final class ImmList implements Kind, Applicative
+abstract class ImmList implements Kind, Applicative
 {
     use Show;
     use ImmListApplicativeOps,
@@ -23,15 +22,41 @@ final class ImmList implements Kind, Applicative
 
     const kind = "ImmList";
     private $values;
-
-    public function __construct(...$values)
+    public function __construct()
     {
-        $this->values = $values;
+        switch (get_class($this)) {
+            case NonEmptyList::class:
+                if (func_num_args() == 0) {
+                    throw new \Error("not enough arguments for constructor Nel");
+                }
+                $this->values = func_get_args();
+                break;
+            case Cons::class:
+                if (func_num_args() != 2) {
+                    throw new \Error((func_num_args() < 2 ? "not enough" : "too many") . " arguments for constructor List");
+                }
+                $head = func_get_arg(0);
+                $tail = func_get_arg(1);
+                if (!$tail instanceof ImmList) {
+                    throw new \TypeError("type mismatch 2nd argument List: expected List, found " .
+                                         ((gettype($tail) == "object") ? get_class($tail) : gettype($tail)));
+                }
+                $this->values = array_merge([$head], $tail->toArray());
+                break;
+            case Nil::class:
+                if (func_num_args() > 0) {
+                    throw new \Error("too many arguments for constructor Nil");
+                }
+                $this->values = [];
+                break;
+            default:
+                throw new \TypeError("List cannot be extended outside namespace");
+        }
     }
 
     public function isEmpty(): bool
     {
-        return count($this->values) == 0;
+        return false;
     }
 
     public function toString(): string
@@ -43,7 +68,7 @@ final class ImmList implements Kind, Applicative
      * @param callable $condition
      * @return ImmList<T>
      */
-    public function filter(callable $condition)
+    public function filter(callable $condition): ImmList
     {
         return ImmList(...array_filter($this->values, $condition));
     }
@@ -92,65 +117,41 @@ final class ImmList implements Kind, Applicative
      * @param int $index
      * @return ImmList<ImmList<T>>
      */
-    public function splitAt(int $index): Pair
-    {
-        switch (true) {
-            case $this->isEmpty():               return Pair(ImmList(), ImmList());
-            case $index == 0:                    return Pair(ImmList(), clone $this);
-            case $index >= count($this->values): return Pair(clone $this, ImmList());
-            default:
-                return Pair(ImmList(...array_slice($this->values, 0, $index)),
-                            ImmList(...array_slice($this->values, $index)));
-        }
+    public function splitAt(int $index): Pair { switch (true) {
+        case $index == 0:                    return Pair(Nil(), clone $this);
+        case $index >= count($this->values): return Pair(clone $this, Nil());
+        default: return Pair(ImmList(...array_slice($this->values, 0, $index)),
+            ImmList(...array_slice($this->values, $index))); }
     }
 
     public function partition(callable $condition): Pair
     {
         $trues = $falses = [];
-        foreach ($this->values as $value) {
-            switch ($result = call_user_func($condition, $value)) {
-                case true:
-                    $trues[] = $value;
-                    break;
-                case false:
-                    $falses[] = $value;
-                    break;
-                default:
-                    throw new \BadMethodCallException(sprintf("partition must be passed a callable returning a boolean, %s returned", gettype($result)));
-            }
+        foreach ($this->values as $value) { switch ($result = call_user_func($condition, $value)) {
+            case true: $trues[] = $value; break;
+            case false: $falses[] = $value; break;
+            default: throw $this->callableMustReturnBoolean($result); }
         }
         return Pair(ImmList(...$trues), ImmList(...$falses));
     }
 
     public function head()
     {
-        if ($this->isEmpty()) {
-            throw new NoSuchElementException("head of empty list");
-        }
         return $this->values[0];
     }
 
     public function tail()
     {
-        if ($this->isEmpty()) {
-            throw new \BadMethodCallException("tail of empty list");
-        }
         return ImmList(...array_slice($this->values,1));
     }
 
     public function init()
     {
-        if ($this->isEmpty()) {
-            throw new \BadMethodCallException("empty init");
-        }
         return ImmList(...array_slice($this->values,0,-1));
     }
 
     public function last()
     {
-        if ($this->isEmpty()) {
-            throw new NoSuchElementException("last of empty list");
-        }
         return $this->values[count($this->values) - 1];
     }
 
@@ -158,4 +159,11 @@ final class ImmList implements Kind, Applicative
     {
         return ImmList(...array_reverse($this->values));
     }
+
+    private function callableMustReturnBoolean($result)
+    {
+        return new \BadMethodCallException(sprintf("partition must be passed a callable that returns a boolean, %s returned",
+            gettype($result)));
+    }
+
 }

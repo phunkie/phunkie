@@ -40,7 +40,7 @@ trait ImmListApplicativeOps
             case $f == None(): return None();
             case $f instanceof Option: throw new TypeError(sprintf("`apply` takes List<callable>, Option<%s> given", gettype($f->get())));
             case !$this instanceof ImmList: throw new BadMethodCallException();
-            case $this == ImmList(): return ImmList();
+            case $this == Nil(): return Nil();
             case $f instanceof ImmList: return $apply();
             case $f instanceof Function1 && is_callable($f->get()): case $f instanceof Option && is_callable($f->get()):
                 return $this->map($f->get());

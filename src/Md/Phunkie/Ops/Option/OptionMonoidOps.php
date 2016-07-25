@@ -16,13 +16,10 @@ trait OptionMonoidOps
         return None();
     }
 
-    public function combine(Option $b)
-    {
-        switch (true) {
-            case !$this instanceof Option: throw new RuntimeException("Options ops imported to non-option");
-            case $this->isEmpty(): return $b;
-            case $b->isEmpty(): return $this;
-            default: return Some(combine($this->get(), $b->get()));
-        }
+    public function combine(Option $b) { switch (true) {
+        case !$this instanceof Option: throw new RuntimeException("Options ops imported to non-option");
+        case $this->isEmpty(): return $b;
+        case $b->isEmpty(): return $this;
+        default: return Some(combine($this->get(), $b->get())); }
     }
 }

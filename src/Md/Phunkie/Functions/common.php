@@ -6,4 +6,5 @@ const Option = 'Option';
 const ImmList = 'ImmList';
 const Function1 = 'Function1';
 const _ = "_";
-const None = 'None';
+const None = 'Phunkie@Reserverd@Constant@None';
+const Nil = 'Phunkie@Reserverd@Constant@Nil';

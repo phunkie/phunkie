@@ -6,6 +6,8 @@ use Md\Phunkie\Cats\Show;
 use function Md\Phunkie\Functions\show\get_value_to_show;
 use function Md\Phunkie\Functions\show\object_class_uses_trait;
 use Md\Phunkie\Ops\ImmList\ImmListApplicativeOps;
+use Md\Phunkie\Types\Cons;
+use Md\Phunkie\Types\Nil;
 use PhpSpec\ObjectBehavior;
 
 use Eris\TestTrait;
@@ -18,6 +20,12 @@ use Eris\Generator\IntegerGenerator as IntGen;
 class ImmListSpec extends ObjectBehavior
 {
     use TestTrait;
+
+    function let()
+    {
+        $this->beAnInstanceOf(Cons::class);
+        $this->beConstructedWith(1,ImmList(2,3));
+    }
 
     function it_is_showable()
     {
@@ -39,6 +47,7 @@ class ImmListSpec extends ObjectBehavior
 
     function it_returns_an_empty_list_when_an_empty_list_is_mapped()
     {
+        $this->beAnInstanceOf(Nil::class);
         $this->beConstructedWith();
         $this->map(function($x) { return $x + 1; })->shouldBeLike(ImmList());
     }
@@ -50,6 +59,7 @@ class ImmListSpec extends ObjectBehavior
 
     function it_returns_an_empty_list_when_an_empty_list_is_applied()
     {
+        $this->beAnInstanceOf(Nil::class);
         $this->beConstructedWith();
         $this->apply(ImmList(function($x) { return $x + 1; }))->shouldBeLike(ImmList());
     }

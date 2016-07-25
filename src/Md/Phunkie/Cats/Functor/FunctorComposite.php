@@ -15,17 +15,9 @@ class FunctorComposite
     use Show,FunctorOps;
     protected $kinds = [];
 
-    public function __construct(string $kind)
-    {
-        switch ($kind) {
-            case ImmList::kind:
-            case Option::kind:
-            case Function1::kind:
-                $this->kinds[] = $kind;
-                break;
-            default:
-                throw new \RuntimeException("Composing functor of kind $kind is not supported");
-        }
+    public function __construct(string $kind) { switch ($kind) {
+        case ImmList::kind: case Option::kind: case Function1::kind: $this->kinds[] = $kind; break;
+        default: throw new \RuntimeException("Composing functor of kind $kind is not supported"); }
     }
 
     public function map(Kind $fa, callable $f)

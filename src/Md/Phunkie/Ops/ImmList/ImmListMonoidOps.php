@@ -9,7 +9,7 @@ trait ImmListMonoidOps
 {
     public function zero()
     {
-        return ImmList();
+        return Nil();
     }
 
     public function combine(ImmList $b)

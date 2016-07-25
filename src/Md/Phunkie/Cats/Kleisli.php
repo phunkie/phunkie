@@ -24,15 +24,9 @@ class Kleisli
         });
     }
 
-    public function __get($arg)
-    {
-        switch ($arg) {
-            case "run":
-                return $this->run;
-                break;
-            default:
-                throw new \InvalidArgumentException("Invalid property $arg for Kleisli");
-        }
+    public function __get($arg) { switch ($arg) {
+        case "run": return $this->run;
+        default: throw new \InvalidArgumentException("Invalid property $arg for Kleisli"); }
     }
 
     public function __set($name, $value)

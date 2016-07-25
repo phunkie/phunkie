@@ -2,11 +2,32 @@
 
 namespace {
 
+    use Md\Phunkie\Types\Cons;
     use Md\Phunkie\Types\ImmList;
+    use Md\Phunkie\Types\Nil;
+    use Md\Phunkie\Types\NonEmptyList;
 
-    function ImmList(...$values): ImmList
+    function ImmList(...$values): ImmList { switch(count($values)) {
+        case 0: return Nil();
+        case 1: return new Cons($values[0], Nil());
+        default: return new Cons($values[0], ImmList(...array_slice($values, 1))); }
+    }
+
+    function Nil(): ImmList
     {
-        return new ImmList(...$values);
+        return new Nil();
+    }
+
+    function Cons($head, $tail): ImmList
+    {
+        if ($head == Nil) $head = Nil();
+        if ($tail == Nil) $tail = Nil();
+        return new Cons($head, $tail);
+    }
+
+    function Nel(...$values): ImmList
+    {
+        return new NonEmptyList(...$values);
     }
 }
 
@@ -48,11 +69,7 @@ namespace Md\Phunkie\Functions\immlist {
     {
         $result = [];
         foreach ($items as $item) {
-            if (!$item instanceof ImmList) {
-                $result[] = $item;
-            } else {
-                $result = array_merge($result, $item->toArray());
-            }
+            $result = !$item instanceof ImmList ? array_merge($result, [$item]) : array_merge($result, $item->toArray());
         }
         return ImmList(...$result);
     }
