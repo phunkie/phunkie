@@ -18,153 +18,25 @@ use Md\Phunkie\Types\Some;
 use Md\Phunkie\Validation\Failure;
 use Md\Phunkie\Validation\Success;
 
-class Match{
+class Match
+{
     private $values;
-    public $Nil = Nil;
-    public $_ = _;
-    public function __construct(...$values) { $this->values = $values; }
 
-    public function __invoke(...$conditions)
+    public function __construct(...$values)
+    {
+        $this->values = $values;
+    }
+
+    public function __invoke(...$conditions): bool
     {
         $conditions = $this->wildcardGuard($conditions);
         $this->guardNumberOfConditionsAndValuesNotEqual($conditions);
 
         for ($position = 0; $position < count($conditions); $position++)
-            if (!$this->conditionIsValid($conditions[$position], $this->values[$position]))
+            if (!conditionIsValid($conditions[$position], $this->values[$position]))
                 return false;
 
         return true;
-    }
-
-    private function matchesWildcardedSome($condition, $value)
-    {
-        return $condition instanceof Some && $condition == Some(_) && $value instanceof Some;
-    }
-
-    private function matchesWildcardedFunction1($condition, $value)
-    {
-        return $condition instanceof WildcardedFunction1 && $value instanceof Function1;
-    }
-
-    private function sameTypeSameValue($condition, $value)
-    {
-        return gettype($condition) == gettype($value) && $value == $condition;
-    }
-
-    private function matchesNone($condition, $value)
-    {
-        return $condition == None && $value instanceof Option && $value == None();
-    }
-
-    private function matchesNil($condition, $value)
-    {
-        return $condition == Nil && $value instanceof ImmList && $value == Nil();
-    }
-
-    private function matchesWildcardedFailure($condition, $value)
-    {
-        return $condition instanceof Failure && $condition == Failure(_) && $value instanceof Failure;
-    }
-
-    private function matchesWildcardedSuccess($condition, $value)
-    {
-        return $condition instanceof Success && $condition == Success(_) && $value instanceof Success;
-    }
-
-    private function matchesConsWildcardedHead($condition, $value)
-    {
-        if ($condition instanceof WildcardedCons && $condition->head == _ && $value instanceof ImmList) {
-            $match = new Match ($value->tail());
-            return $match($condition->tail);
-        }
-        return false;
-    }
-
-    private function matchesConsWildcardedTail($condition, $value)
-    {
-        if ($condition instanceof WildcardedCons && $condition->tail == _ && $value instanceof ImmList) {
-            $match = new Match ($value->head);
-            return $match($condition->head);
-        }
-        return false;
-    }
-
-    private function matchesWildcardedNel($condition, $value)
-    {
-        return $condition instanceof NonEmptyList && $condition == Nel(_) &&
-        $value instanceof NonEmptyList && $value->length > 0;
-    }
-
-    private function matchByReference($condition, $value)
-    {
-        if ($condition instanceof ReferencedCons && $value instanceof ImmList) {
-            if ($condition->head == null) $condition->head = $value->head;
-            elseif ($condition->head != $value->head) return false;
-            if ($condition->tail == null) $condition->tail = $value->tail;
-            elseif ($condition->tail != $value->tail) return false;
-            return true;
-        }
-        if ($condition instanceof ReferencedConsX && $value instanceof ImmList) {
-            $condition->head = $value->head;
-            if ($condition->tail != $value->tail) return false;
-            return true;
-        }
-        if ($condition instanceof ReferencedConsXs && $value instanceof ImmList) {
-            if ($condition->head != $value->head) return false;
-            $condition->tail = $value->tail;
-            return true;
-        }
-        if ($condition instanceof ReferencedSome && $value instanceof Some) {
-            $condition->value = $value->get();
-            return true;
-        }
-        if (($condition instanceof ReferencedSuccess && $value instanceof Success) ||
-            ($condition instanceof ReferencedFailure && $value instanceof Failure)) {
-            $condition->value = $value->map(Function1::identity());
-            return true;
-        }
-        return false;
-    }
-
-    private function conditionIsValid($condition, $value)
-    {
-        if ($condition === _) {
-            return true;
-        }
-        if ($this->matchByReference($condition, $value)) {
-            return true;
-        }
-        if ($this->matchesNone($condition, $value)) {
-            return true;
-        }
-        if ($this->matchesNil($condition, $value)) {
-            return true;
-        }
-        if ($this->matchesWildcardedNel($condition, $value)) {
-            return true;
-        }
-        if ($this->matchesConsWildcardedHead($condition, $value)) {
-            return true;
-        }
-        if ($this->matchesConsWildcardedTail($condition, $value)) {
-            return true;
-        }
-        if ($this->matchesWildcardedFunction1($condition, $value)) {
-            return true;
-        }
-        if ($this->matchesWildcardedSome($condition, $value)) {
-            return true;
-        }
-        if ($this->matchesWildcardedFailure($condition, $value)) {
-            return true;
-        }
-        if ($this->matchesWildcardedSuccess($condition, $value)) {
-            return true;
-        }
-        if ($this->sameTypeSameValue($condition, $value)) {
-            return true;
-        }
-        return false;
     }
 
     private function wildcardGuard($conditions)
@@ -181,4 +53,142 @@ class Match{
             throw new \Error("number of conditions must equal number of arguments in match.");
         }
     }
+}
+
+function conditionIsValid($condition, $value)
+{
+    switch (true) {
+        case $condition === _:
+        case matchByReference($condition, $value):
+        case matchesNone($condition, $value):
+        case matchesNil($condition, $value):
+        case matchesWildcardedNel($condition, $value):
+        case matchesConsWildcardedHead($condition, $value):
+        case matchesConsWildcardedTail($condition, $value):
+        case matchesWildcardedFunction1($condition, $value):
+        case matchesWildcardedSome($condition, $value):
+        case matchesWildcardedFailure($condition, $value):
+        case matchesWildcardedSuccess($condition, $value):
+        case sameTypeSameValue($condition, $value):
+            return true;
+        default: return false;
+    }
+}
+
+function matchesWildcardedSome($condition, $value)
+{
+    return $condition instanceof Some && $condition == Some(_) && $value instanceof Some;
+}
+
+function matchesWildcardedFunction1($condition, $value)
+{
+    return $condition instanceof WildcardedFunction1 && $value instanceof Function1;
+}
+
+function sameTypeSameValue($condition, $value)
+{
+    return gettype($condition) == gettype($value) && $value == $condition;
+}
+
+function matchesNone($condition, $value)
+{
+    return $condition == None && $value instanceof Option && $value == None();
+}
+
+function matchesNil($condition, $value)
+{
+    return $condition == Nil && $value instanceof ImmList && $value == Nil();
+}
+
+function matchesWildcardedFailure($condition, $value)
+{
+    return $condition instanceof Failure && $condition == Failure(_) && $value instanceof Failure;
+}
+
+function matchesWildcardedSuccess($condition, $value)
+{
+    return $condition instanceof Success && $condition == Success(_) && $value instanceof Success;
+}
+
+function matchesConsWildcardedHead($condition, $value)
+{
+    if ($condition instanceof WildcardedCons && $condition->head == _ && $value instanceof ImmList) {
+        $match = new Match ($value->tail());
+        return $match($condition->tail);
+    }
+    return false;
+}
+
+function matchesConsWildcardedTail($condition, $value)
+{
+    if ($condition instanceof WildcardedCons && $condition->tail == _ && $value instanceof ImmList) {
+        $match = new Match ($value->head);
+        return $match($condition->head);
+    }
+    return false;
+}
+
+function matchesWildcardedNel($condition, $value)
+{
+    return $condition instanceof NonEmptyList && $condition == Nel(_) &&
+    $value instanceof NonEmptyList && $value->length > 0;
+}
+
+function matchByReference($condition, $value)
+{
+    switch (true) {
+        case matchListByReference($condition, $value):
+        case matchListHeadByReference($condition, $value):
+        case matchListTailByReference($condition, $value):
+        case matchSomeByReference($condition, $value):
+        case matchValidationByReference($condition, $value):
+            return true;
+        default: return false;
+    }
+}
+
+function matchValidationByReference($condition, $value) {
+    if (($condition instanceof ReferencedSuccess && $value instanceof Success) ||
+        ($condition instanceof ReferencedFailure && $value instanceof Failure)) {
+        $condition->value = $value->map(Function1::identity());
+        return true;
+    }
+    return false;
+}
+
+function matchSomeByReference($condition, $value) {
+    if ($condition instanceof ReferencedSome && $value instanceof Some) {
+        $condition->value = $value->get();
+        return true;
+    }
+    return false;
+}
+
+function matchListByReference($condition, $value) {
+    if ($condition instanceof ReferencedCons && $value instanceof ImmList) {
+        if ($condition->head == null) $condition->head = $value->head;
+        elseif ($condition->head != $value->head) return false;
+        if ($condition->tail == null) $condition->tail = $value->tail;
+        elseif ($condition->tail != $value->tail) return false;
+        return true;
+    }
+    return false;
+}
+
+function matchListHeadByReference($condition, $value) {
+    if ($condition instanceof ReferencedConsX && $value instanceof ImmList) {
+        $condition->head = $value->head;
+        if ($condition->tail != $value->tail) return false;
+        return true;
+    }
+    return false;
+}
+
+function matchListTailByReference($condition, $value) {
+    if ($condition instanceof ReferencedConsXs && $value instanceof ImmList) {
+        if ($condition->head != $value->head) return false;
+        $condition->tail = $value->tail;
+        return true;
+    }
+    return false;
 }
