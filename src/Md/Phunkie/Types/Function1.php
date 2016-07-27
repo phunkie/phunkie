@@ -33,6 +33,11 @@ final class Function1 implements Kind, Applicative
         return $this->invokeFunctionOnArg($a);
     }
 
+    public function run($a)
+    {
+        return $this->invokeFunctionOnArg($a);
+    }
+
     public function andThen(callable $g): Function1
     {
         $f = $this;
