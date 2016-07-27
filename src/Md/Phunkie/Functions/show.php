@@ -4,15 +4,15 @@ namespace Md\Phunkie\Functions\show {
 
     use Md\Phunkie\Cats\Show;
 
-    function show($value)
+    function show(...$values)
     {
-        echo get_value_to_show($value);
+        array_map(function($x) { echo get_value_to_show($x); }, $values);
     }
 
     function get_value_to_show($value) { switch (true) {
         case is_showable($value): return $value->show();
         case is_object($value) && method_exists($value, '__toString'): return (string)$value;
-        case is_string($value): return '"' . $value . '"';
+        case is_string($value): return $value == "\n" ? $value : '"' . $value . '"';
         case is_int($value):case is_double($value): case is_float($value): case is_long($value): return $value;
         case is_resource($value): return (string)$value;
         case is_bool($value): return $value ? 'true' : 'false';
