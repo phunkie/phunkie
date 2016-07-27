@@ -22,8 +22,8 @@ abstract class Option implements Kind, Applicative
         OptionMonoidOps;
     abstract public function getOrElse($t);
     abstract public function get();
-    abstract public function isDefined(): bool;
-    abstract public function isEmpty(): bool;
+    abstract public function isDefined();
+    abstract public function isEmpty();
     public function toString(): string {
         return $this->isEmpty() ? "None" : "Some(". get_value_to_show($this->get()) . ")";
     }

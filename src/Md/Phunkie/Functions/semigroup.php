@@ -8,7 +8,7 @@ use TypeError;
 function combine($a, $b) { switch (true) {
     case $a instanceof Unit: return $b;
     case $b instanceof Unit: return $a;
-    case gettype($a) != gettype($b) && is_object($a): throw new TypeError("combine is not defined for " . get_class($a));
+    case gettype($a) != gettype($b) && is_object($a): throw new TypeError("cannot combine values of different types. using " . get_class($a));
     case gettype($a) != gettype($b): throw new TypeError("combine is not defined for type " . gettype($a));
     case gettype($a) == gettype($b): switch(gettype($a)) {
         case "int": case "integer": case "double": case "float": return $a + $b;

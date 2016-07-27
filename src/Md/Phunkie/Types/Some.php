@@ -16,7 +16,10 @@ final class Some extends Option
             default: throw new \TypeError(sprintf("Option must take exactly 1 argument, %d given", $numArgs));
         }
     }
-    public function getOrElse($t) { return $this->t; }
+    public function getOrElse($t)
+    {
+        return $this->t;
+    }
     public function get() { return $this->t; }
     public function isDefined(): bool { return true; }
     public function isEmpty(): bool { return false; }

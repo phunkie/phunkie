@@ -6,6 +6,9 @@ use Md\Phunkie\Types\Function1;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 use function Md\Phunkie\PatternMatching\Referenced\_Cons as rCons;
+use function Md\Phunkie\PatternMatching\Referenced\Some as rSome;
+use function Md\Phunkie\PatternMatching\Referenced\Success as rSuccess;
+use function Md\Phunkie\PatternMatching\Referenced\Failure as rFailure;
 use function Md\Phunkie\PatternMatching\Wildcarded\_Cons as wCons;
 
 class PatternMatchingSpec extends ObjectBehavior
@@ -112,20 +115,20 @@ class PatternMatchingSpec extends ObjectBehavior
         }
         expect($result)->toBe(2);
 
-//        $result = null;
-//        $on = match(ImmList(1)); switch (true) {
-//            case $on(Nil): $result = 10; break;
-//            case $on(wCons(_, Nil)): $result = 2; break;
-//        }
-//        expect($result)->toBe(2);
-//
-//        $result = null;
-//        $on = match(ImmList(1, 2)); switch (true) {
-//            case $on(Nil): $result = 10; break;
-//            case $on(wCons(_, Nil)): $result = 2; break;
-//            case $on(wCons(_, wCons(_, Nil))): $result = 3; break;
-//        }
-//        expect($result)->toBe(3);
+        $result = null;
+        $on = match(ImmList(1)); switch (true) {
+            case $on(Nil): $result = 10; break;
+            case $on(wCons(_, Nil)): $result = 2; break;
+        }
+        expect($result)->toBe(2);
+
+        $result = null;
+        $on = match(ImmList(1, 2)); switch (true) {
+            case $on(Nil): $result = 10; break;
+            case $on(wCons(_, Nil)): $result = 2; break;
+            case $on(wCons(_, wCons(_, Nil))): $result = 3; break;
+        }
+        expect($result)->toBe(3);
     }
 
     function it_accepts_wildcard_for_tail_when_comparing_lists()
@@ -152,9 +155,9 @@ class PatternMatchingSpec extends ObjectBehavior
     {
         $result = null;
         $on = match(Nel(1,2)); switch (true) {
-        case $on(Nil): $result = 10; break;
-        case $on(Nel(_)): $result = 2; break;
-    }
+            case $on(Nil): $result = 10; break;
+            case $on(Nel(_)): $result = 2; break;
+        }
         expect($result)->toBe(2);
     }
 
@@ -165,5 +168,34 @@ class PatternMatchingSpec extends ObjectBehavior
             case $on(rCons($x, $xs)): $result = $x + $xs->head; break;
         }
         expect($result)->toBe(3);
+    }
+
+    function it_accepts_reference_when_comparing_options()
+    {
+        $result = null;
+        $on = match(Some(42)); switch (true) {
+            case $on(rSome($x)): $result = $x; break;
+        }
+        expect($result)->toBe(42);
+    }
+
+    function it_accepts_reference_when_comparing_successes()
+    {
+        $yay = function () { return Success("yay!"); };
+        $result = null;
+        $on = match($yay()); switch (true) {
+            case $on(rSuccess($x)): $result = $x; break;
+        }
+        expect($result)->toBe($x);
+    }
+
+    function it_accepts_reference_when_comparing_failures()
+    {
+        $boom = function () { return Failure("boom!"); };
+        $result = null;
+        $on = match($boom()); switch (true) {
+        case $on(rFailure($x)): $result = $x; break;
+    }
+        expect($result)->toBe($x);
     }
 }

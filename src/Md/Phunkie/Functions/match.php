@@ -4,9 +4,9 @@ namespace {
 
     use Md\Phunkie\PatternMatching\Match;
 
-    function match($value)
+    function match(...$values)
     {
-        return new Match($value);
+        return new Match(...$values);
     }
 }
 
@@ -24,6 +24,21 @@ namespace Md\Phunkie\PatternMatching\Referenced {
     function _ConsXs($head, &$tail)
     {
         return new ConsXs($head, $tail);
+    }
+
+    function Some(&$value)
+    {
+        return new Some($value);
+    }
+
+    function Success(&$value)
+    {
+        return new Success($value);
+    }
+
+    function Failure(&$value)
+    {
+        return new Failure($value);
     }
 }
 
