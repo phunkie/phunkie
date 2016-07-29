@@ -10,6 +10,11 @@ namespace {
         return new Failure($e);
     }
 
+    function FailureNel(...$e)
+    {
+        return Nel(...$e)->failure();
+    }
+
     function Success($a)
     {
         return new Success($a);

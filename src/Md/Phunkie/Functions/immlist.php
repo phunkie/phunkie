@@ -24,7 +24,7 @@ namespace {
         return new Cons($head, $tail);
     }
 
-    function Nel(...$values): ImmList
+    function Nel(...$values): NonEmptyList
     {
         return new NonEmptyList(...$values);
     }
