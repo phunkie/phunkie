@@ -22,7 +22,7 @@ Lists
 -----
 ```bash
 php> show(ImmList(2,3,4));
-List(1,2,3)
+List(2,3,4)
 php> show(ImmList(Some(1), None(), Some(3)));
 List(Some(1),None,Some(3))
 
@@ -35,7 +35,7 @@ List(1,2)
 php> show(last(ImmList(1,2,3)));
 3
 php> show(reverse(ImmList(1,2,3)));
-List(3,2,3)
+List(3,2,1)
 php> show(length(ImmList(1,2,3)))
 3
 
