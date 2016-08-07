@@ -22,7 +22,7 @@ abstract class ImmList implements Kind, Applicative
 
     const kind = "ImmList";
     private $values;
-    public function __construct()
+    final public function __construct()
     {
         switch (get_class($this)) {
             case NonEmptyList::class:

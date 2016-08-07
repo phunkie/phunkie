@@ -14,4 +14,9 @@ final class NonEmptyList extends ImmList
     {
         return Failure($this);
     }
+
+    public function success()
+    {
+        return Success($this);
+    }
 }

@@ -20,6 +20,11 @@ namespace {
         return new Success($a);
     }
 
+    function SuccessNel($a)
+    {
+        return Nel(...$a)->success();
+    }
+
 }
 
 namespace Md\Phunkie\Functions\validation {
