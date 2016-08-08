@@ -59,7 +59,7 @@ namespace Md\Phunkie\Functions\show {
 
     function get_collection_type($value) { switch (count($value)) {
         case 0: return "Nothing";
-        case 1: return get_type_to_show($value);
+        case 1: return get_type_to_show($value[0]);
         case 2: return combine_types(get_type_to_show($value[0]), get_type_to_show($value[1]));
         default: return combine_types(get_type_to_show($value[0]), get_collection_type(array_slice($value, 1))); }
     }
