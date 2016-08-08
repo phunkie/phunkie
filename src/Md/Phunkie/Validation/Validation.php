@@ -31,8 +31,8 @@ abstract class Validation
     }
 
     public function fold($fe, $fa) { $on = match($this); switch(true) {
-        case $on(Success($a)): return $fa($a);
-        case $on(Failure($a)): return $fe($a); }
+        case $on(rSuccess($a)): return $fa($a);
+        case $on(rFailure($a)): return $fe($a); }
     }
 
     abstract public function getOrElse($default);
