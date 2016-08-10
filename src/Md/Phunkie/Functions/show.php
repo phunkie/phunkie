@@ -66,6 +66,8 @@ namespace Md\Phunkie\Functions\show {
 
     function combine_types($a, $b) { switch (true) {
         case $a === $b: return $a;
+        case strpos($a, "Option") === 0 && $b === "None": return $a;
+        case $a === "None" && strpos($b, "Option") === 0 : return $b;
         case $a === "Nothing": return $b;
         case $b === "Nothing": return $a;
         default: return "Mixed";}

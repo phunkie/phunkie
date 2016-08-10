@@ -26,6 +26,7 @@ class ShowSpec extends ObjectBehavior
         expect(get_type_to_show(ImmList(Some(1),Some(2),Some(3))))->toReturn("List<Option<Int>>");
         expect(get_type_to_show(Nil()))->toReturn("List<Nothing>");
         expect(get_type_to_show(ImmList(1,2,"f")))->toReturn("List<Mixed>");
+        expect(get_type_to_show(ImmList(Some(32), Some(56), None())))->toReturn("List<Option<Int>>");
 
         expect(get_type_to_show(Pair(42, "42")))->toReturn("(Int, String)");
 
