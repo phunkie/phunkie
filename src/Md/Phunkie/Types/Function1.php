@@ -8,6 +8,8 @@ use Md\Phunkie\Cats\Show;
 use Md\Phunkie\Ops\Function1\Function1ApplicativeOps;
 use Md\Phunkie\Ops\Function1\Function1EqOps;
 
+use function Md\Phunkie\Functions\show\normalise_type;
+
 final class Function1 implements Kind, Applicative
 {
     use Function1ApplicativeOps, Function1EqOps, Show;
@@ -72,8 +74,8 @@ final class Function1 implements Kind, Applicative
     public function toString(): string
     {
         return sprintf("Function1(%s=>%s)",
-            $this->reflection->getParameters()[0]->getType() ?: "?",
-            $this->reflection->getReturnType() ?: "?");
+            normalise_type($this->reflection->getParameters()[0]->getType()) ?: "?",
+            normalise_type($this->reflection->getReturnType()) ?: "?");
     }
 
     private function invokeFunctionOnArg($arg)

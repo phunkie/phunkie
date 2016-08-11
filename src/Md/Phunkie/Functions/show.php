@@ -78,6 +78,22 @@ namespace Md\Phunkie\Functions\show {
         default: return "Mixed";}
     }
 
+    function normalise_type($type)
+    {
+        $scalars = [
+            "int" => "Int",
+            "string" => "String",
+            "bool" => "Boolean",
+            "callable" => "Callable",
+            "null" => "Null",
+            "double" => "Double",
+            "float" => "Float",
+            "resource" => "Resource"
+        ];
+
+        return is_string($type) && isset($scalars[$type]) ? $scalars[$type] : $type;
+    }
+
     function is_showable($value): bool
     {
         return !is_object($value) ? false : object_class_uses_trait($value, Show::class);
