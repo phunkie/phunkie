@@ -3,7 +3,9 @@
 namespace spec\Md\Phunkie;
 
 use function Md\Phunkie\Functions\show\get_type_to_show;
+use function Md\Phunkie\Functions\show\get_value_to_show;
 use PhpSpec\ObjectBehavior;
+use stdClass;
 
 class ShowSpec extends ObjectBehavior
 {
@@ -27,6 +29,7 @@ class ShowSpec extends ObjectBehavior
         expect(get_type_to_show(Nil()))->toReturn("List<Nothing>");
         expect(get_type_to_show(ImmList(1,2,"f")))->toReturn("List<Mixed>");
         expect(get_type_to_show(ImmList(Some(32), Some(56), None())))->toReturn("List<Option<Int>>");
+        expect(get_type_to_show(Function1(function(int $x):bool { return $x == 42; })))->toReturn("Function1");
 
         expect(get_type_to_show(Pair(42, "42")))->toReturn("(Int, String)");
 
@@ -34,5 +37,44 @@ class ShowSpec extends ObjectBehavior
         expect(get_type_to_show(Failure(new \Exception())))->toReturn("Validation<Exception, A>");
 
         expect(get_type_to_show(Tuple(1,true,"")))->toReturn("(Int, Boolean, String)");
+
+        expect(get_type_to_show(new class{}))->toReturn("AnonymousClass");
+        expect(get_type_to_show(new class extends SomeSuperClass {}))->toReturn(SomeSuperClass::class);
     }
+
+    function it_prints_value()
+    {
+        expect(get_value_to_show(1))->shouldReturn(1);
+        expect(get_value_to_show("1"))->shouldReturn('"1"');
+        expect(get_value_to_show(true))->shouldReturn("true");
+        expect(get_value_to_show(null))->shouldReturn("null");
+        expect(get_value_to_show([1,2,3]))->shouldReturn("[1,2,3]");
+        expect(get_value_to_show(function(int $x):bool { return $x == 42; }))->shouldReturn("<function>");
+
+        expect(get_value_to_show(Some(42)))->shouldReturn(Some(42)->show());
+        expect(get_value_to_show(ImmList(42)))->shouldReturn(ImmList(42)->show());
+        expect(get_value_to_show(Function1(function(int $x):bool { return $x == 42; })))
+            ->shouldReturn(Function1(function(int $x):bool { return $x == 42; })->show());
+        expect(get_value_to_show(Success(42)))->shouldReturn(Success(42)->show());
+        expect(get_value_to_show(Failure(42)))->shouldReturn(Failure(42)->show());
+        expect(get_value_to_show(Tuple(42)))->shouldReturn(Tuple(42)->show());
+
+        $object = new stdClass();
+        expect(get_value_to_show($object))->toReturn(get_class($object) . "@" . $this->hash($object));
+
+        $object = new class{};
+        expect(get_value_to_show($object))->toReturn("anonymous" . "@" . $this->hash($object));
+
+        $object = new class extends SomeSuperClass {};
+        expect(get_value_to_show($object))->toReturn(SomeSuperClass::class . "@" . $this->hash($object));
+    }
+
+    private function hash($object)
+    {
+        return substr(ltrim(spl_object_hash($object), "0"), 0, 7);
+    }
+}
+
+class SomeSuperClass {
+
 }

@@ -26,6 +26,9 @@ namespace Md\Phunkie\Functions\show {
         case is_bool($value): return $value ? 'true' : 'false';
         case is_null($value): return 'null';
         case is_array($value): return "[" . implode(",", array_map(function ($e) { return get_value_to_show($e); }, $value)) . "]";
+        case is_object($value) && (new \ReflectionClass($value))->isAnonymous():
+            return get_parent_class($value) === false ? "anonymous@" . substr(ltrim(spl_object_hash($value), "0"), 0, 7) :
+                get_parent_class($value) . "@" . substr(ltrim(spl_object_hash($value), "0"), 0, 7);
         case is_callable($value): return "<function>";
         case is_object($value): return get_class($value) . "@" . substr(ltrim(spl_object_hash($value), "0"), 0, 7);
         default: return $value;}
@@ -39,9 +42,9 @@ namespace Md\Phunkie\Functions\show {
         case is_resource($value): return "Resource";
         case is_bool($value): return "Boolean";
         case is_null($value): return "Null";
-        case is_callable($value): return "Callable";
         case is_array($value): return "Array<" . get_collection_type($value) . ">";
-        case is_object($value) && $value instanceof Unit: return "Unit";
+        case is_object($value) && $value instanceof Function1: return "Function1";
+        case is_callable($value): return "Callable";        case is_object($value) && $value instanceof Unit: return "Unit";
         case is_object($value) && $value == None(): return "None";
         case is_object($value) && $value instanceof Option: return "Option<" . get_type_to_show($value->get()) . ">";
         case is_object($value) && $value instanceof Pair: return "(" . get_type_to_show($value->_1) . ", " . get_type_to_show($value->_2) . ")";
@@ -54,6 +57,8 @@ namespace Md\Phunkie\Functions\show {
                 $types[] = get_type_to_show($value->{"_$i"});
             }
             return "(" . implode(", ", $types) . ")";
+        case is_object($value) && (new \ReflectionClass($value))->isAnonymous():
+            return get_parent_class($value) === false ? "AnonymousClass" : get_parent_class($value);
         case is_object($value): return get_class($value); }
     }
 
