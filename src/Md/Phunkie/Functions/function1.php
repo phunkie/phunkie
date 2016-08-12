@@ -1,5 +1,14 @@
 <?php
 
+namespace Md\Phunkie\Functions\function1 {
+
+    function identity($x) {
+        return $x;
+    }
+
+    const identity = "\\Md\\Phunkie\\Functions\\function1\\identity";
+}
+
 namespace {
 
     use Md\Phunkie\PatternMatching\Wildcarded\Function1 as WildcardedFunction1;
