@@ -23,6 +23,7 @@ final class Function1 implements Kind, Applicative
         $this->reflection = method_exists($f, '__invoke') ?
                             new \ReflectionMethod($f, '__invoke') :
                             new \ReflectionFunction($f);
+        $this->guardCallableNumberOfParameters();
     }
 
     public function get()
@@ -84,6 +85,14 @@ final class Function1 implements Kind, Applicative
             return $this->reflection->invoke($arg);
         } catch (\ReflectionException $e) {
             return call_user_func($this->f, $arg);
+        }
+    }
+
+    private function guardCallableNumberOfParameters()
+    {
+        $numberOfParameters = $this->reflection->getNumberOfParameters();
+        if ($numberOfParameters != 1) {
+            throw new \TypeError("Function1 takes a callable with 1 parameter. $numberOfParameters given.");
         }
     }
 }
