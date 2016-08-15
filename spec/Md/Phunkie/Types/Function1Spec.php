@@ -3,6 +3,7 @@
 namespace spec\Md\Phunkie\Types;
 
 use Md\Phunkie\Cats\Show;
+use const Md\Phunkie\Functions\function1\identity;
 use function Md\Phunkie\Functions\show\get_value_to_show;
 use function Md\Phunkie\Functions\show\object_class_uses_trait;
 use Md\Phunkie\Ops\Function1\Function1ApplicativeOps;
@@ -33,9 +34,8 @@ class Function1Spec extends ObjectBehavior
 
     function it_returns_an_identity_when_identity_is_applied_to_itself()
     {
-        $identity = function($x) { return $x; };
-        $this->beConstructedWith($identity);
-        $this->apply(Function1($identity))->eqv(Function1::identity(), Some(42))->shouldBe(true);
+        $this->beConstructedWith(identity);
+        $this->apply(Function1(identity))->eqv(Function1::identity(), Some(42))->shouldBe(true);
     }
 
     function getMatchers()

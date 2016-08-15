@@ -2,6 +2,7 @@
 
 namespace Md\Phunkie\Laws;
 
+use const Md\Phunkie\Functions\function1\identity;
 use Md\Phunkie\Types\Function1;
 use Md\Phunkie\Types\Kind;
 
@@ -9,7 +10,7 @@ trait InvariantLaws
 {
     public function invariantIdentity(Kind $fa): bool
     {
-        return $fa->eqv($fa->imap(Function1::identity(), Function1::identity()), Some(42));
+        return $fa->eqv($fa->imap(identity, identity), Some(42));
     }
 
     /**

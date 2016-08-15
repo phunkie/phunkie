@@ -2,13 +2,14 @@
 
 namespace Md\Phunkie\Laws;
 
+use const Md\Phunkie\Functions\function1\identity;
 use Md\Phunkie\Types\Kind;
 
 trait ApplicativeLaws
 {
     public function applicativeIdentity(Kind $fa): bool
     {
-        return $fa->apply($fa->pure(function($x) {return $x;}))->eqv($fa, Some(42));
+        return $fa->apply($fa->pure(identity))->eqv($fa, Some(42));
     }
 
     public function applicativeHomomorphism(Kind $fa, $a, callable $f): bool
