@@ -30,7 +30,7 @@ class ImmListSpec extends ObjectBehavior
     function it_is_showable()
     {
         $this->shouldBeShowable();
-        expect(get_value_to_show(ImmList(1,2,3)))->toReturn("List(1,2,3)");
+        expect(get_value_to_show(ImmList(1,2,3)))->toReturn("List(1, 2, 3)");
     }
 
     function it_is_a_functor()

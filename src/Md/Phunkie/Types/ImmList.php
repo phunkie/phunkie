@@ -61,7 +61,7 @@ abstract class ImmList implements Kind, Applicative
 
     public function toString(): string
     {
-        return "List(". implode(",", $this->map(function($e) { return get_value_to_show($e); })->values) . ")";
+        return "List(". implode(", ", $this->map(function($e) { return get_value_to_show($e); })->values) . ")";
     }
 
     /**

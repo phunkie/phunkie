@@ -3,10 +3,13 @@
 namespace Md\Phunkie\Types;
 
 use ArrayAccess, SplObjectStorage;
+use Md\Phunkie\Cats\Show;
+use function Md\Phunkie\Functions\show\get_value_to_show;
 use function Md\Phunkie\Functions\type\promote;
 
 final class ImmMap implements ArrayAccess
 {
+    use Show;
     private $values;
 
     public function __construct(...$values)
@@ -75,5 +78,32 @@ final class ImmMap implements ArrayAccess
     public function getOrElse($offset, $default)
     {
         return $this->get($offset)->getOrElse($default);
+    }
+
+    public function keys()
+    {
+        $keys = [];
+        foreach ($this->values as $k) {
+            $keys[] = $k instanceof ImmString || $k instanceof ImmInteger ? $k->get() : $k;
+        }
+        return $keys;
+    }
+
+    public function values()
+    {
+        $values = [];
+        foreach ($this->values as $k) {
+            $values[] = $this->values[$k];
+        }
+        return $values;
+    }
+
+    function toString(): string
+    {
+        $mappings = [];
+        foreach ($this->values as $k) {
+            $mappings[] = get_value_to_show($k instanceof ImmString ? $k->get() : $k) . " -> " . get_value_to_show($this->values[$k]);
+        }
+        return "Map(" . implode(", ", $mappings) . ")";
     }
 }

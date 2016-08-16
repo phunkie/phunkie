@@ -43,7 +43,7 @@ class Tuple
 
     public function toString(): string
     {
-        return "(" . implode(",", map("\\Md\\Phunkie\\Functions\\show\\get_value_to_show", ImmList(...($this->values)))->toArray()) . ")";
+        return "(" . implode(", ", map("\\Md\\Phunkie\\Functions\\show\\get_value_to_show", ImmList(...($this->values)))->toArray()) . ")";
     }
 
     public function getArity()

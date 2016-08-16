@@ -5,6 +5,7 @@ namespace Md\Phunkie\Functions\show {
     use Md\Phunkie\Cats\Show;
     use Md\Phunkie\Types\Function1;
     use Md\Phunkie\Types\ImmList;
+    use Md\Phunkie\Types\ImmMap;
     use Md\Phunkie\Types\Option;
     use Md\Phunkie\Types\Pair;
     use Md\Phunkie\Types\Tuple;
@@ -25,7 +26,7 @@ namespace Md\Phunkie\Functions\show {
         case is_resource($value): return (string)$value;
         case is_bool($value): return $value ? 'true' : 'false';
         case is_null($value): return 'null';
-        case is_array($value): return "[" . implode(",", array_map(function ($e) { return get_value_to_show($e); }, $value)) . "]";
+        case is_array($value): return "[" . implode(", ", array_map(function ($e) { return get_value_to_show($e); }, $value)) . "]";
         case is_object($value) && (new \ReflectionClass($value))->isAnonymous():
             return get_parent_class($value) === false ? "anonymous@" . substr(ltrim(spl_object_hash($value), "0"), 0, 7) :
                 get_parent_class($value) . "@" . substr(ltrim(spl_object_hash($value), "0"), 0, 7);
@@ -49,6 +50,7 @@ namespace Md\Phunkie\Functions\show {
         case is_object($value) && $value instanceof Option: return "Option<" . get_type_to_show($value->get()) . ">";
         case is_object($value) && $value instanceof Pair: return "(" . get_type_to_show($value->_1) . ", " . get_type_to_show($value->_2) . ")";
         case is_object($value) && $value instanceof ImmList: return "List<" . get_collection_type($value->toArray()) . ">";
+        case is_object($value) && $value instanceof ImmMap: return "Map<" . get_collection_type($value->keys()) . ", " . get_collection_type($value->values()) . ">";
         case is_object($value) && $value instanceof Success: return "Validation<E, " . get_type_to_show($value->getOrElse("")) . ">";
         case is_object($value) && $value instanceof Failure: return "Validation<" . get_type_to_show($value->fold(Function1::identity(),_)) . ", A>";
         case is_object($value) && $value instanceof Tuple:

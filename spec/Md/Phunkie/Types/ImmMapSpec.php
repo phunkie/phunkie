@@ -62,6 +62,12 @@ class ImmMapSpec extends ObjectBehavior
         $this->getOrElse("hi", "here")->shouldReturn("here");
         $this->getOrElse("hello", "here")->shouldReturn("there");
     }
+
+    function it_is_showable()
+    {
+        $this->beConstructedWith(["hi" => "here", "hello" => "there"]);
+        $this->toString()->shouldBe('Map("hi" -> "here", "hello" -> "there")');
+    }
 }
 
 

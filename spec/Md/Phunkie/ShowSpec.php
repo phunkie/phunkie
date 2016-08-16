@@ -48,7 +48,7 @@ class ShowSpec extends ObjectBehavior
         expect(get_value_to_show("1"))->shouldReturn('"1"');
         expect(get_value_to_show(true))->shouldReturn("true");
         expect(get_value_to_show(null))->shouldReturn("null");
-        expect(get_value_to_show([1,2,3]))->shouldReturn("[1,2,3]");
+        expect(get_value_to_show([1,2,3]))->shouldReturn("[1, 2, 3]");
         expect(get_value_to_show(function(int $x):bool { return $x == 42; }))->shouldReturn("<function>");
 
         expect(get_value_to_show(Some(42)))->shouldReturn(Some(42)->show());

@@ -53,7 +53,7 @@ final class Pair
 
     function toString(): string
     {
-        return "Pair(" . get_value_to_show($this->ta) . "," . get_value_to_show($this->tb) . ")";
+        return "Pair(" . get_value_to_show($this->ta) . ", " . get_value_to_show($this->tb) . ")";
     }
 
     private function guardNumArgs(int $numArgs)
