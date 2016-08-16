@@ -102,7 +102,7 @@ final class ImmMap implements ArrayAccess
     {
         $mappings = [];
         foreach ($this->values as $k) {
-            $mappings[] = get_value_to_show($k instanceof ImmString ? $k->get() : $k) . " -> " . get_value_to_show($this->values[$k]);
+            $mappings[] = get_value_to_show($k instanceof ImmString || $k instanceof ImmInteger ? $k->get() : $k) . " -> " . get_value_to_show($this->values[$k]);
         }
         return "Map(" . implode(", ", $mappings) . ")";
     }
