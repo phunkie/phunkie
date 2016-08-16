@@ -32,6 +32,20 @@ final class Pair
         throw new \TypeError("Pairs are immutable");
     }
 
+    public function copy($parameters)
+    {
+        $ta = $this->ta;
+        $tb = $this->tb;
+        foreach ($parameters as $parameter => $value) {
+            switch ($parameter) {
+                case "_1": $ta = $value;break;
+                case "_2": $tb = $value;break;
+                default: throw new \InvalidArgumentException("$parameter is not a member of pair.");
+            }
+        }
+        return new Pair($ta, $tb);
+    }
+
     public function getArity()
     {
         return 2;
