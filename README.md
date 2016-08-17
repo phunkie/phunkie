@@ -5,218 +5,287 @@ Phunkie
 
 Phunkie is a library with functional structures for PHP.
 
+For better Phunkie development, consider installing [phunkie-console](https://github.com/MarcelloDuarte/phunkie-console).
+
+```bash
+$ bin/phunkie-console
+Welcome to phunkie console.
+
+Type in expressions to have them evaluated.
+
+phunkie > 
+```
+
 Options
 -------
-```bash
-$ php -a
-php> require_once "vendor/autoload.php";
-php> show(Some(1));
-Some(1)
-php> show(None());
-None
-php> show(Option(42));
-Some(42)
+```
+phunkie > Some(1)
+Option<Int> = Some(1)
+
+phunkie > None()
+None = None
+
+phunkie > Option(42)
+Option<Int> = Some(42)
 ```
 
 Lists
 -----
+You can import module functions with the `:import` command. Use `:help` for more information
 ```bash
-php> show(ImmList(2,3,4));
-List(2,3,4)
-php> show(ImmList(Some(1), None(), Some(3)));
-List(Some(1),None,Some(3))
+phunkie > ImmList(2,3,4)
+List<Int> = List(2, 3, 4)
 
-php> show(head(ImmList(1,2,3)));
-1
-php> show(tail(ImmList(1,2,3)));
-List(2,3)
-php> show(init(ImmList(1,2,3)));
-List(1,2)
-php> show(last(ImmList(1,2,3)));
-3
-php> show(reverse(ImmList(1,2,3)));
-List(3,2,1)
-php> show(length(ImmList(1,2,3)))
-3
+phunkie > ImmList(Some(1), None(), Some(3))
+List<Int> = List(Some(1), None, Some(3))
 
-php> $isNotGreen = function($x) { return $x != "Green"; };
+phunkie> :import immlist/*
+Imported function \Md\Phunkie\Functions\immlist\head()
+Imported function \Md\Phunkie\Functions\immlist\init()
+Imported function \Md\Phunkie\Functions\immlist\tail()
+Imported function \Md\Phunkie\Functions\immlist\last()
+Imported function \Md\Phunkie\Functions\immlist\reverse()
+Imported function \Md\Phunkie\Functions\immlist\length()
+Imported function \Md\Phunkie\Functions\immlist\concat()
 
-php> $colours = ImmList("Black", "Red", "Green");
-php> $notGreen = $colours->filter($isNotGreen);
-php> show($notGreen);
-List("Black","Red")
+phunkie > head (ImmList(1,2,3))
+Int = 1
 
-php> $greenAndNot = $colours->partition($isNotGreen);
-php> show($greenAndNot);
-Pair(List("Black","Red"),List("Green"))
+phunkie > tail (ImmList(1,2,3))
+List<Int> = List(2, 3)
 
-php> $zipped = ImmList("A","B","C")->zip(ImmList(1,2,3));
-php> show($zipped);
-List(Pair("A",1),Pair("B",1),Pair("C",1))
+phunkie > init (ImmList(1,2,3))
+List<Int> = List(1, 2)
+
+phunkie > last (ImmList(1,2,3))
+Int = 3
+
+phunkie > reverse (ImmList(1,2,3))
+List<Int> = List(3, 2, 1)
+
+phunkie > length (ImmList(1,2,3))
+Int = 3
+
+phunkie > ImmList("Black", "Red", "Green")->filter(function($x) { return $x != "Green"; })
+List<String> = List("Black", "Red")
+
+phunkie > ImmList("Black", "Red", "Green")->partition(function($x) { return $x != "Green"; })
+(List<String>, List<String>) = Pair(List("Black", "Red"), List("Green"))
+
+phunkie > ImmList("A","B","C")->zip(ImmList(1,2,3))
+List<(String, Int)> = List(Pair("A", 1), Pair("B", 1), Pair("C", 1))
 ```
 
 Function1
 ---------
+Disclaimer: phunkie-console does not support variable declaration just yet — but it is coming! The examples below are mainly to illustrate how `Function1` works.
 ```bash
-php> $f = Function1('strlen');
-php> show($f("hello"));
-5
-php> $g = Function1(function($x) { return $x % 2 === 0; });
-php> show($g($f("hello")));
-false
-php> $h = $g->compose($f);
-php> show($h("hello"));
-false
-php> $h = $f->andThen($g);
-php> show($h("hello"));
-false
+phunkie > $f = Function1('strlen')
+$f : Function1 = Function1(?=>?)
+
+phunkie > $f("hello");
+Int = 5
+
+phunkie > $g = Function1(function($x) { return $x % 2 === 0; })
+$g : Function1 = Function1(?=>?)
+
+phunkie > $g($f("hello"))
+Boolean = false
+
+phunkie > $h = $g->compose($f)
+$h : Function1 = Function1(?=>?)
+
+phunkie > $h("hello")
+Boolean = false
+
+phunkie > $h = $f->andThen($g)
+$h : Function1 = Function1(?=>?)
+
+phunkie > $h("hello")
+Boolean = false
 ```
 
 Functor
 -------
 ```bash
-php> show(Some(1)->map(function($x) { return $x + 1;}));
-Some(2)
-php> show(None()->map(function($x) { return $x + 1;}));
-None
-php> show(ImmList(1,2,3)->map(function($x) { return $x + 1;}));
-List(2,3,4)
-php> show(ImmList(1,2,3)->zipWith(function($x) { return $x + 1;}));
-List(Pair(1,2),Pair(2,3),Pair(3,4))
+phunkie > Some(1)->map(function($x) { return $x + 1;})
+Option<Int> = Some(2)
 
-php> $x = map(function($x) { return $x + 1;}, Some(42));
-php> show($x);
-Some(43)
+phunkie > None()->map(function($x) { return $x + 1;})
+None = None
+
+phunkie > ImmList(1,2,3)->map(function($x) { return $x + 1;})
+List<Int> = List(2, 3, 4)
+
+phunkie > ImmList(1,2,3)->zipWith(function($x) { return $x + 1;})
+List<(Int, Int)> = List(Pair(1, 2), Pair(2, 3), Pair(3, 4))
+
+phunkie> :import functor/*
+Imported function \Md\Phunkie\Functions\functor\map()
+
+phunkie > map (function($x) { return $x + 1;}, Some(42))
+Option<Int> = Some(43)
 ```
 
 Foldable
 --------
 ```bash
-php> $sum = ImmList(1,2,3)->foldLeft(0)(function($x, $y) { return $x + $y; });
-php> show($sum);
-6
-php> $letters = ImmList("a", "b", "c")->foldLeft("letters:")(function($x, $y) { return $x . $y; });
-php> show($letters);
-"letters:abc"
-php> $letters = ImmList("a", "b", "c")->foldRight("<--")(function($x, $y) { return $x . $y; });
-php> show($letters);
-"abc<--"
+phunkie > ImmList(1,2,3)->foldLeft(0)(function($x, $y) { return $x + $y; })
+Int = 6
+
+phunkie > ImmList("a", "b", "c")->foldLeft("letters:")(function($x, $y) { return $x . $y; })
+String = "letters:abc"
+
+phunkie > ImmList("a", "b", "c")->foldRight("<--")(function($x, $y) { return $x . $y; })
+String = "abc<--"
 ```
 
 Currying
 --------
 ```bash
-php>  $curried = ImmList(1,2,3)->foldLeft(0)(_);
-php> show($curried(function($x, $y) { return $x + $y; }));
-6
+phunkie > $curried = ImmList(1,2,3)->foldLeft(0)(_)
+$curried : Callable = <function>
+
+phunkie > $curried(function($x, $y) { return $x + $y; })
+Int = 6
 ```
 
 Functor Composite
 -----------------
 ```bash
-php> $fa = Functor(Option);
-php> show($fa->map(Option(1), function($x) { return $x + 1; }));
-Some(2)
+phunkie > $fa = Functor(Option)
+$fa : Md\Phunkie\Cats\Functor\FunctorComposite = Functor(Option)
 
-php> show($fa->map(Option(ImmList(1,2,3)), function($x) { return $x + 1; }));
-PHP Notice:  Object of class Md\Phunkie\Types\ImmList could not be converted to int
+phunkie > $fa->map(Option(1), function($x) { return $x + 1; })
+Option<Int> = Some(2)
 
-php> $fa = Functor(Option)->compose(ImmList);
-php> show($fa->map(Option(ImmList(1,2,3)), function($x) { return $x + 1; }));
-Some(List(2,3,4))
+phunkie > fa->map(Option(ImmList(1,2,3)), function($x) { return $x + 1; })
+Notice: Object of class Md\Phunkie\Types\ImmList could not be converted to int
+
+phunkie > $fa = Functor(Option)->compose(ImmList)
+$fa : Md\Phunkie\Cats\Functor\FunctorComposite = Functor(Option(List))
+
+phunkie > $fa->map(Option(ImmList(1,2,3)), function($x) { return $x + 1; })
+Option<List<Int>> = Some(List(2,3,4))
 ```
 
 Applicative
 -----------
 ```bash
-php> show(None()->pure(42));
-Some(42)
-php> show(ImmList()->pure(42));
-List(42)
-php> show(Some(1)->apply(Some(function($x) { return $x + 1;})));
-Some(2)
-php> show(None()->apply(Some(function($x) { return $x + 1;})));
-None
-php> show(ImmList(1,2,3)->apply(ImmList(function($x) { return $x + 1;})));
-List(2,3,4)
-php> show(ImmList()->apply(ImmList(function($x) { return $x + 1;})));show
-List()
-php> show(Some(1)->map2(Some(2), function($x, $y) { return $x + $y; }));
-Some(3)
-php> show(ImmList(1,2,3)->map2(ImmList(4,5,6), function($x, $y) { return $x + $y; }));
-List(5,6,7,6,7,8,7,8,9)
+phunkie > None()->pure(42)
+Option<Int> = Some(42)
+
+phunkie > ImmList()->pure(42)
+List<Int> = List(42)
+
+phunkie > Some(1)->apply(Some(function($x) { return $x + 1;}))
+Option<Int> = Some(2)
+
+phunkie > None()->apply(Some(function($x) { return $x + 1;}))
+None = None
+
+phunkie > ImmList(1,2,3)->apply(ImmList(function($x) { return $x + 1;}))
+List<Int> = List(2, 3, 4)
+
+phunkie > ImmList()->apply(ImmList(function($x) { return $x + 1;}))
+List<Nothing> = List()
+
+phunkie > Some(1)->map2(Some(2), function($x, $y) { return $x + $y; })
+Option<Int> = Some(3)
+
+phunkie > ImmList(1,2,3)->map2(ImmList(4,5,6), function($x, $y) { return $x + $y; })
+List<Int> = List(5, 6, 7, 6, 7, 8, 7, 8, 9)
 ```
 
 Monad
 -----
 ```bash
-php> show(ImmList(1,2,3)->flatMap(function($x) { return Some($x + 1); }));
-List(2,3,4)
-php> show(ImmList(1,2,3)->flatMap(function($x) { return $x % 2 === 0 ? None() : Some($x + 1); }));
-List(2,4)
-php> show(ImmList(1,2,3)->flatMap(function($x) { return None(); }));
-List()
-php> show(ImmList(1,2,3)->flatMap(function($x) { return ImmList($x + 1, $x + 2); }));
-List(2,3,3,4,4,5)
-php> show(Some(1)->flatMap(function($x) { return Some($x + 1); }));
-Some(2)
-php> show(Some(1)->flatMap(function($x) { return None(); }));
-None
-php> show(None()->flatMap(function($x) { return Some(42); }));
-None
-php> show(ImmList(1,2,3)->flatMap(function($x) { return ImmList(Some($x + 1)); }));>php show
-List(Some(2),Some(3),Some(4))
+phunkie > ImmList(1,2,3)->flatMap(function($x) { return Some($x + 1); })
+List<Int> = List(2, 3, 4)
 
-php> show(Some(Some(42))->flatten());
-Some(42)
-php> show(ImmList(ImmList(1,2,3))->flatten());
-List(1,2,3)
+phunkie > ImmList(1,2,3)->flatMap(function($x) { return $x % 2 === 0 ? None() : Some($x + 1); })
+List<Int> = List(2, 4)
+
+phunkie > ImmList(1,2,3)->flatMap(function($x) { return None(); })
+List<Nothing> = List()
+
+phunkie > ImmList(1,2,3)->flatMap(function($x) { return ImmList($x + 1, $x + 2); })
+List<Int> = List(2, 3, 3, 4, 4, 5)
+
+phunkie > Some(1)->flatMap(function($x) { return Some($x + 1); })
+Option<Int> = Some(2)
+
+phunkie > Some(1)->flatMap(function($x) { return None(); })
+None = None
+
+phunkie > None()->flatMap(function($x) { return Some(42); })
+None = None
+
+phunkie > ImmList(1,2,3)->flatMap(function($x) { return ImmList(Some($x + 1)); })
+List<Option<Int>> = List(Some(2),Some(3),Some(4))
+
+phunkie > Some(Some(42))->flatten()
+Option<Int> = Some(42)
+
+phunkie > ImmList(ImmList(1,2,3))->flatten()
+List<Int> = List(1,2,3)
 ```
 
 Kleisli
 -------
 ```bash
-php> $f = kleisli(function($x) { return Some($x + 1); });
-php> $g = kleisli(function($x) { return Some($x + 4); });
-php> $x = $k->andThen($g);
-php> show(($x->run)(3));
-Some(8)
+phunkie > $f = kleisli(function($x) { return Some($x + 1); })
+phunkie > $g = kleisli(function($x) { return Some($x + 4); })
+phunkie > $x = $k->andThen($g)
+phunkie > ($x->run)(3)
+Option<Int> = Some(8)
 ```
 
 Monoid
 ------
 ```bash
-php> show(combine(1,1));
-2
-php> show(combine("a","b"));
-"ab"
-php> show(combine([1,2,3], [4,5,6]));
-[1,2,3,4,5,6]
-php> show(combine(true, false));
-false
-php> show(combine(ImmList(1,2,3), ImmList(4,5,6)));
-List(1,2,3,4,5,6)
-php> show(combine(Some(4), Some(2)));
-Some(6)
-php> show(combine(Some("4"), Some("2")));
-Some("42")
-php> ImmList(1,2,3)->combine(ImmList(4,5,6));
-List(1,2,3,4,5,6)
+phunkie > :import semigroup/*
+Imported function \Md\Phunkie\Functions\semigroup\combine()
+Imported function \Md\Phunkie\Functions\semigroup\zero()
 
-php> $option = Option(42);
-php> zero($option);
-None
-php> show($option->zero());
-None
+phunkie > combine(1,1)
+Int = 2
 
-php> $list = ImmList(1,2,3)
-php> show($list->zero());
-List()
+phunkie > combine("a","b")
+String = "ab"
 
-php> show(zero(rand(1,45)));
-0
-php> show(zero([1,2,3]));
-[]
+phunkie > combine([1,2,3], [4,5,6])
+Array<Int> = [1, 2, 3, 4, 5, 6]
+
+phunkie > combine(true, false)
+Boolean = false
+
+phunkie > combine(ImmList(1,2,3), ImmList(4,5,6))
+List<Int> = List(1, 2, 3, 4, 5, 6)
+
+phunkie > combine(Some(4), Some(2))
+Option<Int> = Some(6)
+
+phunkie > combine(Some("4"), Some("2"))
+Option<String> = Some("42")
+
+phunkie > ImmList(1,2,3)->combine(ImmList(4,5,6)
+List<Int> = List(1, 2, 3, 4, 5, 6)
+
+phunkie > zero(Option(42))
+None = None
+
+phunkie > Option(42)->zero()
+None = None
+
+phunkie > ImmList(1,2,3)->zero()
+List<Nothing> = List()
+
+phunkie > zero(rand(1,45))
+Int = 0
+
+phunkie > zero([1,2,3])
+Array<Nothing> = []
 ```
 
 Pattern Matching
@@ -265,4 +334,3 @@ $on = match(None()); switch (true) {
     case $on(Some(_)): return 2; break;
 }
 ```
-
