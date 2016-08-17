@@ -265,3 +265,4 @@ $on = match(None()); switch (true) {
     case $on(Some(_)): return 2; break;
 }
 ```
+

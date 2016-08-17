@@ -68,6 +68,12 @@ class ImmMapSpec extends ObjectBehavior
         $this->beConstructedWith(["hi" => "here", "hello" => "there"]);
         $this->toString()->shouldBe('Map("hi" -> "here", "hello" -> "there")');
     }
+
+    function it_has_plus()
+    {
+        $this->beConstructedWith(["hello" => "there"]);
+        $this->plus("hi", "here")->eqv(ImmMap(["hello" => "there", "hi" => "here"]))->shouldBe(true);
+    }
 }
 
 

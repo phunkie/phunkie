@@ -2,9 +2,7 @@
 
 namespace Md\Phunkie\Algebra;
 
-use Md\Phunkie\Types\Kind;
-
 trait Eq
 {
-    abstract public function eqv(Kind $rhs): bool;
+    abstract public function eqv(self $rhs): bool;
 }

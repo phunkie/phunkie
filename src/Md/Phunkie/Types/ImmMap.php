@@ -6,32 +6,21 @@ use ArrayAccess, SplObjectStorage;
 use Md\Phunkie\Cats\Show;
 use function Md\Phunkie\Functions\show\get_value_to_show;
 use function Md\Phunkie\Functions\type\promote;
+use Md\Phunkie\Ops\ImmMap\ImmMapEqOps;
 
 final class ImmMap implements ArrayAccess
 {
-    use Show;
+    use Show, ImmMapEqOps;
     private $values;
 
     public function __construct(...$values)
     {
         $this->values = new SplObjectStorage();
         switch (true) {
-            case count($values) == 0: break;
-            case count($values) == 1 && is_array($values[0]):
-                foreach ($values[0] as $k => $v) {
-                    $k = promote($k);
-                    $this->values[$k] = $v;
-                }
-                break;
-            default:
-                if (count($values) % 2 == 0) {
-                    for ($i = 0; $i <= count($values) - 1; $i += 2) {
-                        $values[$i] = promote($values[$i]);
-                        $this->values[$values[$i]] = $values[$i + 1];
-                    }
-                    break;
-                }
-                throw new \Error("not enough arguments for constructor ImmMap");
+            case $this->noArguments($values): break;
+            case $this->isArrayAndOneArgument($values): $this->createFromArray($values); break;
+            case $this->oddNumberOfArguments($values): throw new \Error("not enough arguments for constructor ImmMap");
+            default: $this->createFromVariadic($values);
         }
     }
 
@@ -98,12 +87,67 @@ final class ImmMap implements ArrayAccess
         return $values;
     }
 
-    function toString(): string
+    public function toString(): string
     {
         $mappings = [];
         foreach ($this->values as $k) {
             $mappings[] = get_value_to_show($k instanceof ImmString || $k instanceof ImmInteger ? $k->get() : $k) . " -> " . get_value_to_show($this->values[$k]);
         }
         return "Map(" . implode(", ", $mappings) . ")";
+    }
+
+    private function createFromArray($values)
+    {
+        foreach ($values[0] as $k => $v) {
+            $k = promote($k);
+            $this->values[$k] = $v;
+        }
+    }
+
+    private function createFromVariadic($values)
+    {
+        for ($i = 0; $i <= count($values) - 1; $i += 2) {
+            $values[$i] = promote($values[$i]);
+            $this->values[$values[$i]] = $values[$i + 1];
+        }
+    }
+
+    private function isArrayAndOneArgument($values)
+    {
+        return count($values) == 1 && is_array($values[0]);
+    }
+
+    private function noArguments($values)
+    {
+        return count($values) == 0;
+    }
+
+    private function oddNumberOfArguments($values)
+    {
+        return count($values) % 2 != 0;
+    }
+
+    public function plus($k, $v)
+    {
+        $mappings = clone $this->values;
+        $mappings->attach(promote($k), $v);
+        $map = new self();
+        $map->values = $mappings;
+        return $map;
+    }
+
+    public function minus($k)
+    {
+        $mappings = new SplObjectStorage();
+        if ($this->contains($k)) {
+            foreach ($this->values as $offset) {
+                if (promote($k) != $offset) {
+                    $mappings[$offset] = $this->values[$offset];
+                }
+            }
+        }
+        $map = new self();
+        $map->values = $mappings;
+        return $map;
     }
 }
