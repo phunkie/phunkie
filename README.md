@@ -29,8 +29,8 @@ phunkie > Option(42)
 Option<Int> = Some(42)
 ```
 
-Lists
------
+Immutable Lists
+---------------
 You can import module functions with the `:import` command. Use `:help` for more information
 ```bash
 phunkie > ImmList(2,3,4)
@@ -39,7 +39,7 @@ List<Int> = List(2, 3, 4)
 phunkie > ImmList(Some(1), None(), Some(3))
 List<Int> = List(Some(1), None, Some(3))
 
-phunkie> :import immlist/*
+phunkie > :import immlist/*
 Imported function \Md\Phunkie\Functions\immlist\head()
 Imported function \Md\Phunkie\Functions\immlist\init()
 Imported function \Md\Phunkie\Functions\immlist\tail()
@@ -74,6 +74,55 @@ phunkie > ImmList("Black", "Red", "Green")->partition(function($x) { return $x !
 
 phunkie > ImmList("A","B","C")->zip(ImmList(1,2,3))
 List<(String, Int)> = List(Pair("A", 1), Pair("B", 1), Pair("C", 1))
+```
+
+Immutable Sets and Immutable Maps
+---------------------------------
+```bash
+phunkie > ImmSet(1,2,3)
+Set<Int> = Set(1, 2, 3)
+
+phunkie > ImmSet(1,2,3,2) // No duplicates
+Set<Int> = Set(1, 2, 3)
+
+phunkie > ImmSet(1,2,3)->contains(3)
+Boolean = true
+
+phunkie > ImmSet(1,2,3)->minus(3) // creates a new set
+Set<Int> = Set(1, 2)
+
+phunkie > ImmSet(1,2,3)->plus(4) // again, new set
+Set<Int> = Set(1, 2, 3, 4)
+
+phunkie > ImmMap(["hello" => "there"])
+Map<String, String> = Map("hello" -> "there")
+
+phunkie > ImmMap(["hello" => "there"])->get("hello")
+Option<String> = Some("hello")
+
+phunkie > ImmMap(["hello" => "there"])->get("zoom")
+None = None
+
+ImmMap(["hello" => "there"])->plus("hi", "here") // creates a new Map
+Map<String, String> = Map("hello" -> "there", "hi" -> "here")
+
+// disclaimer: phunkie-console does not support multi-line instructions... yet!
+
+phunkie > class Id {
+phunkie {     private $number;
+phunkie {     public function __construct($n)
+phunkie {     {
+phunkie {         $this->number = $n;
+phunkie {     }
+phunkie { }
+defined class Id
+
+phunkie > ImmMap(
+phunkie (   new Id(1), "John Smith",
+phunkie (   new Id(2), "Chuck Norris",
+phunkie (   new Id(3), "Jack Bauer"
+phunkie ( )
+Map<Id, String> = Map(Id@2d05ca0 -> "John Smith", Id@2d05ca1 -> "Chuck Norris", Id@2d05ca2 -> "Jack Bauer")
 ```
 
 Function1
@@ -333,4 +382,63 @@ $on = match(None()); switch (true) {
     case $on(None): return 10; break;
     case $on(Some(_)): return 2; break;
 }
+```
+
+Lenses
+------
+```bash
+phunkie > :import lens/*
+Imported function \Md\Phunkie\Functions\lens\trivial()
+Imported function \Md\Phunkie\Functions\lens\self()
+Imported function \Md\Phunkie\Functions\lens\fst()
+Imported function \Md\Phunkie\Functions\lens\snd()
+Imported function \Md\Phunkie\Functions\lens\contains()
+Imported function \Md\Phunkie\Functions\lens\member()
+
+phunkie > trivial()->get(42) // returns Unit which doesn't print anything
+
+phunkie > trivial()->set(42,34)
+Int = 34
+
+phunkie > self()->get(42)
+int = 42
+
+phunkie > self()->set(42,34)
+Int = 42
+
+phunkie > fst()->get(Pair(1,2))
+Int = 1
+
+phunkie > fst()->set(3, Pair(1,2))
+(Int, Int) = (3, 2)
+
+phunkie > snd()->get(Pair(1,2))
+Int = 2
+
+phunkie > snd()->set(3, Pair(1,2))
+(Int, Int) = (1, 3)
+
+phunkie > $s = ImmSet(1,2,3)
+$s : ImmSet<Int> = Set(1, 2, 3)
+
+phunkie > contains(2)->get($s)
+true
+
+phunkie > contains(4)->set($s, true)
+ImmSet<Int> = Set(1, 2, 3, 4)
+
+phunkie > contains(3)->set($s, false)
+ImmSet<Int> = Set(1, 2)
+
+phunkie > $m = ImmMap(["a" => 1, "b" => 2])
+$m : ImmMap<String, Int> = Map("a" -> 1, "b" -> 2)
+
+phunkie > member("b")->get($m)
+Option<Int> = Some(2)
+
+phunkie > member("b")->set($m, None())
+ImmMap<String, Int> = Map("a" -> 1)
+
+phunkie > member("b")->set($m, Some(3))
+ImmMap<String, Int> = Map("a" -> 1, "b" -> 3)
 ```
