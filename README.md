@@ -395,7 +395,7 @@ Imported function \Md\Phunkie\Functions\lens\snd()
 Imported function \Md\Phunkie\Functions\lens\contains()
 Imported function \Md\Phunkie\Functions\lens\member()
 
-phunkie > trivial()->get(42) // returns Unit which doesn't print anything
+phunkie > trivial()->get(42) // returns Unit which does not print anything
 
 phunkie > trivial()->set(42,34)
 Int = 34
