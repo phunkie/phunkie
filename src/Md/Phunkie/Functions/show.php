@@ -6,6 +6,7 @@ namespace Md\Phunkie\Functions\show {
     use Md\Phunkie\Types\Function1;
     use Md\Phunkie\Types\ImmList;
     use Md\Phunkie\Types\ImmMap;
+    use Md\Phunkie\Types\ImmSet;
     use Md\Phunkie\Types\Option;
     use Md\Phunkie\Types\Pair;
     use Md\Phunkie\Types\Tuple;
@@ -50,6 +51,7 @@ namespace Md\Phunkie\Functions\show {
         case is_object($value) && $value instanceof Option: return "Option<" . get_type_to_show($value->get()) . ">";
         case is_object($value) && $value instanceof Pair: return "(" . get_type_to_show($value->_1) . ", " . get_type_to_show($value->_2) . ")";
         case is_object($value) && $value instanceof ImmList: return "List<" . get_collection_type($value->toArray()) . ">";
+        case is_object($value) && $value instanceof ImmSet: return "Set<" . get_collection_type($value->toArray()) . ">";
         case is_object($value) && $value instanceof ImmMap: return "Map<" . get_collection_type($value->keys()) . ", " . get_collection_type($value->values()) . ">";
         case is_object($value) && $value instanceof Success: return "Validation<E, " . get_type_to_show($value->getOrElse("")) . ">";
         case is_object($value) && $value instanceof Failure: return "Validation<" . get_type_to_show($value->fold(Function1::identity(),_)) . ", A>";

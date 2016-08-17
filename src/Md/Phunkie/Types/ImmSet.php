@@ -2,8 +2,12 @@
 
 namespace Md\Phunkie\Types;
 
+use Md\Phunkie\Cats\Show;
+use function Md\Phunkie\Functions\show\get_value_to_show;
+
 class ImmSet
 {
+    use Show;
     private $elements = [];
 
     public function __construct(...$elements)
@@ -42,5 +46,15 @@ class ImmSet
         }
 
         return ImmSet(...array_merge($this->elements, [$element]));
+    }
+
+    public function toArray()
+    {
+        return $this->elements;
+    }
+
+    function toString(): string
+    {
+        return "Set(" . implode(", ", array_map(function($e) { return get_value_to_show($e); }, $this->elements)) . ")";
     }
 }
