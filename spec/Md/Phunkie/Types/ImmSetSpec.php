@@ -58,6 +58,24 @@ class ImmSetSpec extends ObjectBehavior
         $this->plus(Item(2))->shouldBeLike(ImmSet(Item(1),Item(2),Item(3)));
         $this->plus(Item(42))->shouldBeLike(ImmSet(Item(1),Item(2),Item(3),Item(42)));
     }
+
+    function it_has_the_union_operation()
+    {
+        $this->beConstructedWith(1,2,3);
+        $this->union(ImmSet(3,4,5))->shouldBeLike(ImmSet(1,2,3,4,5));
+    }
+
+    function it_has_the_intersect_operation()
+    {
+        $this->beConstructedWith(1,2,3);
+        $this->intersect(ImmSet(3,4,5))->shouldBeLike(ImmSet(3));
+    }
+    
+    function it_has_the_diff_operation()
+    {
+        $this->beConstructedWith(1,2,3);
+        $this->diff(ImmSet(3,4,5))->shouldBeLike(ImmSet(1,2,4,5));
+    }
 }
 
 class Item { private $item;

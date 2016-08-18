@@ -53,8 +53,40 @@ class ImmSet
         return $this->elements;
     }
 
-    function toString(): string
+    public function toString(): string
     {
         return "Set(" . implode(", ", array_map(function($e) { return get_value_to_show($e); }, $this->elements)) . ")";
+    }
+
+    public function union(ImmSet $set)
+    {
+        return ImmSet(...array_merge($this->elements, $set->elements));
+    }
+
+    public function intersect(ImmSet $set)
+    {
+        $new = [];
+        foreach ($this->elements as $element) {
+            if ($set->contains($element)) {
+                $new[] = $element;
+            }
+        }
+        return ImmSet(...$new);
+    }
+
+    public function diff(ImmSet $set)
+    {
+        $new = [];
+        foreach ($this->elements as $element) {
+            if (!$set->contains($element)) {
+                $new[] = $element;
+            }
+        }
+        foreach ($set->elements as $element) {
+            if (!$this->contains($element)) {
+                $new[] = $element;
+            }
+        }
+        return ImmSet(...$new);
     }
 }
