@@ -98,7 +98,7 @@ phunkie > ImmMap(["hello" => "there"])
 Map<String, String> = Map("hello" -> "there")
 
 phunkie > ImmMap(["hello" => "there"])->get("hello")
-Option<String> = Some("hello")
+Option<String> = Some("there")
 
 phunkie > ImmMap(["hello" => "there"])->get("zoom")
 None = None
