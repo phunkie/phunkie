@@ -73,7 +73,7 @@ phunkie > ImmList("Black", "Red", "Green")->partition(function($x) { return $x !
 (List<String>, List<String>) = Pair(List("Black", "Red"), List("Green"))
 
 phunkie > ImmList("A","B","C")->zip(ImmList(1,2,3))
-List<(String, Int)> = List(Pair("A", 1), Pair("B", 1), Pair("C", 1))
+List<(String, Int)> = List(Pair("A", 1), Pair("B", 2), Pair("C", 3))
 ```
 
 Immutable Sets and Immutable Maps
