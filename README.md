@@ -215,7 +215,7 @@ phunkie > $fa = Functor(Option)->compose(ImmList)
 $fa : Md\Phunkie\Cats\Functor\FunctorComposite = Functor(Option(List))
 
 phunkie > $fa->map(Option(ImmList(1,2,3)), function($x) { return $x + 1; })
-Option<List<Int>> = Some(List(2,3,4))
+Option<List<Int>> = Some(List(2, 3, 4))
 ```
 
 Applicative
@@ -277,7 +277,7 @@ phunkie > Some(Some(42))->flatten()
 Option<Int> = Some(42)
 
 phunkie > ImmList(ImmList(1,2,3))->flatten()
-List<Int> = List(1,2,3)
+List<Int> = List(1, 2, 3)
 ```
 
 Kleisli
@@ -401,7 +401,7 @@ phunkie > trivial()->set(42,34)
 Int = 34
 
 phunkie > self()->get(42)
-int = 42
+Int = 42
 
 phunkie > self()->set(42,34)
 Int = 42
@@ -422,7 +422,7 @@ phunkie > $s = ImmSet(1,2,3)
 $s : ImmSet<Int> = Set(1, 2, 3)
 
 phunkie > contains(2)->get($s)
-true
+Boolean = true
 
 phunkie > contains(4)->set($s, true)
 ImmSet<Int> = Set(1, 2, 3, 4)
