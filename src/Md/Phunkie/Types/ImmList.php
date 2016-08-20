@@ -20,38 +20,13 @@ abstract class ImmList implements Kind, Applicative
         ImmListFoldableOps,
         ImmListMonoidOps;
 
-    const kind = "ImmList";
+    const kind = ImmList;
     private $values;
-    final public function __construct()
-    {
-        switch (get_class($this)) {
-            case NonEmptyList::class:
-                if (func_num_args() == 0) {
-                    throw new \Error("not enough arguments for constructor Nel");
-                }
-                $this->values = func_get_args();
-                break;
-            case Cons::class:
-                if (func_num_args() != 2) {
-                    throw new \Error((func_num_args() < 2 ? "not enough" : "too many") . " arguments for constructor List");
-                }
-                $head = func_get_arg(0);
-                $tail = func_get_arg(1);
-                if (!$tail instanceof ImmList) {
-                    throw new \TypeError("type mismatch 2nd argument List: expected List, found " .
-                                         ((gettype($tail) == "object") ? get_class($tail) : gettype($tail)));
-                }
-                $this->values = array_merge([$head], $tail->toArray());
-                break;
-            case Nil::class:
-                if (func_num_args() > 0) {
-                    throw new \Error("too many arguments for constructor Nil");
-                }
-                $this->values = [];
-                break;
-            default:
-                throw new \TypeError("List cannot be extended outside namespace");
-        }
+    final public function __construct() { switch (get_class($this)) {
+        case NonEmptyList::class: $this->constructNonEmptyList(func_num_args(), func_get_args()); break;
+        case Cons::class: $this->constructCons(func_num_args(), func_get_args()); break;
+        case Nil::class: $this->constructNil(func_num_args()); break;
+        default: throw $this->listIsSealed(); }
     }
 
     public function isEmpty(): bool
@@ -160,10 +135,63 @@ abstract class ImmList implements Kind, Applicative
         return ImmList(...array_reverse($this->values));
     }
 
+    public function mkString()
+    {
+        switch(func_num_args()) {
+            case 1: return $this->mkStringOneArgument(func_get_arg(0));
+            case 3: return $this->mkStringThreeArguments(func_get_arg(0), func_get_arg(1), func_get_arg(2));
+            default: throw new \Error("wrong number of arguments for mkString, should be 1 or 3, " . func_num_args() . " given");
+        }
+    }
+
     private function callableMustReturnBoolean($result)
     {
         return new \BadMethodCallException(sprintf("partition must be passed a callable that returns a boolean, %s returned",
             gettype($result)));
     }
 
+    private function constructNonEmptyList(int $argc, array $argv)
+    {
+        if ($argc == 0) {
+            throw new \Error("not enough arguments for constructor Nel");
+        }
+        $this->values = $argv;
+    }
+
+    private function constructCons(int $argc, array $argv)
+    {
+        if ($argc != 2) {
+            throw new \Error(($argc < 2 ? "not enough" : "too many") . " arguments for constructor List");
+        }
+        $head = $argv[0];
+        $tail = $argv[1];
+        if (!$tail instanceof ImmList) {
+            throw new \TypeError("type mismatch 2nd argument List: expected List, found " .
+                ((gettype($tail) == "object") ? get_class($tail) : gettype($tail)));
+        }
+        $this->values = array_merge([$head], $tail->toArray());
+    }
+
+    private function constructNil(int $argc)
+    {
+        if ($argc > 0) {
+            throw new \Error("too many arguments for constructor Nil");
+        }
+        $this->values = [];
+    }
+
+    private function listIsSealed()
+    {
+        return new \TypeError("List cannot be extended outside namespace");
+    }
+
+    private function mkStringOneArgument($glue)
+    {
+        return implode($glue, array_map(function($e) { return get_value_to_show($e); }, $this->values));
+    }
+
+    private function mkStringThreeArguments($start, $glue, $end)
+    {
+        return $start . $this->mkStringOneArgument($glue) . $end;
+    }
 }

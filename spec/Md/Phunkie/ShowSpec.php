@@ -71,7 +71,7 @@ class ShowSpec extends ObjectBehavior
 
     private function hash($object)
     {
-        return substr(ltrim(spl_object_hash($object), "0"), 0, 7);
+        return substr(ltrim(spl_object_hash($object), "0"), 0, 8);
     }
 }
 

@@ -29,10 +29,10 @@ namespace Md\Phunkie\Functions\show {
         case is_null($value): return 'null';
         case is_array($value): return "[" . implode(", ", array_map(function ($e) { return get_value_to_show($e); }, $value)) . "]";
         case is_object($value) && (new \ReflectionClass($value))->isAnonymous():
-            return get_parent_class($value) === false ? "anonymous@" . substr(ltrim(spl_object_hash($value), "0"), 0, 7) :
-                get_parent_class($value) . "@" . substr(ltrim(spl_object_hash($value), "0"), 0, 7);
+            return get_parent_class($value) === false ? "anonymous@" . substr(ltrim(spl_object_hash($value), "0"), 0, 8) :
+                get_parent_class($value) . "@" . substr(ltrim(spl_object_hash($value), "0"), 0, 8);
         case is_callable($value): return "<function>";
-        case is_object($value): return get_class($value) . "@" . substr(ltrim(spl_object_hash($value), "0"), 0, 7);
+        case is_object($value): return get_class($value) . "@" . substr(ltrim(spl_object_hash($value), "0"), 0, 8);
         default: return $value;}
     }
 
