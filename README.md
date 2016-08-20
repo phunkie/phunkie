@@ -103,7 +103,7 @@ Option<String> = Some("there")
 phunkie > ImmMap(["hello" => "there"])->get("zoom")
 None = None
 
-ImmMap(["hello" => "there"])->plus("hi", "here") // creates a new Map
+phunkie > ImmMap(["hello" => "there"])->plus("hi", "here") // creates a new Map
 Map<String, String> = Map("hello" -> "there", "hi" -> "here")
 
 // disclaimer: phunkie-console does not support multi-line instructions... yet!
