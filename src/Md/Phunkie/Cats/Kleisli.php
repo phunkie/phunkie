@@ -5,32 +5,34 @@ namespace Md\Phunkie\Cats;
 use function Md\Phunkie\Functions\kleisli\kleisli as k;
 
 /**
- * Represents a Function1 `A => F[B]`.
+ * Kleisli<F, A, B> (equivalent to ReaderT)
+ * represents a function A => F<B>
  */
 class Kleisli
 {
     private $run;
 
+    /**
+     * @param callable<A, F<B>> $run
+     */
     public function __construct(callable $run)
     {
         $this->run = $run;
     }
 
+    /**
+     * @param Kleisli<F, B, C> $f
+     * @return Kleisli<F, A, C>
+     */
     public function andThen(Kleisli $f): Kleisli
     {
         return k(function($a) use ($f) {
-            $g = call_user_func($this->run, $a);
-            return $g->flatMap($f->run);
+            return $this->run($a)->flatMap($f->run);
         });
     }
 
-    public function __get($arg) { switch ($arg) {
-        case "run": return $this->run;
-        default: throw new \InvalidArgumentException("Invalid property $arg for Kleisli"); }
-    }
-
-    public function __set($name, $value)
+    public function run($a)
     {
-        throw new \TypeError("Kleisli are immutable");
+        return call_user_func($this->run, $a);
     }
 }
