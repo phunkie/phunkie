@@ -49,7 +49,7 @@ class ImmListSpec extends ObjectBehavior
     {
         $this->beAnInstanceOf(Nil::class);
         $this->beConstructedWith();
-        $this->map(function($x) { return $x + 1; })->shouldBeLike(ImmList());
+        $this->map(function($x) { return $x + 1; })->shouldBeEmpty();
     }
 
     function it_is_has_applicative_ops()
@@ -61,7 +61,7 @@ class ImmListSpec extends ObjectBehavior
     {
         $this->beAnInstanceOf(Nil::class);
         $this->beConstructedWith();
-        $this->apply(ImmList(function($x) { return $x + 1; }))->shouldBeLike(ImmList());
+        $this->apply(ImmList(function($x) { return $x + 1; }))->shouldBeEmpty();
     }
 
     function it_applies_the_result_of_the_function_to_a_List()
@@ -103,6 +103,48 @@ class ImmListSpec extends ObjectBehavior
         $this->zip(ImmList("A", "B", "C"))->shouldBeLike(
             ImmList(Pair(1,"A"), Pair(2,"B"), Pair(3,"C"))
         );
+    }
+
+    function it_takes_n_elements_from_list()
+    {
+        $this->beAnInstanceOf(Cons::class);
+        $this->beConstructedWith(1,ImmList(2,3));
+        $this->take(2)->shouldBeLike(ImmList(1,2));
+    }
+
+    function it_drops_n_elements_from_list()
+    {
+        $this->beAnInstanceOf(Cons::class);
+        $this->beConstructedWith(1,ImmList(2,3));
+        $this->drop(2)->shouldBeLike(ImmList(3));
+    }
+
+    function it_implements_head()
+    {
+        $this->beAnInstanceOf(Cons::class);
+        $this->beConstructedWith(1,ImmList(2,3));
+        $this->head->shouldBe(1);
+    }
+
+    function it_implements_tail()
+    {
+        $this->beAnInstanceOf(Cons::class);
+        $this->beConstructedWith(1,ImmList(2,3));
+        $this->tail->shouldBeLike(ImmList(2,3));
+    }
+
+    function it_implements_init()
+    {
+        $this->beAnInstanceOf(Cons::class);
+        $this->beConstructedWith(1,ImmList(2,3));
+        $this->init->shouldBeLike(ImmList(1,2));
+    }
+
+    function it_implements_last()
+    {
+        $this->beAnInstanceOf(Cons::class);
+        $this->beConstructedWith(1,ImmList(2,3));
+        $this->last->shouldBe(3);
     }
 
     function getMatchers()

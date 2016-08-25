@@ -32,6 +32,7 @@ namespace {
 
 namespace Md\Phunkie\Functions\immlist {
 
+    use function Md\Phunkie\Functions\currying\curry;
     use Md\Phunkie\Types\ImmList;
 
     function head(ImmList $list)
@@ -71,5 +72,26 @@ namespace Md\Phunkie\Functions\immlist {
             $result = !$item instanceof ImmList ? array_merge($result, [$item]) : array_merge($result, $item->toArray());
         }
         return ImmList(...$result);
+    }
+
+    function take(int $n)
+    {
+        return curry([$n],func_get_args(),function(ImmList $list) use ($n) {
+            return ImmList(...array_slice($list->toArray(), 0, $n < 0 ? 0 : $n));
+        });
+    }
+
+    function drop(int $n)
+    {
+        return curry([$n],func_get_args(),function(ImmList $list) use ($n) {
+            return ImmList(...array_slice($list->toArray(), $n < 0 ? 0 : $n));
+        });
+    }
+
+    function nth(int $nth)
+    {
+        return curry([$nth],func_get_args(),function(ImmList $list) use ($nth) {
+            return array_key_exists($nth, $list->toArray()) ? Some($list->toArray()[$nth]) : None();
+        });
     }
 }

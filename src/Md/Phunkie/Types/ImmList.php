@@ -111,6 +111,11 @@ abstract class ImmList implements Kind, Applicative, Monad
         return Pair(ImmList(...$trues), ImmList(...$falses));
     }
 
+    public function nth(int $nth)
+    {
+        return array_key_exists($nth, $this->values) ? Some($this->values[$nth]) : None();
+    }
+
     public function head()
     {
         return $this->values[0];
@@ -129,6 +134,16 @@ abstract class ImmList implements Kind, Applicative, Monad
     public function last()
     {
         return $this->values[count($this->values) - 1];
+    }
+
+    public function take(int $n)
+    {
+        return ImmList(...array_slice($this->values, 0, $n < 0 ? 0 : $n));
+    }
+
+    public function drop(int $n)
+    {
+        return ImmList(...array_slice($this->values, $n < 0 ? 0 : $n));
     }
 
     public function reverse()
