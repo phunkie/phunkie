@@ -3,6 +3,7 @@
 namespace Md\Phunkie\Types;
 
 use Md\Phunkie\Cats\Applicative;
+use Md\Phunkie\Cats\Monad;
 use Md\Phunkie\Cats\Show;
 use function Md\Phunkie\Functions\show\get_value_to_show;
 use Md\Phunkie\Ops\ImmList\ImmListApplicativeOps;
@@ -11,7 +12,7 @@ use Md\Phunkie\Ops\ImmList\ImmListFoldableOps;
 use Md\Phunkie\Ops\ImmList\ImmListMonadOps;
 use Md\Phunkie\Ops\ImmList\ImmListMonoidOps;
 
-abstract class ImmList implements Kind, Applicative
+abstract class ImmList implements Kind, Applicative, Monad
 {
     use Show;
     use ImmListApplicativeOps,
@@ -71,15 +72,15 @@ abstract class ImmList implements Kind, Applicative
     public function toArray(): array { return $this->values; }
 
     /**
-     * @param ImmList<T> $list
-     * @return ImmList<Pair<T>>
+     * @param ImmList<B> $list
+     * @return ImmList<Pair<A,B>>
      */
     public function zip(ImmList $list): ImmList
     {
         if ($this->length <= $list->length) {
             $other = $list->toArray();
             reset($other);
-            return $this->map(function($x) use ($other) {
+            return $this->map(function($x) use (&$other) {
                 $pair = Pair($x, current($other));
                 next($other);
                 return $pair;
@@ -90,7 +91,7 @@ abstract class ImmList implements Kind, Applicative
 
     /**
      * @param int $index
-     * @return ImmList<ImmList<T>>
+     * @return Pair<ImmList<A>,ImmList<A>>
      */
     public function splitAt(int $index): Pair { switch (true) {
         case $index == 0:                    return Pair(Nil(), clone $this);

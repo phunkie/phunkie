@@ -75,6 +75,36 @@ class ImmListSpec extends ObjectBehavior
         });
     }
 
+    function it_returns_its_length()
+    {
+        $this->beAnInstanceOf(Cons::class);
+        $this->beConstructedWith(1,ImmList(2,3));
+        $this->length->shouldBe(3);
+    }
+
+    function it_has_filter()
+    {
+        $this->beAnInstanceOf(Cons::class);
+        $this->beConstructedWith(1,ImmList(2,3));
+        $this->filter(function($x){return $x == 2;})->shouldBeLike(ImmList(2));
+    }
+
+    function it_can_be_casted_to_array()
+    {
+        $this->beAnInstanceOf(Cons::class);
+        $this->beConstructedWith(1,ImmList(2,3));
+        $this->toArray()->shouldBe([1,2,3]);
+    }
+
+    function it_zips()
+    {
+        $this->beAnInstanceOf(Cons::class);
+        $this->beConstructedWith(1,ImmList(2,3));
+        $this->zip(ImmList("A", "B", "C"))->shouldBeLike(
+            ImmList(Pair(1,"A"), Pair(2,"B"), Pair(3,"C"))
+        );
+    }
+
     function getMatchers()
     {
         return ["beShowable" => function($sus){
