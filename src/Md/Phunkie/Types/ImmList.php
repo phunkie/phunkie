@@ -64,7 +64,12 @@ abstract class ImmList implements Kind, Applicative, Monad
     public function __set($property, $unused)
     {
         switch($property) {
-            case 'length': throw new \BadMethodCallException("Can't change the value of members of a ImmList");
+            case 'length':
+            case 'head':
+            case 'tail':
+            case 'init':
+            case 'last':
+                throw new \Error("Can't change the value of members of a ImmList");
         }
         throw new \Error("value $property is not a member of ImmList");
     }
