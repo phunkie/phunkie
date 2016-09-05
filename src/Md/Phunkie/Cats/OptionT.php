@@ -10,11 +10,11 @@ use Md\Phunkie\Types\Option;
 class OptionT
 {
     /**
-     * @var F<Option<A>>
+     * @var Monad<Option<A>>
      */
     private $value;
 
-    public function __construct($value)
+    public function __construct(Monad $value)
     {
         $this->value = $value;
     }

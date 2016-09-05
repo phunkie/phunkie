@@ -2,6 +2,7 @@
 
 namespace Md\Phunkie\PatternMatching;
 
+use const Md\Phunkie\Functions\function1\identity;
 use Md\Phunkie\PatternMatching\Referenced\Failure as ReferencedFailure;
 use Md\Phunkie\PatternMatching\Referenced\Some as ReferencedSome;
 use Md\Phunkie\PatternMatching\Referenced\Success as ReferencedSuccess;
@@ -150,7 +151,7 @@ function matchByReference($condition, $value)
 function matchValidationByReference($condition, $value) {
     if (($condition instanceof ReferencedSuccess && $value instanceof Success) ||
         ($condition instanceof ReferencedFailure && $value instanceof Failure)) {
-        $condition->value = $value->map(Function1::identity());
+        $condition->value = $value->map(identity);
         return true;
     }
     return false;
