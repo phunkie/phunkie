@@ -10,7 +10,6 @@ use Md\Phunkie\PatternMatching\Wildcarded\Function1 as WildcardedFunction1;
 use Md\Phunkie\PatternMatching\Wildcarded\ImmList as WildcardedCons;
 use Md\Phunkie\PatternMatching\Referenced\ListWithTail as ReferencedCons;
 use Md\Phunkie\PatternMatching\Referenced\ListNoTail as ReferencedConsX;
-use Md\Phunkie\PatternMatching\Referenced\ConsXs as ReferencedConsXs;
 use Md\Phunkie\Types\Function1;
 use Md\Phunkie\Types\ImmList;
 use Md\Phunkie\Types\NonEmptyList;
@@ -140,7 +139,6 @@ function matchByReference($condition, $value)
     switch (true) {
         case matchListByReference($condition, $value):
         case matchListHeadByReference($condition, $value):
-        case matchListTailByReference($condition, $value):
         case matchSomeByReference($condition, $value):
         case matchValidationByReference($condition, $value):
             return true;
@@ -180,15 +178,6 @@ function matchListHeadByReference($condition, $value) {
     if ($condition instanceof ReferencedConsX && $value instanceof ImmList) {
         $condition->head = $value->head;
         if ($condition->tail != $value->tail) return false;
-        return true;
-    }
-    return false;
-}
-
-function matchListTailByReference($condition, $value) {
-    if ($condition instanceof ReferencedConsXs && $value instanceof ImmList) {
-        if ($condition->head != $value->head) return false;
-        $condition->tail = $value->tail;
         return true;
     }
     return false;
