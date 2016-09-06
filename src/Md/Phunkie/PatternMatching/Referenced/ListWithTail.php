@@ -2,7 +2,7 @@
 
 namespace Md\Phunkie\PatternMatching\Referenced;
 
-class Cons
+class ListWithTail
 {
     public $head;
     public $tail;

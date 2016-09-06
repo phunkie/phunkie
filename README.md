@@ -345,13 +345,13 @@ Pattern Matching
 ```php
 <?php
 use Md\Phunkie\Types\ImmList;
-use function Md\Phunkie\PatternMatching\Referenced\_Cons as Cons;
-use function Md\Phunkie\PatternMatching\Referenced\_ConsX as ConsX;
+use function Md\Phunkie\PatternMatching\Referenced\ListWithTail;
+use function Md\Phunkie\PatternMatching\Referenced\ListNoTail;
 
 function sum(ImmList $list): int { $on = match($list); switch(true) {
     case $on(Nil): return 0;
-    case $on(ConsX($x, Nil)): return $x;
-    case $on(Cons($x, $xs)): return $x + sum($xs);}
+    case $on(ListNoTail($x, Nil)): return $x;
+    case $on(ListWithTail($x, $xs)): return $x + sum($xs);}
 }
 ```
 

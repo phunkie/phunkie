@@ -5,7 +5,7 @@ namespace spec\Md\Phunkie;
 use Md\Phunkie\Types\Function1;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
-use function Md\Phunkie\PatternMatching\Referenced\_Cons as rCons;
+use function Md\Phunkie\PatternMatching\Referenced\ListWithTail as ListWithTail;
 use function Md\Phunkie\PatternMatching\Referenced\Some as rSome;
 use function Md\Phunkie\PatternMatching\Referenced\Success as rSuccess;
 use function Md\Phunkie\PatternMatching\Referenced\Failure as rFailure;
@@ -165,7 +165,7 @@ class PatternMatchingSpec extends ObjectBehavior
     {
         $result = null;
         $on = match(ImmList(1,2)); switch (true) {
-            case $on(rCons($x, $xs)): $result = $x + $xs->head; break;
+            case $on(ListWithTail($x, $xs)): $result = $x + $xs->head; break;
         }
         expect($result)->toBe(3);
     }

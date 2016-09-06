@@ -11,19 +11,14 @@ namespace {
 }
 
 namespace Md\Phunkie\PatternMatching\Referenced {
-    function _Cons(&$head, &$tail)
+    function ListWithTail(&$head, &$tail)
     {
-        return new Cons($head, $tail);
+        return new ListWithTail($head, $tail);
     }
 
-    function _ConsX(&$head, $tail)
+    function ListNoTail(&$head, $tail)
     {
-        return new ConsX($head, $tail);
-    }
-
-    function _ConsXs($head, &$tail)
-    {
-        return new ConsXs($head, $tail);
+        return new ListNoTail($head, $tail);
     }
 
     function Some(&$value)
