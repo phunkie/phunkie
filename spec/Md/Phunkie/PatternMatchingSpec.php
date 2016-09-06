@@ -6,10 +6,10 @@ use Md\Phunkie\Types\Function1;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 use function Md\Phunkie\PatternMatching\Referenced\ListWithTail as ListWithTail;
-use function Md\Phunkie\PatternMatching\Referenced\Some as rSome;
-use function Md\Phunkie\PatternMatching\Referenced\Success as rSuccess;
-use function Md\Phunkie\PatternMatching\Referenced\Failure as rFailure;
-use function Md\Phunkie\PatternMatching\Wildcarded\_Cons as wCons;
+use function Md\Phunkie\PatternMatching\Referenced\Some as Just;
+use function Md\Phunkie\PatternMatching\Referenced\Success as Valid;
+use function Md\Phunkie\PatternMatching\Referenced\Failure as Invalid;
+use function Md\Phunkie\PatternMatching\Wildcarded\ImmList as WildcardedImmList;
 
 class PatternMatchingSpec extends ObjectBehavior
 {
@@ -111,22 +111,22 @@ class PatternMatchingSpec extends ObjectBehavior
         $result = null;
         $on = match(ImmList(1,2)); switch (true) {
             case $on(Nil): $result = 10; break;
-            case $on(wCons(_, Cons(2, Nil))): $result = 2; break;
+            case $on(WildcardedImmList(_, Cons(2, Nil))): $result = 2; break;
         }
         expect($result)->toBe(2);
 
         $result = null;
         $on = match(ImmList(1)); switch (true) {
             case $on(Nil): $result = 10; break;
-            case $on(wCons(_, Nil)): $result = 2; break;
+            case $on(WildcardedImmList(_, Nil)): $result = 2; break;
         }
         expect($result)->toBe(2);
 
         $result = null;
         $on = match(ImmList(1, 2)); switch (true) {
             case $on(Nil): $result = 10; break;
-            case $on(wCons(_, Nil)): $result = 2; break;
-            case $on(wCons(_, wCons(_, Nil))): $result = 3; break;
+            case $on(WildcardedImmList(_, Nil)): $result = 2; break;
+            case $on(WildcardedImmList(_, WildcardedImmList(_, Nil))): $result = 3; break;
         }
         expect($result)->toBe(3);
     }
@@ -136,7 +136,7 @@ class PatternMatchingSpec extends ObjectBehavior
         $result = null;
         $on = match(ImmList(1,2)); switch (true) {
             case $on(Nil): $result = 10; break;
-            case $on(wCons(1, _)): $result = 2; break;
+            case $on(WildcardedImmList(1, _)): $result = 2; break;
         }
         expect($result)->toBe(2);
     }
@@ -146,7 +146,7 @@ class PatternMatchingSpec extends ObjectBehavior
         $result = null;
         $on = match(ImmList(1,2)); switch (true) {
             case $on(Nil): $result = 10; break;
-            case $on(wCons(_, _)): $result = 2; break;
+            case $on(WildcardedImmList(_, _)): $result = 2; break;
         }
         expect($result)->toBe(2);
     }
@@ -174,7 +174,7 @@ class PatternMatchingSpec extends ObjectBehavior
     {
         $result = null;
         $on = match(Some(42)); switch (true) {
-            case $on(rSome($x)): $result = $x; break;
+            case $on(Just($x)): $result = $x; break;
         }
         expect($result)->toBe(42);
     }
@@ -184,7 +184,7 @@ class PatternMatchingSpec extends ObjectBehavior
         $yay = function () { return Success("yay!"); };
         $result = null;
         $on = match($yay()); switch (true) {
-            case $on(rSuccess($x)): $result = $x; break;
+            case $on(Valid($x)): $result = $x; break;
         }
         expect($result)->toBe($x);
     }
@@ -194,7 +194,7 @@ class PatternMatchingSpec extends ObjectBehavior
         $boom = function () { return Failure("boom!"); };
         $result = null;
         $on = match($boom()); switch (true) {
-        case $on(rFailure($x)): $result = $x; break;
+        case $on(Invalid($x)): $result = $x; break;
     }
         expect($result)->toBe($x);
     }

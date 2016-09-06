@@ -38,10 +38,10 @@ namespace Md\Phunkie\PatternMatching\Referenced {
 }
 
 namespace Md\Phunkie\PatternMatching\Wildcarded {
-    function _Cons($head, $tail)
+    function ImmList($head, $tail)
     {
         if ($head == Nil) $head = Nil();
         if ($tail == Nil) $tail = Nil();
-        return new Cons($head, $tail);
+        return new ImmList($head, $tail);
     }
 }

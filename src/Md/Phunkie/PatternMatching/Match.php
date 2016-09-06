@@ -7,7 +7,7 @@ use Md\Phunkie\PatternMatching\Referenced\Failure as ReferencedFailure;
 use Md\Phunkie\PatternMatching\Referenced\Some as ReferencedSome;
 use Md\Phunkie\PatternMatching\Referenced\Success as ReferencedSuccess;
 use Md\Phunkie\PatternMatching\Wildcarded\Function1 as WildcardedFunction1;
-use Md\Phunkie\PatternMatching\Wildcarded\Cons as WildcardedCons;
+use Md\Phunkie\PatternMatching\Wildcarded\ImmList as WildcardedCons;
 use Md\Phunkie\PatternMatching\Referenced\ListWithTail as ReferencedCons;
 use Md\Phunkie\PatternMatching\Referenced\ListNoTail as ReferencedConsX;
 use Md\Phunkie\PatternMatching\Referenced\ConsXs as ReferencedConsXs;

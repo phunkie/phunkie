@@ -2,7 +2,7 @@
 
 namespace Md\Phunkie\PatternMatching\Wildcarded;
 
-class Cons
+class ImmList
 {
     public $head;
     public $tail;
