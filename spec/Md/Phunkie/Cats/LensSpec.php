@@ -77,6 +77,7 @@ class LensSpec extends ObjectBehavior
         expect(member("b")->get($m))->toBeLike(Some(2));
         expect(member("b")->set($m, None())->eqv(ImmMap(["a" => 1])))->toBe(true);
         expect(member("b")->set($m, Some(3))->eqv(ImmMap(["a" => 1, "b" => 3])))->toBe(true);
+        expect(member("b")->set($m, Some(4))->eqv(ImmMap(["a" => 1, "b" => 4])))->toBe(true);
     }
 
     private function userNameLens()

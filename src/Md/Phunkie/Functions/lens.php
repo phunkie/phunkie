@@ -83,7 +83,7 @@ namespace Md\Phunkie\Functions\lens {
             function(ImmMap $m) use ($k) { return $m->get($k); },
             function(ImmMap $m, Option $v) use ($k) { $on = match($v); switch(true) {
                 case $on(None): return $m->minus($k);
-                case $on(Maybe($v)): return $m->plus($k, $v);}
+                case $on(Maybe($v)): return $m->minus($k)->plus($k, $v);}
             }
         );
     }
