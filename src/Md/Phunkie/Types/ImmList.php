@@ -208,7 +208,7 @@ abstract class ImmList implements Kind, Applicative, Monad
 
     private function mkStringOneArgument($glue)
     {
-        return implode($glue, array_map(function($e) { return get_value_to_show($e); }, $this->values));
+        return implode($glue, array_map(function($e) { return is_string($e) ? $e : get_value_to_show($e); }, $this->values));
     }
 
     private function mkStringThreeArguments($start, $glue, $end)
