@@ -68,9 +68,9 @@ namespace Md\Phunkie\Functions\show {
 
     function get_collection_type($value) { switch (count($value)) {
         case 0: return "Nothing";
-        case 1: return get_type_to_show($value[0]);
-        case 2: return combine_types(get_type_to_show($value[0]), get_type_to_show($value[1]));
-        default: return combine_types(get_type_to_show($value[0]), get_collection_type(array_slice($value, 1))); }
+        case 1: return get_type_to_show(array_values($value)[0]);
+        case 2: return combine_types(get_type_to_show(array_values($value)[0]), get_type_to_show(array_values($value)[1]));
+        default: return combine_types(get_type_to_show(array_values($value)[0]), get_collection_type(array_slice($value, 1))); }
     }
 
     function combine_types($a, $b) { switch (true) {
@@ -120,4 +120,8 @@ namespace Md\Phunkie\Functions\show {
 
         return (bool)$countOfShowTraitUsage;
     }
+}
+
+namespace Md\Phunkie\Functions\show\_private {
+
 }
