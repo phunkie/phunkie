@@ -11,7 +11,7 @@ class StateTSpec extends ObjectBehavior
 {
     function it_runs_function_under_a_context()
     {
-        $increment = new StateT(Some(function($n) { return Some(Pair($n + 1, $n)); }));
-        expect($increment->run(1))->toBeLike(Some(Pair(2,1)));
+        $this->beConstructedWith(Some(function($n) { return Some(Pair($n + 1, $n)); }));
+        $this->run(1)->shouldBeLike(Some(Pair(2,1)));
     }
 }
