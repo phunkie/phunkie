@@ -5,9 +5,6 @@ namespace spec\Md\Phunkie\Cats;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
-/**
- * @mixin \Md\Phunkie\Cats\Reader
- */
 class ReaderSpec extends ObjectBehavior
 {
     function it_wraps_a_function()
