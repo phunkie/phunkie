@@ -285,8 +285,8 @@ Kleisli
 ```bash
 phunkie > $f = kleisli(function($x) { return Some($x + 1); })
 phunkie > $g = kleisli(function($x) { return Some($x + 4); })
-phunkie > $x = $k->andThen($g)
-phunkie > ($x->run)(3)
+phunkie > $x = $f->andThen($g)
+phunkie > $x->run(3)
 Option<Int> = Some(8)
 ```
 
