@@ -34,7 +34,15 @@ namespace Md\Phunkie\Functions\show {
         case is_resource($value): return (string)$value;
         case is_bool($value): return $value ? 'true' : 'false';
         case is_null($value): return 'null';
-        case is_array($value): return "[" . implode(", ", array_map(function ($e) { return get_value_to_show($e); }, $value)) . "]";
+        case is_array($value):
+            if (array_diff_key($value, array_keys(array_keys($value)))) {
+                $valueToShow = '';
+                foreach ($value as $key => $elem) {
+                    $valueToShow .= (is_string($key) ? '"' . $key . '"' : $key) . " => " . get_value_to_show($elem);
+                }
+                return '[' . $valueToShow . ']';
+            }
+            return "[" . implode(", ", array_map(function ($e) { return get_value_to_show($e); }, $value)) . "]";
         case is_object($value) && (new \ReflectionClass($value))->isAnonymous():
             return get_parent_class($value) === false ? "anonymous@" . substr(ltrim(spl_object_hash($value), "0"), 0, 8) :
                 get_parent_class($value) . "@" . substr(ltrim(spl_object_hash($value), "0"), 0, 8);
