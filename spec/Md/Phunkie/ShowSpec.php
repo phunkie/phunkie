@@ -19,7 +19,7 @@ class ShowSpec extends ObjectBehavior
         expect(get_type_to_show(STDIN))->toReturn("Resource");
         expect(get_type_to_show([1,2,3]))->toReturn("Array<Int>");
         expect(get_type_to_show([]))->toReturn("Array<Nothing>");
-        expect(get_type_to_show([1=>""]))->toReturn("Array<String>");
+        expect(get_type_to_show(["foo"=>"bar"]))->toReturn("Array<String, String>");
         expect(get_type_to_show(function(){}))->toReturn("Callable");
 
         expect(get_type_to_show(Unit()))->toReturn("Unit");

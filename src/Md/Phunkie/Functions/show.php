@@ -35,7 +35,7 @@ namespace Md\Phunkie\Functions\show {
         case is_bool($value): return $value ? 'true' : 'false';
         case is_null($value): return 'null';
         case is_array($value):
-            if (array_diff_key($value, array_keys(array_keys($value)))) {
+            if (is_assoc($value)) {
                 $valueToShow = '';
                 foreach ($value as $key => $elem) {
                     $valueToShow .= (is_string($key) ? '"' . $key . '"' : $key) . " => " . get_value_to_show($elem);
@@ -51,6 +51,11 @@ namespace Md\Phunkie\Functions\show {
         default: return $value;}
     }
 
+    function is_assoc(array $value): bool
+    {
+        return array() !== array_diff_key($value, array_keys(array_keys($value)));
+    }
+
     function get_type_to_show($value) { switch (true) {
         case is_integer($value): return "Int";
         case is_float($value):
@@ -59,7 +64,7 @@ namespace Md\Phunkie\Functions\show {
         case is_resource($value): return "Resource";
         case is_bool($value): return "Boolean";
         case is_null($value): return "Null";
-        case is_array($value): return "Array<" . get_collection_type($value) . ">";
+        case is_array($value): return is_assoc($value) ? "Array<" . get_collection_type(array_keys($value)) . ", " . get_collection_type($value) . ">" : "Array<" . get_collection_type($value) . ">";
         case is_object($value) && $value instanceof Function1: return "Function1";
         case is_callable($value): return "Callable";        case is_object($value) && $value instanceof Unit: return "Unit";
         case is_object($value) && $value == None(): return "None";
