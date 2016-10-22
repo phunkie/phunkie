@@ -20,10 +20,17 @@ namespace Md\Phunkie\Functions\show {
     }
 
     function get_value_to_show($value) { switch (true) {
-        case is_showable($value): return $value->show();
-        case is_object($value) && method_exists($value, '__toString'): return (string)$value;
+        case is_showable($value):
+            return $value->show();
+        case is_object($value) && method_exists($value, '__toString'):
+            return (string)$value;
+        case is_double($value):
+        case is_float($value):
+            return ($value == floor($value)) ? sprintf("%.01f", $value) : $value;
         case is_string($value): return $value == "\n" ? $value : '"' . $value . '"';
-        case is_int($value):case is_double($value): case is_float($value): case is_long($value): return $value;
+        case is_int($value):
+        case is_long($value):
+            return $value;
         case is_resource($value): return (string)$value;
         case is_bool($value): return $value ? 'true' : 'false';
         case is_null($value): return 'null';
@@ -120,8 +127,4 @@ namespace Md\Phunkie\Functions\show {
 
         return (bool)$countOfShowTraitUsage;
     }
-}
-
-namespace Md\Phunkie\Functions\show\_private {
-
 }
