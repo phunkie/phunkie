@@ -4,12 +4,12 @@ namespace Md\Phunkie\PatternMatching;
 
 use const Md\Phunkie\Functions\function1\identity;
 use Md\Phunkie\PatternMatching\Referenced\Failure as ReferencedFailure;
+use Md\Phunkie\PatternMatching\Referenced\ListWithTail;
 use Md\Phunkie\PatternMatching\Referenced\Some as ReferencedSome;
 use Md\Phunkie\PatternMatching\Referenced\Success as ReferencedSuccess;
 use Md\Phunkie\PatternMatching\Wildcarded\Function1 as WildcardedFunction1;
 use Md\Phunkie\PatternMatching\Wildcarded\ImmList as WildcardedCons;
-use Md\Phunkie\PatternMatching\Referenced\ListWithTail as ReferencedCons;
-use Md\Phunkie\PatternMatching\Referenced\ListNoTail as ReferencedConsX;
+use Md\Phunkie\PatternMatching\Referenced\ListNoTail;
 use Md\Phunkie\Types\Function1;
 use Md\Phunkie\Types\ImmList;
 use Md\Phunkie\Types\NonEmptyList;
@@ -164,20 +164,21 @@ function matchSomeByReference($condition, $value) {
 }
 
 function matchListByReference($condition, $value) {
-    if ($condition instanceof ReferencedCons && $value instanceof ImmList) {
+    if ($condition instanceof ListWithTail && $value instanceof ImmList) {
         if ($condition->head == null) $condition->head = $value->head;
         elseif ($condition->head != $value->head) return false;
         if ($condition->tail == null) $condition->tail = $value->tail;
         elseif ($condition->tail != $value->tail) return false;
         return true;
     }
+
     return false;
 }
 
 function matchListHeadByReference($condition, $value) {
-    if ($condition instanceof ReferencedConsX && $value instanceof ImmList) {
+    if ($condition instanceof ListNoTail && $value instanceof ImmList) {
         $condition->head = $value->head;
-        if ($condition->tail != $value->tail) return false;
+        if ($value->tail != Nil()) return false;
         return true;
     }
     return false;
