@@ -96,6 +96,31 @@ final class ImmMap implements ArrayAccess
         return "Map(" . implode(", ", $mappings) . ")";
     }
 
+    public function plus($k, $v)
+    {
+        $mappings = clone $this->values;
+        $mappings->attach(promote($k), $v);
+        $map = new self();
+        $map->values = $mappings;
+        return $map;
+    }
+
+    public function minus($k)
+    {
+        $mappings = new SplObjectStorage();
+        if ($this->contains($k)) {
+            foreach ($this->values as $offset) {
+                if (promote($k) != $offset) {
+                    $mappings[$offset] = $this->values[$offset];
+                }
+            }
+            $map = new self();
+            $map->values = $mappings;
+            return $map;
+        }
+        return clone ($this);
+    }
+
     private function createFromArray($values)
     {
         foreach ($values[0] as $k => $v) {
@@ -125,29 +150,5 @@ final class ImmMap implements ArrayAccess
     private function oddNumberOfArguments($values)
     {
         return count($values) % 2 != 0;
-    }
-
-    public function plus($k, $v)
-    {
-        $mappings = clone $this->values;
-        $mappings->attach(promote($k), $v);
-        $map = new self();
-        $map->values = $mappings;
-        return $map;
-    }
-
-    public function minus($k)
-    {
-        $mappings = new SplObjectStorage();
-        if ($this->contains($k)) {
-            foreach ($this->values as $offset) {
-                if (promote($k) != $offset) {
-                    $mappings[$offset] = $this->values[$offset];
-                }
-            }
-        }
-        $map = new self();
-        $map->values = $mappings;
-        return $map;
     }
 }
