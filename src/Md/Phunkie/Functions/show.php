@@ -36,11 +36,11 @@ namespace Md\Phunkie\Functions\show {
         case is_null($value): return 'null';
         case is_array($value):
             if (is_assoc($value)) {
-                $valueToShow = '';
+                $valueToShow = [];
                 foreach ($value as $key => $elem) {
-                    $valueToShow .= (is_string($key) ? '"' . $key . '"' : $key) . " => " . get_value_to_show($elem);
+                    $valueToShow[] = (is_string($key) ? '"' . $key . '"' : $key) . " => " . get_value_to_show($elem);
                 }
-                return '[' . $valueToShow . ']';
+                return '[' . implode(", ", $valueToShow) . ']';
             }
             return "[" . implode(", ", array_map(function ($e) { return get_value_to_show($e); }, $value)) . "]";
         case is_object($value) && (new \ReflectionClass($value))->isAnonymous():
