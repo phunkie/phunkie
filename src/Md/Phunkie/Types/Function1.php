@@ -81,11 +81,7 @@ final class Function1 implements Kind, Applicative
 
     private function invokeFunctionOnArg($arg)
     {
-        try {
-            return $this->reflection->invoke($arg);
-        } catch (\ReflectionException $e) {
-            return call_user_func($this->f, $arg);
-        }
+        return call_user_func($this->f, $arg);
     }
 
     private function guardCallableNumberOfParameters()
