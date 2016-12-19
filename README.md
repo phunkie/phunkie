@@ -1,7 +1,7 @@
 Phunkie
 =======
 
-[![Join the chat at https://gitter.im/MarcelloDuarte/phunkie](https://badges.gitter.im/MarcelloDuarte/phunkie.svg)](https://gitter.im/MarcelloDuarte/phunkie?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Build Status](https://travis-ci.org/MarcelloDuarte/phunkie.svg?branch=master)](https://travis-ci.org/MarcelloDuarte/phunkie) [![Join the chat at https://gitter.im/MarcelloDuarte/phunkie](https://badges.gitter.im/MarcelloDuarte/phunkie.svg)](https://gitter.im/MarcelloDuarte/phunkie?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 Phunkie is a library with functional structures for PHP.
 
