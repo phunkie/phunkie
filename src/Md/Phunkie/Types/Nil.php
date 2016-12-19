@@ -36,12 +36,12 @@ final class Nil extends ImmList
         throw new NoSuchElementException("head of empty list");
     }
 
-    public function tail()
+    public function tail(): ImmList
     {
         throw new \BadMethodCallException("tail of empty list");
     }
 
-    public function init()
+    public function init(): ImmList
     {
         throw new \BadMethodCallException("empty init");
     }
@@ -51,7 +51,7 @@ final class Nil extends ImmList
         throw new NoSuchElementException("last of empty list");
     }
 
-    public function reverse()
+    public function reverse(): ImmList
     {
         return Nil();
     }

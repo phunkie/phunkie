@@ -11,11 +11,13 @@ use Md\Phunkie\Ops\ImmList\ImmListEqOps;
 use Md\Phunkie\Ops\ImmList\ImmListFoldableOps;
 use Md\Phunkie\Ops\ImmList\ImmListMonadOps;
 use Md\Phunkie\Ops\ImmList\ImmListMonoidOps;
+use Md\Phunkie\Ops\ImmList\ImmListOps;
 
 abstract class ImmList implements Kind, Applicative, Monad
 {
     use Show;
-    use ImmListApplicativeOps,
+    use ImmListOps,
+        ImmListApplicativeOps,
         ImmListEqOps,
         ImmListMonadOps,
         ImmListFoldableOps,
@@ -30,146 +32,12 @@ abstract class ImmList implements Kind, Applicative, Monad
         default: throw $this->listIsSealed(); }
     }
 
-    public function isEmpty(): bool
-    {
-        return false;
-    }
-
     public function toString(): string
     {
         return "List(". implode(", ", $this->map(function($e) { return get_value_to_show($e); })->values) . ")";
     }
 
-    /**
-     * @param callable $condition
-     * @return ImmList<T>
-     */
-    public function filter(callable $condition): ImmList
-    {
-        return ImmList(...array_filter($this->values, $condition));
-    }
-
-    public function __get($property)
-    {
-        switch($property) {
-            case 'length': return count($this->values);
-            case 'head': return $this->head();
-            case 'tail': return $this->tail();
-            case 'init': return $this->init();
-            case 'last': return $this->last();
-        }
-        throw new \Error("value $property is not a member of ImmList");
-    }
-
-    public function __set($property, $unused)
-    {
-        switch($property) {
-            case 'length':
-            case 'head':
-            case 'tail':
-            case 'init':
-            case 'last':
-                throw new \Error("Can't change the value of members of a ImmList");
-        }
-        throw new \Error("value $property is not a member of ImmList");
-    }
-
     public function toArray(): array { return $this->values; }
-
-    /**
-     * @param ImmList<B> $list
-     * @return ImmList<Pair<A,B>>
-     */
-    public function zip(ImmList $list): ImmList
-    {
-        if ($this->length <= $list->length) {
-            $other = $list->toArray();
-            reset($other);
-            return $this->map(function($x) use (&$other) {
-                $pair = Pair($x, current($other));
-                next($other);
-                return $pair;
-            });
-        }
-        return $list->zip($this);
-    }
-
-    /**
-     * @param int $index
-     * @return Pair<ImmList<A>,ImmList<A>>
-     */
-    public function splitAt(int $index): Pair { switch (true) {
-        case $index == 0:                    return Pair(Nil(), clone $this);
-        case $index >= count($this->values): return Pair(clone $this, Nil());
-        default: return Pair(ImmList(...array_slice($this->values, 0, $index)),
-            ImmList(...array_slice($this->values, $index))); }
-    }
-
-    public function partition(callable $condition): Pair
-    {
-        $trues = $falses = [];
-        foreach ($this->values as $value) { switch ($result = call_user_func($condition, $value)) {
-            case true: $trues[] = $value; break;
-            case false: $falses[] = $value; break;
-            default: throw $this->callableMustReturnBoolean($result); }
-        }
-        return Pair(ImmList(...$trues), ImmList(...$falses));
-    }
-
-    public function nth(int $nth)
-    {
-        return array_key_exists($nth, $this->values) ? Some($this->values[$nth]) : None();
-    }
-
-    public function head()
-    {
-        return $this->values[0];
-    }
-
-    public function tail()
-    {
-        return ImmList(...array_slice($this->values,1));
-    }
-
-    public function init()
-    {
-        return ImmList(...array_slice($this->values,0,-1));
-    }
-
-    public function last()
-    {
-        return $this->values[count($this->values) - 1];
-    }
-
-    public function take(int $n)
-    {
-        return ImmList(...array_slice($this->values, 0, $n < 0 ? 0 : $n));
-    }
-
-    public function drop(int $n)
-    {
-        return ImmList(...array_slice($this->values, $n < 0 ? 0 : $n));
-    }
-
-    public function reverse()
-    {
-        return ImmList(...array_reverse($this->values));
-    }
-
-    public function mkString()
-    {
-        switch(func_num_args()) {
-            case 1: return $this->mkStringOneArgument(func_get_arg(0));
-            case 3: return $this->mkStringThreeArguments(func_get_arg(0), func_get_arg(1), func_get_arg(2));
-            default: throw new \Error("wrong number of arguments for mkString, should be 1 or 3, " . func_num_args() . " given");
-        }
-    }
-
-    private function callableMustReturnBoolean($result)
-    {
-        return new \BadMethodCallException(sprintf("partition must be passed a callable that returns a boolean, %s returned",
-            gettype($result)));
-    }
 
     private function constructNonEmptyList(int $argc, array $argv)
     {
@@ -204,15 +72,5 @@ abstract class ImmList implements Kind, Applicative, Monad
     private function listIsSealed()
     {
         return new \TypeError("List cannot be extended outside namespace");
-    }
-
-    private function mkStringOneArgument($glue)
-    {
-        return implode($glue, array_map(function($e) { return is_string($e) ? $e : get_value_to_show($e); }, $this->values));
-    }
-
-    private function mkStringThreeArguments($start, $glue, $end)
-    {
-        return $start . $this->mkStringOneArgument($glue) . $end;
     }
 }
