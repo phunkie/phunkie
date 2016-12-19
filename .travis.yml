@@ -10,3 +10,4 @@ script:
 before_script:
   - composer selfupdate
   - composer update
+  - phpenv config-rm xdebug.ini
