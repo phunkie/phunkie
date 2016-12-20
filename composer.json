@@ -1,5 +1,5 @@
 {
-    "name": "md/phunkie",
+    "name": "phunkie/phunkie",
     "description":  "Functional structures library for PHP",
     "license":      "MIT",
     "type":         "library",
