@@ -7,6 +7,7 @@ use Md\Phunkie\Cats\Show;
 use function Md\Phunkie\Functions\show\get_value_to_show;
 use function Md\Phunkie\Functions\type\promote;
 use Md\Phunkie\Ops\ImmMap\ImmMapEqOps;
+use Md\Phunkie\Utils\Iterator;
 
 final class ImmMap implements ArrayAccess
 {
@@ -119,6 +120,11 @@ final class ImmMap implements ArrayAccess
             return $map;
         }
         return clone ($this);
+    }
+
+    public function iterator()
+    {
+        return new Iterator($this->values);
     }
 
     private function createFromArray($values)
