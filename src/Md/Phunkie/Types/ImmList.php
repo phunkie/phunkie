@@ -6,12 +6,14 @@ use Md\Phunkie\Cats\Applicative;
 use Md\Phunkie\Cats\Monad;
 use Md\Phunkie\Cats\Show;
 use function Md\Phunkie\Functions\show\get_value_to_show;
+use function Md\Phunkie\Functions\type\promote;
 use Md\Phunkie\Ops\ImmList\ImmListApplicativeOps;
 use Md\Phunkie\Ops\ImmList\ImmListEqOps;
 use Md\Phunkie\Ops\ImmList\ImmListFoldableOps;
 use Md\Phunkie\Ops\ImmList\ImmListMonadOps;
 use Md\Phunkie\Ops\ImmList\ImmListMonoidOps;
 use Md\Phunkie\Ops\ImmList\ImmListOps;
+use Md\Phunkie\Utils\Iterator;
 
 abstract class ImmList implements Kind, Applicative, Monad
 {
@@ -38,6 +40,15 @@ abstract class ImmList implements Kind, Applicative, Monad
     }
 
     public function toArray(): array { return $this->values; }
+
+    public function iterator(): Iterator
+    {
+        $storage = new \SplObjectStorage();
+        foreach ($this->toArray() as $k => $v) {
+            $storage[promote($k)] = $v;
+        }
+        return new Iterator($storage);
+    }
 
     private function constructNonEmptyList(int $argc, array $argv)
     {
