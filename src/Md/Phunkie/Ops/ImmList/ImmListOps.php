@@ -67,6 +67,13 @@ trait ImmListOps
         return ImmList(...array_filter($this->toArray(), $condition));
     }
 
+    public function reject(callable $condition): ImmList
+    {
+        return ImmList(...array_filter($this->toArray(), function($x) use ($condition) {
+            return !$condition($x);
+        }));
+    }
+
     public function nth(int $nth): Option
     {
         return array_key_exists($nth, $this->toArray()) ? Some($this->toArray()[$nth]) : None();

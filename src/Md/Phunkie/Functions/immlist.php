@@ -94,4 +94,18 @@ namespace Md\Phunkie\Functions\immlist {
             return array_key_exists($nth, $list->toArray()) ? Some($list->toArray()[$nth]) : None();
         });
     }
+
+    function filter($f)
+    {
+        return curry([$f],func_get_args(),function(ImmList $list) use ($f) {
+            return $list->filter($f);
+        });
+    }
+
+    function reject($f)
+    {
+        return curry([$f],func_get_args(),function(ImmList $list) use ($f) {
+            return $list->reject($f);
+        });
+    }
 }

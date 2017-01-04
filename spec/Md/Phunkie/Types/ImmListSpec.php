@@ -89,6 +89,13 @@ class ImmListSpec extends ObjectBehavior
         $this->filter(function($x){return $x == 2;})->shouldBeLike(ImmList(2));
     }
 
+    function it_has_reject()
+    {
+        $this->beAnInstanceOf(Cons::class);
+        $this->beConstructedWith(1,ImmList(2,3));
+        $this->reject(function($x){return $x == 2;})->shouldBeLike(ImmList(1, 3));
+    }
+
     function it_can_be_casted_to_array()
     {
         $this->beAnInstanceOf(Cons::class);
