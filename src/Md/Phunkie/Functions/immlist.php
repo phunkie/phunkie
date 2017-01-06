@@ -108,4 +108,11 @@ namespace Md\Phunkie\Functions\immlist {
             return $list->reject($f);
         });
     }
+
+    function reduce($f)
+    {
+        return curry([$f],func_get_args(),function(ImmList $list) use ($f) {
+            return $list->reduce($f);
+        });
+    }
 }

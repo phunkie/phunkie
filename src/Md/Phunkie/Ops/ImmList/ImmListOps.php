@@ -2,11 +2,19 @@
 
 namespace Md\Phunkie\Ops\ImmList;
 
-use Exception;
-use function Md\Phunkie\Functions\show\get_value_to_show;
+use function Md\Phunkie\Functions\assertion\assertSameTypeAsCollectionType;
 use Md\Phunkie\Types\ImmList;
 use Md\Phunkie\Types\Option;
 use Md\Phunkie\Types\Pair;
+use Exception;
+
+use function Md\Phunkie\Functions\show\get_type_to_show;
+use function Md\Phunkie\Functions\show\get_value_to_show;
+use function Md\Phunkie\PatternMatching\Referenced\ListNoTail;
+use function Md\Phunkie\PatternMatching\Referenced\ListWithTail;
+use function \Md\Phunkie\PatternMatching\Referenced\Failure as Invalid;
+use function \Md\Phunkie\PatternMatching\Referenced\Success as Valid;
+
 
 trait ImmListOps
 {
@@ -72,6 +80,26 @@ trait ImmListOps
         return ImmList(...array_filter($this->toArray(), function($x) use ($condition) {
             return !$condition($x);
         }));
+    }
+
+    public function reduce(callable $f)
+    {
+        /** @var $xs ImmList */
+        $xs = null;
+        /** @var \Exception $e */
+        $e = null;
+
+        $on = match($this); switch(true) {
+            case $on(Nil): throw new \Error("can't apply reduce on an empty list");
+            case $on(ListNoTail($x, Nil)): return $x;
+            default: $on(ListWithTail($x, $xs));
+                $result = $f($x, $xs->reduce($f));
+                $when = $this->isSameTypeAsList($result);
+                switch(true) {
+                    case      $when(Invalid($e)): throw $e;
+                    default : $when(Valid($x)); return $x;
+                }
+        }
     }
 
     public function nth(int $nth): Option
@@ -157,5 +185,22 @@ trait ImmListOps
     {
         return new \BadMethodCallException(sprintf("partition must be passed a callable that returns a boolean, %s returned",
             gettype($result)));
+    }
+
+    private function callableMustReturnSameType($result): string
+    {
+        return "callable must return the same type as list type variable." . PHP_EOL .
+            "Callable returns a " . (get_type_to_show($result)) .
+            ", and this is a " . get_type_to_show($this);
+    }
+
+    /**
+     * @param $result
+     * @return \Md\Phunkie\PatternMatching\Match
+     */
+    private function isSameTypeAsList($result): \Md\Phunkie\PatternMatching\Match
+    {
+        return match(assertSameTypeAsCollectionType($result, $this->toArray(),
+            $this->callableMustReturnSameType($result)));
     }
 }
