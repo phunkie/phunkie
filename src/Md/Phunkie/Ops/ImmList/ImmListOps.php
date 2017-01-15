@@ -2,7 +2,11 @@
 
 namespace Md\Phunkie\Ops\ImmList;
 
+use BadMethodCallException;
+use Error;
 use function Md\Phunkie\Functions\assertion\assertSameTypeAsCollectionType;
+use function Md\Phunkie\Functions\show\get_collection_type;
+use Md\Phunkie\PatternMatching\Match;
 use Md\Phunkie\Types\ImmList;
 use Md\Phunkie\Types\Option;
 use Md\Phunkie\Types\Pair;
@@ -14,7 +18,6 @@ use function Md\Phunkie\PatternMatching\Referenced\ListNoTail;
 use function Md\Phunkie\PatternMatching\Referenced\ListWithTail;
 use function \Md\Phunkie\PatternMatching\Referenced\Failure as Invalid;
 use function \Md\Phunkie\PatternMatching\Referenced\Success as Valid;
-
 
 trait ImmListOps
 {
@@ -29,7 +32,7 @@ trait ImmListOps
             case 'init': return $this->init();
             case 'last': return $this->last();
         }
-        throw new \Error("value $property is not a member of ImmList");
+        throw new Error("value $property is not a member of ImmList");
     }
 
     public function __set($property, $unused)
@@ -40,9 +43,9 @@ trait ImmListOps
             case 'tail':
             case 'init':
             case 'last':
-                throw new \Error("Can't change the value of members of a ImmList");
+                throw new Error("Can't change the value of members of a ImmList");
         }
-        throw new \Error("value $property is not a member of ImmList");
+        throw new Error("value $property is not a member of ImmList");
     }
 
     public function head()
@@ -90,7 +93,7 @@ trait ImmListOps
         $e = null;
 
         $on = match($this); switch(true) {
-            case $on(Nil): throw new \Error("can't apply reduce on an empty list");
+            case $on(Nil): throw $this->canReduceEmptyList();
             case $on(ListNoTail($x, Nil)): return $x;
             default: $on(ListWithTail($x, $xs));
                 $result = $f($x, $xs->reduce($f));
@@ -122,21 +125,21 @@ trait ImmListOps
         return ImmList(...array_reverse($this->toArray()));
     }
 
-    public function mkString()
+    public function mkString(): string
     {
         switch(func_num_args()) {
             case 1: return $this->mkStringOneArgument(func_get_arg(0));
             case 3: return $this->mkStringThreeArguments(func_get_arg(0), func_get_arg(1), func_get_arg(2));
-            default: throw new \Error("wrong number of arguments for mkString, should be 1 or 3, " . func_num_args() . " given");
+            default: throw new Error("wrong number of arguments for mkString, should be 1 or 3, " . func_num_args() . " given");
         }
     }
 
-    private function mkStringOneArgument($glue)
+    private function mkStringOneArgument($glue): string
     {
         return implode($glue, array_map(function($e) { return is_string($e) ? $e : get_value_to_show($e); }, $this->toArray()));
     }
 
-    private function mkStringThreeArguments($start, $glue, $end)
+    private function mkStringThreeArguments($start, $glue, $end): string
     {
         return $start . $this->mkStringOneArgument($glue) . $end;
     }
@@ -183,24 +186,25 @@ trait ImmListOps
 
     private function callableMustReturnBoolean($result): Exception
     {
-        return new \BadMethodCallException(sprintf("partition must be passed a callable that returns a boolean, %s returned",
-            gettype($result)));
+        return new BadMethodCallException(sprintf("partition must be passed a callable that returns a boolean, " .
+            "%s returned", gettype($result)));
     }
 
     private function callableMustReturnSameType($result): string
     {
         return "callable must return the same type as list type variable." . PHP_EOL .
             "Callable returns a " . (get_type_to_show($result)) .
-            ", and this is a " . get_type_to_show($this);
+            ", and this is a list of " . get_collection_type($this->toArray());
     }
 
-    /**
-     * @param $result
-     * @return \Md\Phunkie\PatternMatching\Match
-     */
-    private function isSameTypeAsList($result): \Md\Phunkie\PatternMatching\Match
+    private function isSameTypeAsList($result): Match
     {
         return match(assertSameTypeAsCollectionType($result, $this->toArray(),
             $this->callableMustReturnSameType($result)));
+    }
+
+    private function canReduceEmptyList(): Error
+    {
+        return new Error("can't apply reduce on an empty list");
     }
 }
