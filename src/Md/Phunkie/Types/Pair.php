@@ -4,8 +4,9 @@ namespace Md\Phunkie\Types;
 
 use Md\Phunkie\Cats\Show;
 use function \Md\Phunkie\Functions\show\get_value_to_show;
+use Md\Phunkie\Utils\Copiable;
 
-final class Pair
+final class Pair implements Copiable
 {
     use Show;
     private $ta;
@@ -32,7 +33,7 @@ final class Pair
         throw new \TypeError("Pairs are immutable");
     }
 
-    public function copy($parameters)
+    public function copy(array $parameters)
     {
         $ta = $this->ta;
         $tb = $this->tb;

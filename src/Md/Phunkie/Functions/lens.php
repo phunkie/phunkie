@@ -18,6 +18,7 @@ namespace Md\Phunkie\Functions\lens {
     use Md\Phunkie\Types\ImmSet;
     use Md\Phunkie\Types\Option;
     use Md\Phunkie\Types\Pair;
+    use Md\Phunkie\Utils\GenLens;
 
     function trivial()
     {
@@ -86,5 +87,10 @@ namespace Md\Phunkie\Functions\lens {
                 case $on(Maybe($v)): return $m->minus($k)->plus($k, $v);}
             }
         );
+    }
+
+    function makeLenses(...$fields)
+    {
+        return new GenLens(...$fields);
     }
 }

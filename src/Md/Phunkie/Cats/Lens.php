@@ -28,6 +28,17 @@ class Lens
         return $this->set($f($this->get($a)), $a);
     }
 
+    public function combine(Lens ...$other)
+    {
+        if (func_num_args() == 0) {
+            return $this;
+        }
+        if (func_num_args() == 1) {
+            return $this->andThen($other[0]);
+        }
+        return $this->andThen($other[0])->combine(array_slice($other, 1));
+    }
+
     public function andThen(Lens $l): Lens
     {
         return new Lens(

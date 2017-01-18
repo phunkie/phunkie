@@ -80,6 +80,12 @@ class ImmMapSpec extends ObjectBehavior
         $this->beConstructedWith(["hello" => "there"]);
         $this->plus("hi", "here")->eqv(ImmMap(["hello" => "there", "hi" => "here"]))->shouldBe(true);
     }
+
+    function it_can_be_copied()
+    {
+        $this->beConstructedWith(["hello" => "there", "hi" => "here"]);
+        $this->copy()->show()->shouldBe($this->getWrappedObject()->show());
+    }
 }
 
 

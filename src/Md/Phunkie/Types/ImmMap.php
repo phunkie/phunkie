@@ -7,9 +7,10 @@ use Md\Phunkie\Cats\Show;
 use function Md\Phunkie\Functions\show\get_value_to_show;
 use function Md\Phunkie\Functions\type\promote;
 use Md\Phunkie\Ops\ImmMap\ImmMapEqOps;
+use Md\Phunkie\Utils\Copiable;
 use Md\Phunkie\Utils\Iterator;
 
-final class ImmMap implements ArrayAccess
+final class ImmMap implements ArrayAccess, Copiable
 {
     use Show, ImmMapEqOps;
     private $values;
@@ -53,6 +54,17 @@ final class ImmMap implements ArrayAccess
     public function offsetUnset($offset)
     {
         throw new \TypeError("ImmMaps are immutable");
+    }
+
+    public function copy(array $fields = [])
+    {
+        $copy = ImmMap();
+        $copy->values = clone $this->values;
+        foreach ($fields as $field => $value) {
+            $copy = $copy->minus($field);
+            $copy->values->attach(promote($field), $value);
+        }
+        return $copy;
     }
 
     public function get($offset)
