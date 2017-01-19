@@ -4,7 +4,7 @@ namespace Md\Phunkie\Types;
 
 use Error;
 use Md\Phunkie\Cats\Show;
-use function Md\Phunkie\Functions\functor\map;
+use function Md\Phunkie\Functions\functor\fmap;
 use function Md\Phunkie\Functions\show\get_value_to_show;
 
 class Tuple
@@ -43,7 +43,7 @@ class Tuple
 
     public function toString(): string
     {
-        return "(" . implode(", ", map("\\Md\\Phunkie\\Functions\\show\\get_value_to_show", ImmList(...($this->values)))->toArray()) . ")";
+        return "(" . implode(", ", fmap("\\Md\\Phunkie\\Functions\\show\\get_value_to_show", ImmList(...($this->values)))->toArray()) . ")";
     }
 
     public function getArity()

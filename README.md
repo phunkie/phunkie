@@ -170,9 +170,9 @@ phunkie > ImmList(1,2,3)->zipWith(function($x) { return $x + 1;})
 List<(Int, Int)> = List(Pair(1, 2), Pair(2, 3), Pair(3, 4))
 
 phunkie> :import functor/*
-Imported function \Md\Phunkie\Functions\functor\map()
+Imported function \Md\Phunkie\Functions\functor\fmap()
 
-phunkie > map (function($x) { return $x + 1;}, Some(42))
+phunkie > fmap (function($x) { return $x + 1;}, Some(42))
 Option<Int> = Some(43)
 ```
 
