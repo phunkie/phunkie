@@ -5,7 +5,7 @@ namespace Md\Phunkie\Types;
 use Md\Phunkie\Cats\Applicative;
 use Md\Phunkie\Cats\Monad;
 use Md\Phunkie\Cats\Show;
-use function Md\Phunkie\Functions\show\get_value_to_show;
+use function Md\Phunkie\Functions\show\showValue;
 use function Md\Phunkie\Functions\type\promote;
 use Md\Phunkie\Ops\ImmList\ImmListApplicativeOps;
 use Md\Phunkie\Ops\ImmList\ImmListEqOps;
@@ -36,7 +36,7 @@ abstract class ImmList implements Kind, Applicative, Monad
 
     public function toString(): string
     {
-        return "List(". implode(", ", $this->map(function($e) { return get_value_to_show($e); })->values) . ")";
+        return "List(". implode(", ", $this->map(function($e) { return showValue($e); })->values) . ")";
     }
 
     public function toArray(): array { return $this->values; }

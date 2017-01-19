@@ -2,7 +2,7 @@
 
 namespace Md\Phunkie\Validation;
 
-use function Md\Phunkie\Functions\show\get_value_to_show;
+use function Md\Phunkie\Functions\show\showValue;
 
 class Failure extends Validation
 {
@@ -15,7 +15,7 @@ class Failure extends Validation
 
     public function toString(): string
     {
-        return "Failure(" . get_value_to_show($this->invalid) . ")";
+        return "Failure(" . showValue($this->invalid) . ")";
     }
 
     public function getOrElse($default)

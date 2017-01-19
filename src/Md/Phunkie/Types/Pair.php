@@ -3,7 +3,7 @@
 namespace Md\Phunkie\Types;
 
 use Md\Phunkie\Cats\Show;
-use function \Md\Phunkie\Functions\show\get_value_to_show;
+use function \Md\Phunkie\Functions\show\showValue;
 use Md\Phunkie\Utils\Copiable;
 
 final class Pair implements Copiable
@@ -54,7 +54,7 @@ final class Pair implements Copiable
 
     function toString(): string
     {
-        return "Pair(" . get_value_to_show($this->ta) . ", " . get_value_to_show($this->tb) . ")";
+        return "Pair(" . showValue($this->ta) . ", " . showValue($this->tb) . ")";
     }
 
     private function guardNumArgs(int $numArgs)

@@ -3,8 +3,8 @@
 namespace spec\Md\Phunkie\Types;
 
 use Md\Phunkie\Cats\Show;
-use function Md\Phunkie\Functions\show\get_value_to_show;
-use function Md\Phunkie\Functions\show\object_class_uses_trait;
+use function Md\Phunkie\Functions\show\showValue;
+use function Md\Phunkie\Functions\show\usesTrait;
 use Md\Phunkie\Types\None;
 use Md\Phunkie\Types\Some;
 use PhpSpec\ObjectBehavior;
@@ -30,8 +30,8 @@ class OptionSpec extends ObjectBehavior
     function it_is_showable()
     {
         $this->shouldBeShowable();
-        expect(get_value_to_show(Option(2)))->toReturn("Some(2)");
-        expect(get_value_to_show(None()))->toReturn("None");
+        expect(showValue(Option(2)))->toReturn("Some(2)");
+        expect(showValue(None()))->toReturn("None");
     }
 
     function it_is_a_functor()
@@ -81,10 +81,10 @@ class OptionSpec extends ObjectBehavior
     {
         return [
             "beUsing" => function($sus, $trait){
-                return object_class_uses_trait($sus, $trait);
+                return usesTrait($sus, $trait);
             },
             "beShowable" => function($sus){
-                return object_class_uses_trait($sus, Show::class);
+                return usesTrait($sus, Show::class);
             }
         ];
     }

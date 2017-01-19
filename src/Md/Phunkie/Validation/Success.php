@@ -2,7 +2,7 @@
 
 namespace Md\Phunkie\Validation;
 
-use function Md\Phunkie\Functions\show\get_value_to_show;
+use function Md\Phunkie\Functions\show\showValue;
 
 class Success extends Validation
 {
@@ -15,7 +15,7 @@ class Success extends Validation
 
     public function toString(): string
     {
-        return "Success(" . get_value_to_show($this->valid) . ")";
+        return "Success(" . showValue($this->valid) . ")";
     }
 
     public function getOrElse($default)

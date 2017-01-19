@@ -3,7 +3,7 @@
 namespace Md\Phunkie\Types;
 
 use Md\Phunkie\Cats\Show;
-use function Md\Phunkie\Functions\show\get_value_to_show;
+use function Md\Phunkie\Functions\show\showValue;
 
 class ImmSet
 {
@@ -55,7 +55,7 @@ class ImmSet
 
     public function toString(): string
     {
-        return "Set(" . implode(", ", array_map(function($e) { return get_value_to_show($e); }, $this->elements)) . ")";
+        return "Set(" . implode(", ", array_map(function($e) { return showValue($e); }, $this->elements)) . ")";
     }
 
     public function union(ImmSet $set)

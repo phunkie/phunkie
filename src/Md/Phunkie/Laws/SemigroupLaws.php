@@ -3,13 +3,13 @@
 namespace Md\Phunkie\Laws;
 
 use function Md\Phunkie\Functions\semigroup\combine;
-use function Md\Phunkie\Functions\show\object_class_uses_trait;
+use function Md\Phunkie\Functions\show\usesTrait;
 
 trait SemigroupLaws
 {
     public function combineAssociativity($x, $y, $z)
     {
-        if (object_class_uses_trait($x, Eq::class)) {
+        if (usesTrait($x, Eq::class)) {
             return combine(combine($x, $y), $z)->eqv(combine($x, combine($y, $z)), 42);
         } else {
             if (is_callable($x)) {

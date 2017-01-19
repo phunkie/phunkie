@@ -6,7 +6,17 @@ use Md\Phunkie\Types\Unit;
 use TypeError;
 
 function combine(...$parts) {
-    $combine = function($a, $b) { switch (true) {
+    $getParentClasses = function($object) {
+        $parents = [];
+        while (false !== $object) {
+            $object = get_parent_class($object);
+            if (false === $object) break;
+            $parents[] = $object;
+        }
+        return $parents;
+    };
+
+    $combine = function($a, $b) use ($getParentClasses) { switch (true) {
         case $a instanceof Unit: return $b;
         case $b instanceof Unit: return $a;
         case gettype($a) != gettype($b) && is_object($a): throw new TypeError("cannot combine values of different types. using " . get_class($a));
@@ -19,7 +29,7 @@ function combine(...$parts) {
             case "object":
                 if (method_exists($a, 'combine')) return $a->combine($b);
                 if (is_callable($a)) { return function () use ($a, $b) { return $a($b(...func_get_args())); }; }
-                foreach (array_intersect(get_parent_classes($a), get_parent_classes($b)) as $parent)
+                foreach (array_intersect($getParentClasses($a), $getParentClasses($b)) as $parent)
                     if (method_exists($parent, 'combine')) return $a->combine($b);
                 break; } }
         throw new TypeError("combining members of different semigroups");
@@ -47,15 +57,4 @@ function zero($a) { switch (gettype($a)) {
         if (is_callable($a)) return function($x) { return $x; };
         break; }
     throw new TypeError("zero is not defined for type " . gettype($a));
-}
-
-function get_parent_classes($object)
-{
-    $parents = [];
-    $parent = $object;
-    while (false !== $parent) {
-        $parent = get_parent_class($parent);
-        $parents[] = $parent;
-    }
-    return $parents;
 }

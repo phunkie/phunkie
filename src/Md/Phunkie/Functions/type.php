@@ -15,3 +15,19 @@ function promote($value)
         default: return $value;
     }
 }
+
+function normaliseType($type)
+{
+    $scalars = [
+        "int" => "Int",
+        "string" => "String",
+        "bool" => "Boolean",
+        "callable" => "Callable",
+        "null" => "Null",
+        "double" => "Double",
+        "float" => "Float",
+        "resource" => "Resource"
+    ];
+
+    return is_string($type) && isset($scalars[$type]) ? $scalars[$type] : $type;
+}

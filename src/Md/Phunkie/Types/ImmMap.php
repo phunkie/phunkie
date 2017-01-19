@@ -4,7 +4,7 @@ namespace Md\Phunkie\Types;
 
 use ArrayAccess, SplObjectStorage;
 use Md\Phunkie\Cats\Show;
-use function Md\Phunkie\Functions\show\get_value_to_show;
+use function Md\Phunkie\Functions\show\showValue;
 use function Md\Phunkie\Functions\type\promote;
 use Md\Phunkie\Ops\ImmMap\ImmMapEqOps;
 use Md\Phunkie\Utils\Copiable;
@@ -104,7 +104,7 @@ final class ImmMap implements ArrayAccess, Copiable
     {
         $mappings = [];
         foreach ($this->values as $k) {
-            $mappings[] = get_value_to_show($k instanceof ImmString || $k instanceof ImmInteger ? $k->get() : $k) . " -> " . get_value_to_show($this->values[$k]);
+            $mappings[] = showValue($k instanceof ImmString || $k instanceof ImmInteger ? $k->get() : $k) . " -> " . showValue($this->values[$k]);
         }
         return "Map(" . implode(", ", $mappings) . ")";
     }

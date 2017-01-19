@@ -5,7 +5,7 @@ namespace Md\Phunkie\Types;
 use Md\Phunkie\Cats\Applicative;
 use Md\Phunkie\Cats\Monad;
 use Md\Phunkie\Cats\Show;
-use function Md\Phunkie\Functions\show\get_value_to_show;
+use function Md\Phunkie\Functions\show\showValue;
 use Md\Phunkie\Ops\Option\OptionApplicativeOps;
 use Md\Phunkie\Ops\Option\OptionEqOps;
 use Md\Phunkie\Ops\Option\OptionFoldableOps;
@@ -26,6 +26,6 @@ abstract class Option implements Kind, Applicative, Monad
     abstract public function isDefined();
     abstract public function isEmpty();
     public function toString(): string {
-        return $this->isEmpty() ? "None" : "Some(". get_value_to_show($this->get()) . ")";
+        return $this->isEmpty() ? "None" : "Some(". showValue($this->get()) . ")";
     }
 }

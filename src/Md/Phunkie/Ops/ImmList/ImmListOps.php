@@ -5,15 +5,15 @@ namespace Md\Phunkie\Ops\ImmList;
 use BadMethodCallException;
 use Error;
 use function Md\Phunkie\Functions\assertion\assertSameTypeAsCollectionType;
-use function Md\Phunkie\Functions\show\get_collection_type;
+use function Md\Phunkie\Functions\show\showArrayType;
 use Md\Phunkie\PatternMatching\Match;
 use Md\Phunkie\Types\ImmList;
 use Md\Phunkie\Types\Option;
 use Md\Phunkie\Types\Pair;
 use Exception;
 
-use function Md\Phunkie\Functions\show\get_type_to_show;
-use function Md\Phunkie\Functions\show\get_value_to_show;
+use function Md\Phunkie\Functions\show\showType;
+use function Md\Phunkie\Functions\show\showValue;
 use function Md\Phunkie\PatternMatching\Referenced\ListNoTail;
 use function Md\Phunkie\PatternMatching\Referenced\ListWithTail;
 use function \Md\Phunkie\PatternMatching\Referenced\Failure as Invalid;
@@ -136,7 +136,7 @@ trait ImmListOps
 
     private function mkStringOneArgument($glue): string
     {
-        return implode($glue, array_map(function($e) { return is_string($e) ? $e : get_value_to_show($e); }, $this->toArray()));
+        return implode($glue, array_map(function($e) { return is_string($e) ? $e : showValue($e); }, $this->toArray()));
     }
 
     private function mkStringThreeArguments($start, $glue, $end): string
@@ -193,8 +193,8 @@ trait ImmListOps
     private function callableMustReturnSameType($result): string
     {
         return "callable must return the same type as list type variable." . PHP_EOL .
-            "Callable returns a " . (get_type_to_show($result)) .
-            ", and this is a list of " . get_collection_type($this->toArray());
+            "Callable returns a " . (showType($result)) .
+            ", and this is a list of " . showArrayType($this->toArray());
     }
 
     private function isSameTypeAsList($result): Match
