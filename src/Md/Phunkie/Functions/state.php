@@ -4,36 +4,25 @@ namespace Md\Phunkie\Functions\state {
 
     use Md\Phunkie\Cats\State;
 
-    /**
-     * @return State<S,S>
-     */
+    const get = "\\Md\\Phunkie\\Functions\\state\\get";
     function get()
     {
         return new State(function($s) { return Pair($s, $s); });
     }
 
-    /**
-     * @param callable<S,A> $f
-     * @return State<S,A>
-     */
+    const gets = "\\Md\\Phunkie\\Functions\\state\\gets";
     function gets(callable $f): State
     {
         return new State(function($s) use ($f) { return Pair($s, $f($s)); });
     }
 
-    /**
-     * @param S $s
-     * @return State<S,Unit>
-     */
+    const put = "\\Md\\Phunkie\\Functions\\state\\put";
     function put($s): State
     {
         return new State(function($ignore) use ($s) { return Pair($s, Unit()); });
     }
 
-    /**
-     * @param callable<S,S> $f
-     * @return State<S,Unit>
-     */
+    const modify = "\\Md\\Phunkie\\Functions\\state\\modify";
     function modify(callable $f)
     {
         return new State(function($s) use ($f) { return Pair($f($s), Unit()); });

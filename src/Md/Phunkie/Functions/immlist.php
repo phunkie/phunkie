@@ -35,36 +35,43 @@ namespace Md\Phunkie\Functions\immlist {
     use function Md\Phunkie\Functions\currying\curry;
     use Md\Phunkie\Types\ImmList;
 
+    const head = "\\Md\\Phunkie\\Functions\\immlist\\head";
     function head(ImmList $list)
     {
         return $list->head();
     }
 
+    const init = "\\Md\\Phunkie\\Functions\\immlist\\init";
     function init(ImmList $list): ImmList
     {
         return $list->init();
     }
 
+    const tail = "\\Md\\Phunkie\\Functions\\immlist\\tail";
     function tail(ImmList $list): ImmList
     {
         return $list->tail();
     }
 
+    const last = "\\Md\\Phunkie\\Functions\\immlist\\last";
     function last(ImmList $list)
     {
         return $list->last();
     }
 
+    const reverse = "\\Md\\Phunkie\\Functions\\immlist\\reverse";
     function reverse(ImmList $list): ImmList
     {
         return $list->reverse();
     }
 
+    const length = "\\Md\\Phunkie\\Functions\\immlist\\length";
     function length(ImmList $list): int
     {
         return $list->length;
     }
 
+    const concat = "\\Md\\Phunkie\\Functions\\immlist\\concat";
     function concat(...$items): ImmList
     {
         $result = [];
@@ -74,6 +81,7 @@ namespace Md\Phunkie\Functions\immlist {
         return ImmList(...$result);
     }
 
+    const take = "\\Md\\Phunkie\\Functions\\immlist\\take";
     function take(int $n)
     {
         return curry([$n],func_get_args(),function(ImmList $list) use ($n) {
@@ -81,6 +89,7 @@ namespace Md\Phunkie\Functions\immlist {
         });
     }
 
+    const drop = "\\Md\\Phunkie\\Functions\\immlist\\drop";
     function drop(int $n)
     {
         return curry([$n],func_get_args(),function(ImmList $list) use ($n) {
@@ -88,6 +97,7 @@ namespace Md\Phunkie\Functions\immlist {
         });
     }
 
+    const nth = "\\Md\\Phunkie\\Functions\\immlist\\nth";
     function nth(int $nth)
     {
         return curry([$nth],func_get_args(),function(ImmList $list) use ($nth) {
@@ -95,6 +105,7 @@ namespace Md\Phunkie\Functions\immlist {
         });
     }
 
+    const filter = "\\Md\\Phunkie\\Functions\\immlist\\filter";
     function filter($f)
     {
         return curry([$f],func_get_args(),function(ImmList $list) use ($f) {
@@ -102,6 +113,7 @@ namespace Md\Phunkie\Functions\immlist {
         });
     }
 
+    const reject = "\\Md\\Phunkie\\Functions\\immlist\\reject";
     function reject($f)
     {
         return curry([$f],func_get_args(),function(ImmList $list) use ($f) {
@@ -109,6 +121,7 @@ namespace Md\Phunkie\Functions\immlist {
         });
     }
 
+    const reduce = "\\Md\\Phunkie\\Functions\\immlist\\reduce";
     function reduce($f)
     {
         return curry([$f],func_get_args(),function(ImmList $list) use ($f) {

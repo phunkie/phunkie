@@ -2,6 +2,8 @@
 
 namespace Md\Phunkie\Functions\currying;
 
+const curry = "\\Md\\Phunkie\\Functions\\currying\\curry";
+
 function curry($declaredArgs, $passedArgs, $f) {
     $countOfPassedArgs = count($passedArgs);
     $countOfDeclaredArgs = count($declaredArgs);

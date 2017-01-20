@@ -5,6 +5,7 @@ namespace Md\Phunkie\Functions\semigroup;
 use Md\Phunkie\Types\Unit;
 use TypeError;
 
+const combine = "\\Md\\Phunkie\\Functions\\semigroup\\combine";
 function combine(...$parts) {
     $getParentClasses = function($object) {
         $parents = [];
@@ -46,6 +47,7 @@ function combine(...$parts) {
     }
 }
 
+const zero = "\\Md\\Phunkie\\Functions\\semigroup\\zero";
 function zero($a) { switch (gettype($a)) {
     case "int": case "integer": return 0;
     case "double": case "float": return 0.0;

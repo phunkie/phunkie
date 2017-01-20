@@ -14,11 +14,13 @@ namespace Md\Phunkie\Functions\show {
     use Md\Phunkie\Validation\Failure;
     use Md\Phunkie\Validation\Success;
 
+    const show = "\\Md\\Phunkie\\Functions\\show\\show";
     function show(...$values)
     {
         array_map(function($x) { echo showValue($x); }, $values);
     }
 
+    const showValue = "\\Md\\Phunkie\\Functions\\show\\showValue";
     function showValue($value): string { switch (true) {
         case is_showable($value):
             return $value->show();
@@ -51,6 +53,7 @@ namespace Md\Phunkie\Functions\show {
         default: return $value;}
     }
 
+    const showType = "\\Md\\Phunkie\\Functions\\show\\showType";
     function showType($value) { switch (true) {
         case is_integer($value): return "Int";
         case is_float($value):
@@ -81,6 +84,7 @@ namespace Md\Phunkie\Functions\show {
         case is_object($value): return get_class($value); }
     }
 
+    const showArrayType = "\\Md\\Phunkie\\Functions\\show\\showArrayType";
     function showArrayType($value): string {
 
         $combineTypes = function (string $a, string $b): string { switch (true) {
@@ -99,6 +103,7 @@ namespace Md\Phunkie\Functions\show {
             default: return $combineTypes(showType(array_values($value)[0]), showArrayType(array_slice($value, 1))); }
     }
 
+    const usesTrait = "\\Md\\Phunkie\\Functions\\show\\usesTrait";
     function usesTrait($object, $trait): bool
     {
         if (!is_object($object))  return false;
@@ -117,11 +122,13 @@ namespace Md\Phunkie\Functions\show {
         return (bool)$countOfShowTraitUsage;
     }
 
+    const is_showable = "\\Md\\Phunkie\\Functions\\show\\is_showable";
     function is_showable($value): bool
     {
         return !is_object($value) ? false : usesTrait($value, Show::class);
     }
 
+    const is_assoc = "\\Md\\Phunkie\\Functions\\show\\is_assoc";
     function is_assoc(array $value): bool
     {
         return array() !== array_diff_key($value, array_keys(array_keys($value)));

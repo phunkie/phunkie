@@ -2,11 +2,17 @@
 
 namespace Md\Phunkie\Functions\function1 {
 
+    use function Md\Phunkie\Functions\semigroup\combine;
+    const identity = "\\Md\\Phunkie\\Functions\\function1\\identity";
     function identity($x) {
         return $x;
     }
 
-    const identity = "\\Md\\Phunkie\\Functions\\function1\\identity";
+    const compose = "\\Md\\Phunkie\\Functions\\function1\\compose";
+    function compose(callable ...$fs) {
+        return combine(...array_map(function($f) {return Function1($f);}, $fs));
+    }
+
 }
 
 namespace {

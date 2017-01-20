@@ -20,6 +20,7 @@ namespace Md\Phunkie\Functions\lens {
     use Md\Phunkie\Types\Pair;
     use Md\Phunkie\Utils\GenLens;
 
+    const trivial = "\\Md\\Phunkie\\Functions\\lens\\lens";
     function trivial()
     {
         return Lens(
@@ -32,6 +33,7 @@ namespace Md\Phunkie\Functions\lens {
         );
     }
 
+    const self = "\\Md\\Phunkie\\Functions\\lens\\self";
     function self()
     {
         return Lens(
@@ -42,6 +44,7 @@ namespace Md\Phunkie\Functions\lens {
         );
     }
 
+    const fst = "\\Md\\Phunkie\\Functions\\lens\\fst";
     function fst()
     {
         return Lens(
@@ -54,6 +57,7 @@ namespace Md\Phunkie\Functions\lens {
         );
     }
 
+    const snd = "\\Md\\Phunkie\\Functions\\lens\\snd";
     function snd()
     {
         return Lens(
@@ -66,6 +70,7 @@ namespace Md\Phunkie\Functions\lens {
         );
     }
 
+    const contains = "\\Md\\Phunkie\\Functions\\lens\\contains";
     function contains($element)
     {
         return Lens(
@@ -78,6 +83,7 @@ namespace Md\Phunkie\Functions\lens {
         );
     }
 
+    const member = "\\Md\\Phunkie\\Functions\\lens\\member";
     function member($k)
     {
         return Lens(
@@ -89,6 +95,7 @@ namespace Md\Phunkie\Functions\lens {
         );
     }
 
+    const makeLenses = "\\Md\\Phunkie\\Functions\\lens\\makeLenses";
     function makeLenses(...$fields)
     {
         return new GenLens(...$fields);

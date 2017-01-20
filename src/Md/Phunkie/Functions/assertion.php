@@ -6,6 +6,8 @@ use function Md\Phunkie\Functions\show\showArrayType;
 use function Md\Phunkie\Functions\show\showType;
 use Md\Phunkie\Validation\Validation;
 
+const assertSameTypeAsCollectionType = "\\Md\\Phunkie\\Functions\\assertion\\assertSameTypeAsCollectionType";
+
 function assertSameTypeAsCollectionType($a, $collection, $message = None): Validation
 {
     if ($message === None) {
