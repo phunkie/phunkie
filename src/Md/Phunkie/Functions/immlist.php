@@ -32,7 +32,7 @@ namespace {
 
 namespace Md\Phunkie\Functions\immlist {
 
-    use function Md\Phunkie\Functions\currying\curry;
+    use function Md\Phunkie\Functions\currying\applyPartially;
     use Md\Phunkie\Types\ImmList;
 
     const head = "\\Md\\Phunkie\\Functions\\immlist\\head";
@@ -84,7 +84,7 @@ namespace Md\Phunkie\Functions\immlist {
     const take = "\\Md\\Phunkie\\Functions\\immlist\\take";
     function take(int $n)
     {
-        return curry([$n],func_get_args(),function(ImmList $list) use ($n) {
+        return applyPartially([$n],func_get_args(),function(ImmList $list) use ($n) {
             return ImmList(...array_slice($list->toArray(), 0, $n < 0 ? 0 : $n));
         });
     }
@@ -92,7 +92,7 @@ namespace Md\Phunkie\Functions\immlist {
     const drop = "\\Md\\Phunkie\\Functions\\immlist\\drop";
     function drop(int $n)
     {
-        return curry([$n],func_get_args(),function(ImmList $list) use ($n) {
+        return applyPartially([$n],func_get_args(),function(ImmList $list) use ($n) {
             return ImmList(...array_slice($list->toArray(), $n < 0 ? 0 : $n));
         });
     }
@@ -100,7 +100,7 @@ namespace Md\Phunkie\Functions\immlist {
     const nth = "\\Md\\Phunkie\\Functions\\immlist\\nth";
     function nth(int $nth)
     {
-        return curry([$nth],func_get_args(),function(ImmList $list) use ($nth) {
+        return applyPartially([$nth],func_get_args(),function(ImmList $list) use ($nth) {
             return array_key_exists($nth, $list->toArray()) ? Some($list->toArray()[$nth]) : None();
         });
     }
@@ -108,7 +108,7 @@ namespace Md\Phunkie\Functions\immlist {
     const filter = "\\Md\\Phunkie\\Functions\\immlist\\filter";
     function filter($f)
     {
-        return curry([$f],func_get_args(),function(ImmList $list) use ($f) {
+        return applyPartially([$f],func_get_args(),function(ImmList $list) use ($f) {
             return $list->filter($f);
         });
     }
@@ -116,7 +116,7 @@ namespace Md\Phunkie\Functions\immlist {
     const reject = "\\Md\\Phunkie\\Functions\\immlist\\reject";
     function reject($f)
     {
-        return curry([$f],func_get_args(),function(ImmList $list) use ($f) {
+        return applyPartially([$f],func_get_args(),function(ImmList $list) use ($f) {
             return $list->reject($f);
         });
     }
@@ -124,7 +124,7 @@ namespace Md\Phunkie\Functions\immlist {
     const reduce = "\\Md\\Phunkie\\Functions\\immlist\\reduce";
     function reduce($f)
     {
-        return curry([$f],func_get_args(),function(ImmList $list) use ($f) {
+        return applyPartially([$f],func_get_args(),function(ImmList $list) use ($f) {
             return $list->reduce($f);
         });
     }

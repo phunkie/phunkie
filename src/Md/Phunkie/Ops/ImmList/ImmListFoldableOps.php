@@ -5,13 +5,13 @@ namespace Md\Phunkie\Ops\ImmList;
 use function Md\Phunkie\Functions\semigroup\combine;
 use function Md\Phunkie\Functions\semigroup\zero;
 use Md\Phunkie\Types\ImmList;
-use function Md\Phunkie\Functions\currying\curry;
+use function Md\Phunkie\Functions\currying\applyPartially;
 
 trait ImmListFoldableOps
 {
     public function foldLeft($initial)
     {
-        return curry([$initial], func_get_args(), function(callable $f) use ($initial) {
+        return applyPartially([$initial], func_get_args(), function(callable $f) use ($initial) {
             $acc = function(ImmList $xs, $initial) use (&$acc, $f) {
                 return $xs->isEmpty() ? $initial : $acc($xs->tail(), $f($initial, $xs->head()));
             };
@@ -21,7 +21,7 @@ trait ImmListFoldableOps
 
     public function foldRight($initial)
     {
-        return curry([$initial], func_get_args(), function(callable $f) use ($initial) {
+        return applyPartially([$initial], func_get_args(), function(callable $f) use ($initial) {
             $acc = function (ImmList $xs, $initial) use (&$acc, $f) {
                 return $xs->isEmpty() ? $initial : $acc($xs->init(), $f($xs->last(), $initial));
             };
@@ -36,7 +36,7 @@ trait ImmListFoldableOps
 
     public function fold($initial)
     {
-        return curry([$initial], func_get_args(), function(callable $f) use ($initial) {
+        return applyPartially([$initial], func_get_args(), function(callable $f) use ($initial) {
             return (!$this->isEmpty()) ? $this->foldLeft($initial, $f) : $initial;
         });
     }

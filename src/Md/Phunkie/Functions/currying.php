@@ -3,8 +3,24 @@
 namespace Md\Phunkie\Functions\currying;
 
 const curry = "\\Md\\Phunkie\\Functions\\currying\\curry";
+function curry($f)
+{
+    return function($a) use ($f) {
+        return function ($b) use ($a, $f) {
+            return $f($a, $b);
+        };
+    };
+}
 
-function curry($declaredArgs, $passedArgs, $f) {
+const uncurry = "\\Md\\Phunkie\\Functions\\currying\\uncurry";
+function uncurry($f)
+{
+    return function($a, $b) use ($f) {
+        return ($f($a))($b);
+    };
+}
+
+function applyPartially($declaredArgs, $passedArgs, $f) {
     $countOfPassedArgs = count($passedArgs);
     $countOfDeclaredArgs = count($declaredArgs);
 
