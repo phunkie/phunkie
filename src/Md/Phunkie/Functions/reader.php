@@ -13,6 +13,7 @@ namespace Md\Phunkie\Functions\reader {
 
     use const Md\Phunkie\Functions\function1\identity;
 
+    const ask = "Md\\Phunkie\\Functions\\reader\\ask";
     function ask()
     {
         return Reader(identity);

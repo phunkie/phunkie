@@ -5,6 +5,7 @@ namespace Md\Phunkie\Functions\type;
 use Md\Phunkie\Types\ImmInteger;
 use Md\Phunkie\Types\ImmString;
 
+const promote = "Md\\Phunkie\\Functions\\type\\promote";
 function promote($value)
 {
     switch (gettype($value)) {
@@ -16,6 +17,7 @@ function promote($value)
     }
 }
 
+const normaliseType = "Md\\Phunkie\\Functions\\type\\normaliseType";
 function normaliseType($type)
 {
     $scalars = [
