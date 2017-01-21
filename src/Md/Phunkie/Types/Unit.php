@@ -14,9 +14,9 @@ final class Unit extends Tuple
         return '()';
     }
 
-    public function __get($arg)
+    public function __get($member)
     {
-        throw new Error("$arg is not a member of Unit");
+        throw new Error("$member is not a member of Unit");
     }
 
     public function __set($arg, $ignore)
@@ -24,7 +24,7 @@ final class Unit extends Tuple
         throw new Error("$arg is not a member of Unit");
     }
 
-    public function copy()
+    public function copy(array $parameters)
     {
         throw new Error("copy is not a member of Unit");
     }
