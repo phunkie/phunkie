@@ -197,6 +197,24 @@ $curried : Callable = <function>
 
 phunkie > $curried(function($x, $y) { return $x + $y; })
 Int = 6
+
+phunkie > $implode = curry('implode')
+$implode: Callable = <function>
+
+phunkie > $implodeColon = $implode(":")
+$implodeColon: Callable = <function>
+
+phunkie > $implodeColon(["a", "b", "c"])
+$var0: String = "a:b:c"
+
+phunkie> :import immlist/take
+Imported function \Md\Phunkie\Functions\immlist\take
+
+phunkie > $take = uncurry(take)
+$take: Callable = <function>
+
+phunkie > $take(2, ImmList(1,2,3))
+List<Int> = List(1, 2)
 ```
 
 Functor Composite
