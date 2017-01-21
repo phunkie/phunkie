@@ -117,4 +117,12 @@ class SemigroupSpec extends ObjectBehavior
         $nel2 = Nel(4,5,6);
         expect(combine(Failure($nel1), Failure($nel2)))->toBeLike(Failure(Nel(1,2,3,4,5,6)));
     }
+
+    function it_combines_compositely()
+    {
+        expect(combine(1, 1))->toBe(2);
+        expect(combine(1, 1, 1))->toBe(3);
+        expect(combine(1, 1, 1, 1))->toBe(4);
+        expect(combine(1, 1, 1, 1, 1))->toBe(5);
+    }
 }

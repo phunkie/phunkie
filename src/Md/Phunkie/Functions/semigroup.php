@@ -43,7 +43,7 @@ function combine(...$parts) {
     } elseif (func_num_args() == 2) {
         return $combine($parts[0], $parts[1]);
     } else {
-        return $combine($parts[0], $combine($parts[1], ...array_slice($parts, 2)));
+        return $combine($parts[0], combine($parts[1], ...array_slice($parts, 2)));
     }
 }
 
