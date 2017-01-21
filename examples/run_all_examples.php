@@ -11,7 +11,6 @@ require_once __DIR__ . "/functor_composite.php";
 require_once __DIR__ . "/applicative.php";
 require_once __DIR__ . "/monad.php";
 require_once __DIR__ . "/pattern_matching.php";
-require_once __DIR__ . "/comprehension.php";
 
 function printLn($value) { show($value); echo PHP_EOL; }
 
@@ -23,4 +22,3 @@ functor_composite_examples();
 applicative_examples();
 monad_examples();
 pattern_matching_example();
-//comprehension_example();
