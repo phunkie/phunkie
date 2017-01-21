@@ -10,7 +10,7 @@ namespace Md\Phunkie\Functions\function1 {
 
     const compose = "\\Md\\Phunkie\\Functions\\function1\\compose";
     function compose(callable ...$fs) {
-        return combine(...array_map(function($f) {return Function1($f);}, $fs));
+        return combine(...array_map(function($f) {return Function1($f);}, array_reverse($fs)));
     }
 
 }
