@@ -6,7 +6,6 @@ use Md\Phunkie\Cats\Show;
 use function Md\Phunkie\Functions\show\showValue;
 use function Md\Phunkie\Functions\show\usesTrait;
 use Md\Phunkie\Ops\ImmList\ImmListApplicativeOps;
-use Md\Phunkie\PatternMatching\Underscore;
 use Md\Phunkie\Types\Cons;
 use Md\Phunkie\Types\Nil;
 use PhpSpec\ObjectBehavior;
@@ -164,7 +163,7 @@ class ImmListSpec extends ObjectBehavior
 
     function it_implements_shortcut_for_mapping_over_class_members()
     {
-        $_ = new Underscore();
+        $_ = underscore();
         $this->isAListContaining(new User("John"), new User("Alice"));
         $this->map($_->name)->map("strtoupper")->shouldBeLike(ImmList("JOHN", "ALICE"));
     }

@@ -3,11 +3,14 @@
 namespace {
 
     use Md\Phunkie\PatternMatching\Match;
+    use Md\Phunkie\PatternMatching\Underscore;
 
     function match(...$values)
     {
         return new Match(...$values);
     }
+
+    function underscore() { return new Underscore(); }
 }
 
 namespace Md\Phunkie\PatternMatching\Referenced {
