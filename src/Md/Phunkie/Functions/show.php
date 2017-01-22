@@ -25,7 +25,7 @@ namespace Md\Phunkie\Functions\show {
         case is_showable($value):
             return $value->show();
         case is_object($value) && method_exists($value, '__toString'):
-            return (string)$value;
+            return $value instanceof \Throwable ? get_class($value) . "(" . $value->getMessage() . ")" : (string)$value;
         case is_double($value):
         case is_float($value):
             return ($value == floor($value)) ? sprintf("%.01f", $value) : $value;
