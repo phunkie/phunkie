@@ -4,7 +4,7 @@ namespace Md\PropertyTesting\Generator;
 
 use Eris\Generator;
 
-use Md\Phunkie\Types\Kind;
+use Phunkie\Types\Kind;
 
 use Eris\Generator\IntegerGenerator as IntGen;
 use Eris\Generator\ElementsGenerator as ElementsGen;

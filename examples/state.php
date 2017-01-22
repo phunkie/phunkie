@@ -1,10 +1,10 @@
 <?php
 
-use Md\Phunkie\Algebra\Monoid;
-use function Md\Phunkie\Functions\show\show;
-use Md\Phunkie\Cats\Show as Showable;
-use function Md\Phunkie\Functions\state\modify;
-use Md\Phunkie\Types\ImmList;
+use Phunkie\Algebra\Monoid;
+use function Phunkie\Functions\show\show;
+use Phunkie\Cats\Show as Showable;
+use function Phunkie\Functions\state\modify;
+use Phunkie\Types\ImmList;
 
 class Balance {
     use Showable;

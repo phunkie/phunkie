@@ -1,6 +1,6 @@
 <?php
 
-use function Md\Phunkie\Functions\show\show;
+use function Phunkie\Functions\show\show;
 
 require_once dirname(__DIR__) . "/vendor/autoload.php";
 require_once __DIR__ . "/option.php";

@@ -21,7 +21,7 @@
         "psr-0": {
             "": ["src/"]
         },
-        "files": ["src/Md/Phunkie/Functions/common.php"]
+        "files": ["src/Phunkie/Functions/common.php"]
     },
     "config": {
         "bin-dir": "bin"

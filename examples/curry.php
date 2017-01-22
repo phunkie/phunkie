@@ -1,8 +1,8 @@
 <?php
 
-use function Md\Phunkie\Functions\currying\curry;
-use function Md\Phunkie\Functions\currying\uncurry;
-use const Md\Phunkie\Functions\immlist\take;
+use function Phunkie\Functions\currying\curry;
+use function Phunkie\Functions\currying\uncurry;
+use const Phunkie\Functions\immlist\take;
 
 function curry_examples() {
     $implode = curry('implode');

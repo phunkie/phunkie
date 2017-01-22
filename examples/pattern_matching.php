@@ -1,8 +1,8 @@
 <?php
 
-use Md\Phunkie\Types\ImmList;
-use function Md\Phunkie\PatternMatching\Referenced\ListWithTail;
-use function Md\Phunkie\PatternMatching\Referenced\ListNoTail;
+use Phunkie\Types\ImmList;
+use function Phunkie\PatternMatching\Referenced\ListWithTail;
+use function Phunkie\PatternMatching\Referenced\ListNoTail;
 
 function pattern_matching_example()
 {

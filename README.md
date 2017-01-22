@@ -40,13 +40,13 @@ phunkie > ImmList(Some(1), None(), Some(3))
 List<Int> = List(Some(1), None, Some(3))
 
 phunkie > :import immlist/*
-Imported function \Md\Phunkie\Functions\immlist\head()
-Imported function \Md\Phunkie\Functions\immlist\init()
-Imported function \Md\Phunkie\Functions\immlist\tail()
-Imported function \Md\Phunkie\Functions\immlist\last()
-Imported function \Md\Phunkie\Functions\immlist\reverse()
-Imported function \Md\Phunkie\Functions\immlist\length()
-Imported function \Md\Phunkie\Functions\immlist\concat()
+Imported function \Phunkie\Functions\immlist\head()
+Imported function \Phunkie\Functions\immlist\init()
+Imported function \Phunkie\Functions\immlist\tail()
+Imported function \Phunkie\Functions\immlist\last()
+Imported function \Phunkie\Functions\immlist\reverse()
+Imported function \Phunkie\Functions\immlist\length()
+Imported function \Phunkie\Functions\immlist\concat()
 
 phunkie > head (ImmList(1,2,3))
 Int = 1
@@ -170,7 +170,7 @@ phunkie > ImmList(1,2,3)->zipWith(function($x) { return $x + 1;})
 List<(Int, Int)> = List(Pair(1, 2), Pair(2, 3), Pair(3, 4))
 
 phunkie> :import functor/*
-Imported function \Md\Phunkie\Functions\functor\fmap()
+Imported function \Phunkie\Functions\functor\fmap()
 
 phunkie > fmap (function($x) { return $x + 1;}, Some(42))
 Option<Int> = Some(43)
@@ -208,7 +208,7 @@ phunkie > $implodeColon(["a", "b", "c"])
 $var0: String = "a:b:c"
 
 phunkie> :import immlist/take
-Imported function \Md\Phunkie\Functions\immlist\take
+Imported function \Phunkie\Functions\immlist\take
 
 phunkie > $take = uncurry(take)
 $take: Callable = <function>
@@ -221,16 +221,16 @@ Functor Composite
 -----------------
 ```bash
 phunkie > $fa = Functor(Option)
-$fa : Md\Phunkie\Cats\Functor\FunctorComposite = Functor(Option)
+$fa : Phunkie\Cats\Functor\FunctorComposite = Functor(Option)
 
 phunkie > $fa->map(Option(1), function($x) { return $x + 1; })
 Option<Int> = Some(2)
 
 phunkie > fa->map(Option(ImmList(1,2,3)), function($x) { return $x + 1; })
-Notice: Object of class Md\Phunkie\Types\ImmList could not be converted to int
+Notice: Object of class Phunkie\Types\ImmList could not be converted to int
 
 phunkie > $fa = Functor(Option)->compose(ImmList)
-$fa : Md\Phunkie\Cats\Functor\FunctorComposite = Functor(Option(List))
+$fa : Phunkie\Cats\Functor\FunctorComposite = Functor(Option(List))
 
 phunkie > $fa->map(Option(ImmList(1,2,3)), function($x) { return $x + 1; })
 Option<List<Int>> = Some(List(2, 3, 4))
@@ -312,8 +312,8 @@ Monoid
 ------
 ```bash
 phunkie > :import semigroup/*
-Imported function \Md\Phunkie\Functions\semigroup\combine()
-Imported function \Md\Phunkie\Functions\semigroup\zero()
+Imported function \Phunkie\Functions\semigroup\combine()
+Imported function \Phunkie\Functions\semigroup\zero()
 
 phunkie > combine(1,1)
 Int = 2
@@ -362,9 +362,9 @@ Pattern Matching
 
 ```php
 <?php
-use Md\Phunkie\Types\ImmList;
-use function Md\Phunkie\PatternMatching\Referenced\ListWithTail;
-use function Md\Phunkie\PatternMatching\Referenced\ListNoTail;
+use Phunkie\Types\ImmList;
+use function Phunkie\PatternMatching\Referenced\ListWithTail;
+use function Phunkie\PatternMatching\Referenced\ListNoTail;
 
 function sum(ImmList $list): int { $on = match($list); switch(true) {
     case $on(Nil): return 0;
@@ -406,12 +406,12 @@ Lenses
 ------
 ```bash
 phunkie > :import lens/*
-Imported function \Md\Phunkie\Functions\lens\trivial()
-Imported function \Md\Phunkie\Functions\lens\self()
-Imported function \Md\Phunkie\Functions\lens\fst()
-Imported function \Md\Phunkie\Functions\lens\snd()
-Imported function \Md\Phunkie\Functions\lens\contains()
-Imported function \Md\Phunkie\Functions\lens\member()
+Imported function \Phunkie\Functions\lens\trivial()
+Imported function \Phunkie\Functions\lens\self()
+Imported function \Phunkie\Functions\lens\fst()
+Imported function \Phunkie\Functions\lens\snd()
+Imported function \Phunkie\Functions\lens\contains()
+Imported function \Phunkie\Functions\lens\member()
 
 phunkie > trivial()->get(42) // returns Unit which does not print anything
 
