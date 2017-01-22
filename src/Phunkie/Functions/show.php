@@ -114,7 +114,7 @@ namespace Phunkie\Functions\show {
     }
 
     const showKind = "\\Phunkie\\Functions\\show\\showKind";
-    function showKind($type): string { switch (normaliseType($type)) {
+    function showKind($type): Option { switch (normaliseType($type)) {
         case "Int":
         case "String":
         case "Boolean":
@@ -123,7 +123,7 @@ namespace Phunkie\Functions\show {
         case "Double":
         case "Float":
         case "Resource":
-            return "proper: " . normaliseType($type) . " :: *";
+            return Some("proper: " . normaliseType($type) . " :: *");
         case "List":
         case "Map":
         case "Set":
@@ -131,10 +131,10 @@ namespace Phunkie\Functions\show {
         case "ImmList":
         case "ImmMap":
         case "ImmSet":
-            return "first-order: " . normaliseType($type) . " :: * -> *";
+            return Some("first-order: " . normaliseType($type) . " :: * -> *");
         case "Pair":
         case "Either":
-            return "first-order: " . normaliseType($type) . " :: * -> * -> *";
+            return Some("first-order: " . normaliseType($type) . " :: * -> * -> *");
         case "Functor":
         case "Applicative":
         case "Monad":
@@ -150,12 +150,13 @@ namespace Phunkie\Functions\show {
         case "Semigroup":
         case "Eq":
         case "Flatmap":
-            return "higher-order: " . normaliseType($type) . " :: (* -> *) -> Constraint";
+            return Some("higher-order: " . normaliseType($type) . " :: (* -> *) -> Constraint");
         case "StateT":
         case "OptionT":
-            return "higher-order: " . normaliseType($type) . " :: (* -> *) -> * -> *";
+            return Some("higher-order: " . normaliseType($type) . " :: (* -> *) -> * -> *");
         default:
-            return "proper: " . $type . " :: *";
+            if (class_exists($type))  return Some("proper: " . $type . " :: *");
+            else return None();
     }}
 
     const usesTrait = "\\Phunkie\\Functions\\show\\usesTrait";
