@@ -93,7 +93,7 @@ trait ImmListOps
         $e = null;
 
         $on = match($this); switch(true) {
-            case $on(Nil): throw $this->canReduceEmptyList();
+            case $on(Nil): throw $this->cantReduceEmptyList();
             case $on(ListNoTail($x, Nil)): return $x;
             default: $on(ListWithTail($x, $xs));
                 $result = $f($x, $xs->reduce($f));
@@ -203,7 +203,7 @@ trait ImmListOps
             $this->callableMustReturnSameType($result)));
     }
 
-    private function canReduceEmptyList(): Error
+    private function cantReduceEmptyList(): Error
     {
         return new Error("can't apply reduce on an empty list");
     }

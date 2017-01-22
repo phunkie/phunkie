@@ -2,15 +2,19 @@
 
 namespace Md\Phunkie\Validation;
 
+use Md\Phunkie\Cats\Functor;
 use Md\Phunkie\Cats\Show;
 use function Md\Phunkie\Functions\semigroup\combine;
+use Md\Phunkie\Ops\FunctorOps;
 use function Md\Phunkie\PatternMatching\Referenced\Success as rSuccess;
 use function Md\Phunkie\PatternMatching\Referenced\Failure as rFailure;
+use Md\Phunkie\Types\Kind;
 use TypeError;
 
-abstract class Validation
+abstract class Validation implements Functor, Kind
 {
     use Show;
+    use FunctorOps;
     public function isRight(): bool { switch (true) {
         case $this instanceof Failure: return false;
         case $this instanceof Success: return true;
@@ -30,11 +34,10 @@ abstract class Validation
         case $on(_): return $that;}
     }
 
-    public function fold($fe, $fa) { $on = match($this); switch(true) {
-        case $on(rSuccess($a)): return $fa($a);
-        case $on(rFailure($a)): return $fe($a); }
-    }
-
     abstract public function getOrElse($default);
-    abstract public function map($f);
+    abstract public function map(callable $f): Kind;
+    public function imap(callable $f, callable $g): Kind
+    {
+        return $this->map($f);
+    }
 }

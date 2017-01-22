@@ -147,9 +147,11 @@ function matchByReference($condition, $value)
 }
 
 function matchValidationByReference($condition, $value) {
-    if (($condition instanceof ReferencedSuccess && $value instanceof Success) ||
-        ($condition instanceof ReferencedFailure && $value instanceof Failure)) {
-        $condition->value = $value->map(identity);
+    if ($condition instanceof ReferencedSuccess && $value instanceof Success) {
+        $condition->value = $value->fold(_,identity);
+        return true;
+    } elseif ($condition instanceof ReferencedFailure && $value instanceof Failure) {
+        $condition->value = $value->fold(identity, _);
         return true;
     }
     return false;

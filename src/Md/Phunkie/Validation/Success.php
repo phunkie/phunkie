@@ -3,6 +3,7 @@
 namespace Md\Phunkie\Validation;
 
 use function Md\Phunkie\Functions\show\showValue;
+use Md\Phunkie\Types\Kind;
 
 class Success extends Validation
 {
@@ -23,8 +24,13 @@ class Success extends Validation
         return $this->valid;
     }
 
-    public function map($f)
+    public function map(callable $f): Kind
     {
-        return $f($this->valid);
+        return Success($f($this->valid));
+    }
+
+    public function fold($fe, $fa)
+    {
+        return $fa($this->valid);
     }
 }
