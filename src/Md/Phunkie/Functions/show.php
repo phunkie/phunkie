@@ -3,6 +3,7 @@
 namespace Md\Phunkie\Functions\show {
 
     use Md\Phunkie\Cats\Show;
+    use function Md\Phunkie\Functions\type\normaliseType;
     use Md\Phunkie\Types\Function1;
     use Md\Phunkie\Types\ImmList;
     use Md\Phunkie\Types\ImmMap;
@@ -102,6 +103,51 @@ namespace Md\Phunkie\Functions\show {
             case 2: return $combineTypes(showType(array_values($value)[0]), showType(array_values($value)[1]));
             default: return $combineTypes(showType(array_values($value)[0]), showArrayType(array_slice($value, 1))); }
     }
+
+    const showKind = "\\Md\\Phunkie\\Functions\\show\\showKind";
+    function showKind($type): string { switch (normaliseType($type)) {
+        case "Int":
+        case "String":
+        case "Boolean":
+        case "Callable":
+        case "Null":
+        case "Double":
+        case "Float":
+        case "Resource":
+            return "proper: " . normaliseType($type) . " :: *";
+        case "List":
+        case "Map":
+        case "Set":
+        case "Option":
+        case "ImmList":
+        case "ImmMap":
+        case "ImmSet":
+            return "first-order: " . normaliseType($type) . " :: * -> *";
+        case "Pair":
+        case "Either":
+            return "first-order: " . normaliseType($type) . " :: * -> * -> *";
+        case "Functor":
+        case "Applicative":
+        case "Monad":
+        case "Apply":
+        case "Foldable":
+        case "Kleisli":
+        case "State":
+        case "Show":
+        case "Validation":
+        case "Id":
+        case "Lens":
+        case "Monoid":
+        case "Semigroup":
+        case "Eq":
+        case "Flatmap":
+            return "higher-order: " . normaliseType($type) . " :: (* -> *) -> Constraint";
+        case "StateT":
+        case "OptionT":
+            return "higher-order: " . normaliseType($type) . " :: (* -> *) -> * -> *";
+        default:
+            return "proper: " . $type . " :: *";
+    }}
 
     const usesTrait = "\\Md\\Phunkie\\Functions\\show\\usesTrait";
     function usesTrait($object, $trait): bool
