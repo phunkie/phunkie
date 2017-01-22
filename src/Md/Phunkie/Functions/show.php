@@ -46,8 +46,8 @@ namespace Md\Phunkie\Functions\show {
             }
             return "[" . implode(", ", array_map(function ($e) { return showValue($e); }, $value)) . "]";
         case is_object($value) && (new \ReflectionClass($value))->isAnonymous():
-            return get_parent_class($value) === false ? "anonymous@" . substr(ltrim(spl_object_hash($value), "0"), 0, 8) :
-                get_parent_class($value) . "@" . substr(ltrim(spl_object_hash($value), "0"), 0, 8);
+            return get_parent_class($value) === false ? "Anonymous@" . substr(ltrim(spl_object_hash($value), "0"), 0, 8) :
+                "Anonymous < " . get_parent_class($value) . "@" . substr(ltrim(spl_object_hash($value), "0"), 0, 8);
         case is_callable($value): return "<function>";
         case is_object($value): return get_class($value) . "@" . substr(ltrim(spl_object_hash($value), "0"), 0, 8);
         default: return $value;}
@@ -80,7 +80,7 @@ namespace Md\Phunkie\Functions\show {
             }
             return "(" . implode(", ", $types) . ")";
         case is_object($value) && (new \ReflectionClass($value))->isAnonymous():
-            return get_parent_class($value) === false ? "AnonymousClass" : "AnonymousClass<" . get_parent_class($value) . ">";
+            return get_parent_class($value) === false ? "AnonymousClass" : "AnonymousClass < " . get_parent_class($value);
         case is_object($value): return get_class($value); }
     }
 

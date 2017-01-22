@@ -40,7 +40,7 @@ class ShowSpec extends ObjectBehavior
         expect(showType(Tuple(1,true,"")))->toReturn("(Int, Boolean, String)");
 
         expect(showType(new class{}))->toReturn("AnonymousClass");
-        expect(showType(new class extends SomeSuperClass {}))->toReturn("AnonymousClass<" . SomeSuperClass::class . ">");
+        expect(showType(new class extends SomeSuperClass {}))->toReturn("AnonymousClass < " . SomeSuperClass::class);
     }
 
     function it_prints_value()
@@ -64,10 +64,10 @@ class ShowSpec extends ObjectBehavior
         expect(showValue($object))->toReturn(get_class($object) . "@" . $this->hash($object));
 
         $object = new class{};
-        expect(showValue($object))->toReturn("anonymous" . "@" . $this->hash($object));
+        expect(showValue($object))->toReturn("Anonymous" . "@" . $this->hash($object));
 
         $object = new class extends SomeSuperClass {};
-        expect(showValue($object))->toReturn(SomeSuperClass::class . "@" . $this->hash($object));
+        expect(showValue($object))->toReturn("Anonymous < " . SomeSuperClass::class . "@" . $this->hash($object));
     }
 
     private function hash($object)
