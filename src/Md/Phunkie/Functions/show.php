@@ -24,7 +24,7 @@ namespace Md\Phunkie\Functions\show {
     function showValue($value): string { switch (true) {
         case is_showable($value):
             return $value->show();
-        case is_object($value) && method_exists($value, '__toString'):
+        case is_object($value) && method_exists($value, '__toString') && !(new \ReflectionClass($value))->isAnonymous():
             return $value instanceof \Throwable ? get_class($value) . "(" . $value->getMessage() . ")" : (string)$value;
         case is_double($value):
         case is_float($value):
@@ -80,7 +80,7 @@ namespace Md\Phunkie\Functions\show {
             }
             return "(" . implode(", ", $types) . ")";
         case is_object($value) && (new \ReflectionClass($value))->isAnonymous():
-            return get_parent_class($value) === false ? "AnonymousClass" : get_parent_class($value);
+            return get_parent_class($value) === false ? "AnonymousClass" : "AnonymousClass<" . get_parent_class($value) . ">";
         case is_object($value): return get_class($value); }
     }
 

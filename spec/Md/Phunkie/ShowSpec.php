@@ -40,7 +40,7 @@ class ShowSpec extends ObjectBehavior
         expect(showType(Tuple(1,true,"")))->toReturn("(Int, Boolean, String)");
 
         expect(showType(new class{}))->toReturn("AnonymousClass");
-        expect(showType(new class extends SomeSuperClass {}))->toReturn(SomeSuperClass::class);
+        expect(showType(new class extends SomeSuperClass {}))->toReturn("AnonymousClass<" . SomeSuperClass::class . ">");
     }
 
     function it_prints_value()
