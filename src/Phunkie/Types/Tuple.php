@@ -12,15 +12,17 @@
 namespace Phunkie\Types;
 
 use Error;
+use Phunkie\Cats\Functor;
 use Phunkie\Cats\Show;
 use function Phunkie\Functions\functor\fmap;
 use const Phunkie\Functions\show\showValue;
+use Phunkie\Ops\Tuple\TupleFunctorOps;
 use Phunkie\Utils\Copiable;
 use TypeError;
 
-class Tuple implements Copiable
+class Tuple implements Copiable, Functor, Kind
 {
-    use Show;
+    use Show, TupleFunctorOps;
     private $values;
 
     final public function __construct(...$values)
@@ -58,8 +60,12 @@ class Tuple implements Copiable
 
     public function toString(): string
     {
-
         return "(" . implode(", ", fmap(showValue, ImmList(...$this->values))->toArray()) . ")";
+    }
+
+    public function toArray(): array
+    {
+        return $this->values;
     }
 
     public function getArity(): int

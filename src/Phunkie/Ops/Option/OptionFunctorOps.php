@@ -25,7 +25,7 @@ trait OptionFunctorOps
 
     public function map(callable $f): Kind { switch (true) {
         case $this->isEmpty(): return None();
-        case ($f($this->get()) instanceof None): return None();
+        case ($f($this->get()) instanceof None || $f($this->get()) === null): return None();
         default: return Some($f($this->get())); }
     }
 
