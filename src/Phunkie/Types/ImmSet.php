@@ -11,12 +11,14 @@
 
 namespace Phunkie\Types;
 
+use Phunkie\Cats\Functor;
 use Phunkie\Cats\Show;
 use function Phunkie\Functions\show\showValue;
+use Phunkie\Ops\ImmSet\ImmSetFunctorOps;
 
-class ImmSet
+class ImmSet implements Kind, Functor
 {
-    use Show;
+    use Show, ImmSetFunctorOps;
     private $elements = [];
 
     public function __construct(...$elements)

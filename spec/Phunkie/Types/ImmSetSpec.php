@@ -3,6 +3,12 @@
 namespace spec\Phunkie\Types;
 
 use PhpSpec\ObjectBehavior;
+use Phunkie\Cats\Functor;
+use function Phunkie\Functions\functor\allAs;
+use function Phunkie\Functions\functor\asVoid;
+use function Phunkie\Functions\functor\fmap;
+use function Phunkie\Functions\functor\zipWith;
+use const Phunkie\Functions\numbers\increment;
 
 class ImmSetSpec extends ObjectBehavior
 {
@@ -74,6 +80,26 @@ class ImmSetSpec extends ObjectBehavior
     {
         $this->beConstructedWith(1,2,3);
         $this->diff(ImmSet(3,4,5))->shouldBeLike(ImmSet(1,2,4,5));
+    }
+
+    function it_is_a_functor()
+    {
+        $this->beConstructedWith(1,2,3);
+        $this->shouldHaveType(Functor::class);
+
+        $this->map(increment)->shouldBeLike(ImmSet(2,3,4));
+        expect(fmap(increment, ImmSet(1,2,3)))->toBeLike(ImmSet(2,3,4));
+
+        $this->as(0)->shouldBeLike(ImmSet(0,0,0));
+        expect(allAs(0, ImmSet(1,2,3)))->toBeLike(ImmSet(0,0,0));
+
+        $this->void()->shouldBeLike(ImmSet(Unit(), Unit(), Unit()));
+        expect(asVoid(ImmSet(1,2,3)))->toBeLike(ImmSet(Unit(), Unit(), Unit()));
+
+        $this->zipWith(function($x) { return 2 * $x; })->shouldBeLike(ImmSet(Pair(1,2), Pair(2,4), Pair(3,6)));
+        expect(zipWith(function($x) { return 2 * $x; }, ImmSet(1,2,3)))->toBeLike(
+            ImmSet(Pair(1,2), Pair(2,4), Pair(3,6))
+        );
     }
 }
 
