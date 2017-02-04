@@ -22,7 +22,7 @@ const pure = "\\Phunkie\\Functions\\applicative\\pure";
 function pure($context)
 {
     return applyPartially([$context],func_get_args(),function($a) use ($context) {
-        if ($fa = $context($a) instanceof Applicative) {
+        if (($fa = $context($a)) instanceof Applicative) {
             return $fa;
         }
         throw new \Error("$context is not an applicative context");
