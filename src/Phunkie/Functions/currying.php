@@ -35,7 +35,7 @@ function applyPartially($declaredArgs, $passedArgs, $f) {
 
     if ($countOfDeclaredArgs == $countOfPassedArgs) {
         return function ($x) use ($f) {
-            return $x == _ ? $f : $f($x);
+            return $x === _ ? $f : $f($x);
         };
     }
 

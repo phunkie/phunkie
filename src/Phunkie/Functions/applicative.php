@@ -13,7 +13,7 @@ use Phunkie\Types\Kind;
 const ap = "\\Phunkie\\Functions\\applicative\\ap";
 function ap(Kind $f)
 {
-    return applyPartially([$f],func_get_args(),function(Applicative $applicative) use ($f) {
+    return applyPartially([$f],func_get_args(), function(Applicative $applicative) use ($f) {
         return $applicative->apply($f);
     });
 }
@@ -21,7 +21,7 @@ function ap(Kind $f)
 const pure = "\\Phunkie\\Functions\\applicative\\pure";
 function pure($context)
 {
-    return applyPartially([$context],func_get_args(),function($a) use ($context) {
+    return applyPartially([$context],func_get_args(), function($a) use ($context) {
         if (($fa = $context($a)) instanceof Applicative) {
             return $fa;
         }
