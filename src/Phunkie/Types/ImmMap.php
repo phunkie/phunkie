@@ -12,16 +12,18 @@
 namespace Phunkie\Types;
 
 use ArrayAccess, SplObjectStorage;
+use Phunkie\Cats\Functor;
 use Phunkie\Cats\Show;
 use function Phunkie\Functions\show\showValue;
 use function Phunkie\Functions\type\promote;
 use Phunkie\Ops\ImmMap\ImmMapEqOps;
+use Phunkie\Ops\ImmMap\ImmMapFunctorOps;
 use Phunkie\Utils\Copiable;
 use Phunkie\Utils\Iterator;
 
-final class ImmMap implements ArrayAccess, Copiable
+final class ImmMap implements ArrayAccess, Copiable, Functor, Kind
 {
-    use Show, ImmMapEqOps;
+    use Show, ImmMapEqOps, ImmMapFunctorOps;
     private $values;
 
     public function __construct(...$values)

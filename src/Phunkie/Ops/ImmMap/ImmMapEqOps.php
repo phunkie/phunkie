@@ -12,6 +12,8 @@
 namespace Phunkie\Ops\ImmMap;
 
 use Phunkie\Algebra\Eq;
+use function Phunkie\Functions\show\show;
+use function Phunkie\Functions\type\promote;
 use Phunkie\Types\ImmInteger;
 use Phunkie\Types\ImmString;
 
@@ -20,14 +22,13 @@ trait ImmMapEqOps
     use Eq;
     public function eqv(self $rhs): bool
     {
-        foreach ($this->values as $offset) {
-            if ($offset instanceof ImmInteger || $offset instanceof ImmString) {
-                $offset = $offset->get();
-            }
-            if (!$rhs->contains($offset)) {
-                return false;
+        $diff = ImmMap();
+        foreach($rhs->iterator() as $k => $v) {
+            if(!($this->contains($k) && $this[$k] == Option($v))) {
+                $diff = $diff->plus($k, $v);
             }
         }
-        return true;
+
+        return $diff->iterator()->count() === 0;
     }
 }

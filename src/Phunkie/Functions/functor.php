@@ -30,24 +30,20 @@ namespace Phunkie\Functions\functor {
     const allAs = "\\Phunkie\\Functions\\functor\\allAs";
     function allAs($b) {
         return applyPartially([$b],func_get_args(),function(Functor $functor) use ($b) {
-            return $functor->map(function ($ignored) use ($b) {
-                return $b;
-            });
+            return $functor->as($b);
         });
     }
 
     const asVoid = "\\Phunkie\\Functions\\functor\\asVoid";
     function asVoid(Functor $functor)
     {
-        return $functor->map(function($ignored) { return Unit(); });
+        return $functor->void();
     }
 
     const zipWith = "\\Phunkie\\Functions\\functor\\zipWith";
     function zipWith($f) {
         return applyPartially([$f],func_get_args(),function(Functor $functor) use ($f) {
-            return $functor->map(function ($a) use ($f) {
-                return Pair($a, $f($a));
-            });
+            return $functor->zipWith($f);
         });
     }
 }

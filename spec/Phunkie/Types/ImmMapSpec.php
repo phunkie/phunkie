@@ -3,6 +3,13 @@
 namespace spec\Phunkie\Types;
 
 use PhpSpec\ObjectBehavior;
+use Phunkie\Cats\Functor;
+use function Phunkie\Functions\functor\allAs;
+use function Phunkie\Functions\functor\asVoid;
+use function Phunkie\Functions\functor\fmap;
+use function Phunkie\Functions\functor\zipWith;
+use function Phunkie\Functions\show\show;
+use Phunkie\Types\Pair;
 
 /**
  * @mixin \Phunkie\Types\ImmMap
@@ -84,6 +91,32 @@ class ImmMapSpec extends ObjectBehavior
     {
         $this->beConstructedWith(["hello" => "there", "hi" => "here"]);
         $this->copy()->show()->shouldBe($this->getWrappedObject()->show());
+    }
+
+    function it_is_a_functor()
+    {
+        $this->beConstructedWith(["a" => 1, "b" => 2, "c" => 3]);
+        $this->shouldHaveType(Functor::class);
+        $increment = function(Pair $keyValue) {
+            return Pair($keyValue->_1,  $keyValue->_2 + 1);
+        };
+
+        $this->map($increment)->eqv(ImmMap(["a" => 2, "b" => 3, "c" => 4]))->shouldBe(true);
+        expect(fmap($increment, ImmMap(["a" => 1, "b" => 2, "c" => 3]))->eqv(ImmMap(["a" => 2, "b" => 3, "c" => 4])))->toBe(true);
+
+        $this->as(Pair("a", 0))->eqv(ImmMap(["a" => 0]))->shouldBe(true);
+        expect(allAs(Pair("a", 0), ImmMap(["a" => 1, "b" => 2, "c" => 3]))->eqv(ImmMap(["a" => 0])))->toBe(true);
+
+        $this->as(Pair(_, 0))->eqv(ImmMap(["a" => 0, "b" => 0, "c" => 0]))->shouldBe(true);
+        expect(allAs(Pair(_, 0), ImmMap(["a" => 1, "b" => 2, "c" => 3]))->eqv(ImmMap(["a" => 0, "b" => 0, "c" => 0])))->toBe(true);
+
+        $this->void()->eqv(ImmMap(["a" => Unit(), "b" => Unit(), "c" => Unit()]))->shouldBe(true);
+        expect(asVoid(ImmMap(["a" => 1, "b" => 2, "c" => 3]))->eqv(ImmMap(["a" => Unit(), "b" => Unit(), "c" => Unit()])))->toBe(true);
+
+        $this->zipWith(function($x) { return 2 * $x; })->eqv(ImmMap(["a" => Pair(1,2), "b" => Pair(2,4), "c" => Pair(3,6)]))->shouldBe(true);
+        expect(zipWith(function($x) { return 2 * $x; }, ImmMap(["a" => 1, "b" => 2, "c" => 3]))->eqv(
+            ImmMap(["a" => Pair(1,2), "b" => Pair(2,4), "c" => Pair(3,6)])
+        ))->toBe(true);
     }
 }
 
