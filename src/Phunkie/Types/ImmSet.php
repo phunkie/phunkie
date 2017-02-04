@@ -14,7 +14,9 @@ namespace Phunkie\Types;
 use Phunkie\Cats\Functor;
 use Phunkie\Cats\Show;
 use function Phunkie\Functions\show\showValue;
+use function Phunkie\Functions\type\promote;
 use Phunkie\Ops\ImmSet\ImmSetFunctorOps;
+use Phunkie\Utils\Iterator;
 
 class ImmSet implements Kind, Functor
 {
@@ -67,6 +69,15 @@ class ImmSet implements Kind, Functor
     public function toString(): string
     {
         return "Set(" . implode(", ", array_map(function($e) { return showValue($e); }, $this->elements)) . ")";
+    }
+
+    public function iterator()
+    {
+        $storage = new \SplObjectStorage();
+        foreach ($this->toArray() as $k => $v) {
+            $storage[promote($k)] = $v;
+        }
+        return new Iterator($storage);
     }
 
     public function union(ImmSet $set)
