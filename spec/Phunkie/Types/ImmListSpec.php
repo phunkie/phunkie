@@ -6,6 +6,9 @@ use Phunkie\Cats\Show;
 use function Phunkie\Functions\applicative\ap;
 use function Phunkie\Functions\applicative\pure;
 use function Phunkie\Functions\applicative\map2;
+use function Phunkie\Functions\monad\bind;
+use function Phunkie\Functions\monad\flatten;
+use function Phunkie\Functions\monad\mcompose;
 use function Phunkie\Functions\show\showValue;
 use function Phunkie\Functions\show\usesTrait;
 use Phunkie\Ops\ImmList\ImmListApplicativeOps;
@@ -181,6 +184,22 @@ class ImmListSpec extends ObjectBehavior
 
         $xs = ((map2 (function($x, $y) { return $x + $y; })) (ImmList(1))) (ImmList(2));
         expect($xs)->toBeLike(ImmList(3));
+    }
+
+    function it_is_a_monad()
+    {
+        $xs = (bind (function($a) { return ImmList($a +1); })) (ImmList(1));
+        expect($xs)->toBeLike(ImmList(2));
+
+        $xs = flatten (ImmList(ImmList(1)));
+        expect($xs)->toBeLike(ImmList(1));
+
+        $xs = ImmList("h");
+        $f = function(string $s) { return ImmList($s . "e"); };
+        $g = function(string $s) { return ImmList($s . "l"); };
+        $h = function(string $s) { return ImmList($s . "o"); };
+        $hello = mcompose($f, $g, $g, $h);
+        expect($hello($xs))->toBeLike(ImmList("hello"));
     }
 
     function getMatchers()

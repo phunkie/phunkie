@@ -8,6 +8,9 @@ use function Phunkie\Functions\show\usesTrait;
 use function Phunkie\Functions\applicative\ap;
 use function Phunkie\Functions\applicative\pure;
 use function Phunkie\Functions\applicative\map2;
+use function Phunkie\Functions\monad\bind;
+use function Phunkie\Functions\monad\flatten;
+use function Phunkie\Functions\monad\mcompose;
 use Phunkie\Types\None;
 use Phunkie\Types\Some;
 use PhpSpec\ObjectBehavior;
@@ -51,14 +54,30 @@ class OptionSpec extends ObjectBehavior
 
     function it_is_an_applicative()
     {
-        $xs = (ap (Option(function($a) { return $a +1; }))) (Option(1));
+        $x = (ap (Option(function($a) { return $a +1; }))) (Option(1));
+        expect($x)->toBeLike(Option(2));
+
+        $x = (pure (Option)) (42);
+        expect($x)->toBeLike(Option(42));
+
+        $x = ((map2 (function($x, $y) { return $x + $y; })) (Option(1))) (Option(2));
+        expect($x)->toBeLike(Option(3));
+    }
+
+    function it_is_a_monad()
+    {
+        $xs = (bind (function($a) { return Option($a +1); })) (Option(1));
         expect($xs)->toBeLike(Option(2));
 
-        $xs = (pure (Option)) (42);
-        expect($xs)->toBeLike(Option(42));
+        $xs = flatten (Option(Option(1)));
+        expect($xs)->toBeLike(Option(1));
 
-        $xs = ((map2 (function($x, $y) { return $x + $y; })) (Option(1))) (Option(2));
-        expect($xs)->toBeLike(Option(3));
+        $xs = Option("h");
+        $f = function(string $s) { return Option($s . "e"); };
+        $g = function(string $s) { return Option($s . "l"); };
+        $h = function(string $s) { return Option($s . "o"); };
+        $hello = mcompose($f, $g, $g, $h);
+        expect($hello($xs))->toBeLike(Option("hello"));
     }
 
     function it_returns_none_when_none_is_mapped()
