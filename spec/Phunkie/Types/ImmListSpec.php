@@ -3,6 +3,9 @@
 namespace spec\Phunkie\Types;
 
 use Phunkie\Cats\Show;
+use function Phunkie\Functions\applicative\ap;
+use function Phunkie\Functions\applicative\pure;
+use function Phunkie\Functions\applicative\map2;
 use function Phunkie\Functions\show\showValue;
 use function Phunkie\Functions\show\usesTrait;
 use Phunkie\Ops\ImmList\ImmListApplicativeOps;
@@ -166,6 +169,18 @@ class ImmListSpec extends ObjectBehavior
         $_ = underscore();
         $this->isAListContaining(new User("John"), new User("Alice"));
         $this->map($_->name)->map("strtoupper")->shouldBeLike(ImmList("JOHN", "ALICE"));
+    }
+
+    function it_is_an_applicative()
+    {
+        $xs = (ap (ImmList(function($a) { return $a +1; }))) (ImmList(1));
+        expect($xs)->toBeLike(ImmList(2));
+
+        $xs = (pure (ImmList)) (42);
+        expect($xs)->toBeLike(ImmList(42));
+
+        $xs = ((map2 (function($x, $y) { return $x + $y; })) (ImmList(1))) (ImmList(2));
+        expect($xs)->toBeLike(ImmList(3));
     }
 
     function getMatchers()

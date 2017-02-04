@@ -5,6 +5,9 @@ namespace spec\Phunkie\Types;
 use Phunkie\Cats\Show;
 use function Phunkie\Functions\show\showValue;
 use function Phunkie\Functions\show\usesTrait;
+use function Phunkie\Functions\applicative\ap;
+use function Phunkie\Functions\applicative\pure;
+use function Phunkie\Functions\applicative\map2;
 use Phunkie\Types\None;
 use Phunkie\Types\Some;
 use PhpSpec\ObjectBehavior;
@@ -44,6 +47,18 @@ class OptionSpec extends ObjectBehavior
                 return $x + 1;
             }))->toBeLike(Some($a + 1));
         });
+    }
+
+    function it_is_an_applicative()
+    {
+        $xs = (ap (Option(function($a) { return $a +1; }))) (Option(1));
+        expect($xs)->toBeLike(Option(2));
+
+        $xs = (pure (Option)) (42);
+        expect($xs)->toBeLike(Option(42));
+
+        $xs = ((map2 (function($x, $y) { return $x + $y; })) (Option(1))) (Option(2));
+        expect($xs)->toBeLike(Option(3));
     }
 
     function it_returns_none_when_none_is_mapped()
