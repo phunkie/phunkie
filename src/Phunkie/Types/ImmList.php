@@ -14,6 +14,7 @@ namespace Phunkie\Types;
 use Phunkie\Cats\Applicative;
 use Phunkie\Cats\Monad;
 use Phunkie\Cats\Show;
+use Phunkie\Cats\Traverse;
 use function Phunkie\Functions\show\showValue;
 use function Phunkie\Functions\type\promote;
 use Phunkie\Ops\ImmList\ImmListApplicativeOps;
@@ -22,9 +23,10 @@ use Phunkie\Ops\ImmList\ImmListFoldableOps;
 use Phunkie\Ops\ImmList\ImmListMonadOps;
 use Phunkie\Ops\ImmList\ImmListMonoidOps;
 use Phunkie\Ops\ImmList\ImmListOps;
+use Phunkie\Ops\ImmList\ImmListTraverseOps;
 use Phunkie\Utils\Iterator;
 
-abstract class ImmList implements Kind, Applicative, Monad
+abstract class ImmList implements Kind, Applicative, Monad, Traverse
 {
     use Show;
     use ImmListOps,
@@ -32,7 +34,8 @@ abstract class ImmList implements Kind, Applicative, Monad
         ImmListEqOps,
         ImmListMonadOps,
         ImmListFoldableOps,
-        ImmListMonoidOps;
+        ImmListMonoidOps,
+        ImmListTraverseOps;
 
     const kind = ImmList;
     private $values;

@@ -3,6 +3,7 @@
 namespace spec\Phunkie\Types;
 
 use Phunkie\Cats\Show;
+use Phunkie\Cats\Traverse;
 use function Phunkie\Functions\applicative\ap;
 use function Phunkie\Functions\applicative\pure;
 use function Phunkie\Functions\applicative\map2;
@@ -200,6 +201,27 @@ class ImmListSpec extends ObjectBehavior
         $h = function(string $s) { return ImmList($s . "o"); };
         $hello = mcompose($f, $g, $g, $h);
         expect($hello($xs))->toBeLike(ImmList("hello"));
+    }
+
+    function it_is_a_traverse()
+    {
+        $this->isAListContaining(1,2,3);
+        $this->shouldHaveType(Traverse::class);
+
+        $this->traverse(function($x) { return Option($x); })
+            ->shouldBeLike(Some(ImmList(1,2,3)));
+
+        $this->traverse(function($x) { return $x > 2 ? None() : Some($x); })
+            ->shouldBeLike(None());
+    }
+
+    function it_implements_sequence()
+    {
+        $this->isAListContaining(Some(1), Some(2), Some(3));
+        $this->sequence()->shouldBeLike(Some(ImmList(1,2,3)));
+
+        $this->isAListContaining(Some(1), None(), Some(3));
+        $this->sequence()->shouldBeLike(None());
     }
 
     function getMatchers()
