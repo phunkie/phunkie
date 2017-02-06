@@ -219,7 +219,10 @@ class ImmListSpec extends ObjectBehavior
     {
         $this->isAListContaining(Some(1), Some(2), Some(3));
         $this->sequence()->shouldBeLike(Some(ImmList(1,2,3)));
+    }
 
+    function it_returns_None_if_any_value_in_sequence_is_None()
+    {
         $this->isAListContaining(Some(1), None(), Some(3));
         $this->sequence()->shouldBeLike(None());
     }
