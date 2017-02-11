@@ -53,7 +53,7 @@ final class GenLens
 
     public function __set(string $name, Lens $lens)
     {
-        if (!isset($this->modifierToken)) {
+        if (!$this->modifierToken) {
             throw new \Error("Lenses are immutable.");
         }
         $this->$name = $lens;
