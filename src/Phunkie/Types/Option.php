@@ -12,6 +12,7 @@
 namespace Phunkie\Types;
 
 use Phunkie\Cats\Applicative;
+use Phunkie\Cats\Foldable;
 use Phunkie\Cats\Monad;
 use Phunkie\Cats\Show;
 use function Phunkie\Functions\show\showValue;
@@ -21,7 +22,7 @@ use Phunkie\Ops\Option\OptionFoldableOps;
 use Phunkie\Ops\Option\OptionMonadOps;
 use Phunkie\Ops\Option\OptionMonoidOps;
 
-abstract class Option implements Kind, Applicative, Monad
+abstract class Option implements Kind, Applicative, Monad, Foldable
 {
     use Show;
     const kind = "Option";

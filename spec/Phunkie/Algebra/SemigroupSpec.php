@@ -8,6 +8,7 @@ use Eris\Generator\SequenceGenerator;
 use Eris\Generator\StringGenerator;
 use Eris\TestTrait;
 use function Phunkie\Functions\semigroup\combine;
+use function Phunkie\Functions\show\show;
 use Phunkie\Laws\SemigroupLaws;
 use Md\PropertyTesting\Generator\RandomKindGenerator;
 use PhpSpec\ObjectBehavior;

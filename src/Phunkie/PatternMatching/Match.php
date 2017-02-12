@@ -24,6 +24,7 @@ use Phunkie\Types\ImmList;
 use Phunkie\Types\NonEmptyList;
 use Phunkie\Types\Option;
 use Phunkie\Types\Some;
+use Phunkie\Utils\Comparable;
 use Phunkie\Validation\Failure;
 use Phunkie\Validation\Success;
 
@@ -96,7 +97,8 @@ function matchesWildcardedFunction1($condition, $value)
 
 function sameTypeSameValue($condition, $value)
 {
-    return gettype($condition) == gettype($value) && $value == $condition;
+    return gettype($condition) == gettype($value) &&
+           ($value == $condition || ($condition instanceof ImmList && $condition->eqv($value)));
 }
 
 function matchesNone($condition, $value)
@@ -157,10 +159,10 @@ function matchByReference($condition, $value)
 
 function matchValidationByReference($condition, $value) {
     if ($condition instanceof ReferencedSuccess && $value instanceof Success) {
-        $condition->value = $value->fold(_,identity);
+        $condition->value = ($value->fold (_)) (identity);
         return true;
     } elseif ($condition instanceof ReferencedFailure && $value instanceof Failure) {
-        $condition->value = $value->fold(identity, _);
+        $condition->value = ($value->fold (identity)) (_);
         return true;
     }
     return false;

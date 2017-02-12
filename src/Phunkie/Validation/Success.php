@@ -38,8 +38,8 @@ class Success extends Validation
         return Success($f($this->valid));
     }
 
-    public function fold($fe, $fa)
+    public function fold($fe)
     {
-        return $fa($this->valid);
+        return function($fa) { return $fa($this->valid); };
     }
 }

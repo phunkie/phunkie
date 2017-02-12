@@ -17,8 +17,7 @@ namespace {
 
     function ImmList(...$values): ImmList { switch(count($values)) {
         case 0: return Nil();
-        case 1: return new Cons($values[0], Nil());
-        default: return new Cons($values[0], ImmList(...array_slice($values, 1))); }
+        default: return new ImmList(...$values); }
     }
 
     function Nil(): ImmList

@@ -18,6 +18,6 @@ trait ImmListEqOps
     use Eq;
     public function eqv(self $rhs): bool
     {
-        return $this == $rhs;
+        return $this->toArray() == $rhs->toArray();
     }
 }

@@ -38,8 +38,8 @@ class Failure extends Validation
         return $this;
     }
 
-    public function fold($fe, $fa)
+    public function fold($fe)
     {
-        return $fe($this->invalid);
+        return function($fa) use ($fe) { return $fe($this->invalid); };
     }
 }

@@ -82,7 +82,7 @@ namespace Phunkie\Functions\show {
         case is_object($value) && $value instanceof ImmSet: return "Set<" . showArrayType($value->toArray()) . ">";
         case is_object($value) && $value instanceof ImmMap: return "Map<" . showArrayType($value->keys()) . ", " . showArrayType($value->values()) . ">";
         case is_object($value) && $value instanceof Success: return "Validation<E, " . showType($value->getOrElse("")) . ">";
-        case is_object($value) && $value instanceof Failure: return "Validation<" . showType($value->fold(Function1::identity(),_)) . ", A>";
+        case is_object($value) && $value instanceof Failure: return "Validation<" . showType(($value->fold(Function1::identity()))(_)) . ", A>";
         case is_object($value) && $value instanceof Tuple:
             $types = [];
             for ($i = 1; $i <= $value->getArity(); $i++) {

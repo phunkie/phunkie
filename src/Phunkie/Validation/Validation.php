@@ -11,16 +11,18 @@
 
 namespace Phunkie\Validation;
 
+use Phunkie\Cats\Foldable;
 use Phunkie\Cats\Functor;
 use Phunkie\Cats\Show;
 use function Phunkie\Functions\semigroup\combine;
+use function Phunkie\Functions\semigroup\zero;
 use Phunkie\Ops\FunctorOps;
 use function Phunkie\PatternMatching\Referenced\Success as rSuccess;
 use function Phunkie\PatternMatching\Referenced\Failure as rFailure;
 use Phunkie\Types\Kind;
 use TypeError;
 
-abstract class Validation implements Functor, Kind
+abstract class Validation implements Functor, Kind, Foldable
 {
     use Show;
     use FunctorOps;
@@ -38,7 +40,7 @@ abstract class Validation implements Functor, Kind
 
     public function combine(Validation $that): Validation { $on = match($this, $that); switch(true) {
         case $on(rSuccess($a), rSuccess($b)): return Success(combine($a, $b));
-        case $on(rFailure($a), rFailure($b)): return Failure(combine($a, $b));
+        case $on(rFailure($x), rFailure($y)): return Failure(combine($x, $y));
         case $on(Failure(_), _): return $this;
         case $on(_): return $that;}
     }
@@ -48,5 +50,20 @@ abstract class Validation implements Functor, Kind
     public function imap(callable $f, callable $g): Kind
     {
         return $this->map($f);
+    }
+
+    public function foldLeft($initial)
+    {
+        return $this->fold($initial);
+    }
+
+    public function foldRight($initial)
+    {
+        return $this->fold($initial);
+    }
+
+    public function foldMap(callable $f)
+    {
+        return ($this->foldLeft(zero($this->getOrElse(null))))( function($b, $a) use ($f) { return combine($b, $f($a)); });
     }
 }

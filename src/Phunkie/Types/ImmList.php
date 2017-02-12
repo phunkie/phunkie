@@ -12,6 +12,7 @@
 namespace Phunkie\Types;
 
 use Phunkie\Cats\Applicative;
+use Phunkie\Cats\Foldable;
 use Phunkie\Cats\Monad;
 use Phunkie\Cats\Show;
 use Phunkie\Cats\Traverse;
@@ -26,7 +27,7 @@ use Phunkie\Ops\ImmList\ImmListOps;
 use Phunkie\Ops\ImmList\ImmListTraverseOps;
 use Phunkie\Utils\Iterator;
 
-abstract class ImmList implements Kind, Applicative, Monad, Traverse
+class ImmList implements Kind, Applicative, Monad, Traverse, Foldable
 {
     use Show;
     use ImmListOps,
@@ -43,6 +44,7 @@ abstract class ImmList implements Kind, Applicative, Monad, Traverse
         case NonEmptyList::class: $this->constructNonEmptyList(func_num_args(), func_get_args()); break;
         case Cons::class: $this->constructCons(func_num_args(), func_get_args()); break;
         case Nil::class: $this->constructNil(func_num_args()); break;
+        case ImmList::class: $this->values = func_get_args(); break;
         default: throw $this->listIsSealed(); }
     }
 
