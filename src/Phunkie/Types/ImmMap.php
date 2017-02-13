@@ -37,6 +37,11 @@ final class ImmMap implements ArrayAccess, Copiable, Functor, Kind
         }
     }
 
+    public function __invoke($key)
+    {
+        return $this->values[promote($key)];
+    }
+
     public function offsetExists($offset)
     {
         foreach ($this->values as $k) {
@@ -123,7 +128,13 @@ final class ImmMap implements ArrayAccess, Copiable, Functor, Kind
     public function plus($k, $v)
     {
         $mappings = clone $this->values;
-        $mappings->attach(promote($k), $v);
+        foreach ($mappings as $offset) {
+            if (promote($k) == $offset) {
+                $mappings[$offset] = $v;
+            } else {
+                $mappings[promote($k)] = $v;
+            }
+        }
         $map = new self();
         $map->values = $mappings;
         return $map;

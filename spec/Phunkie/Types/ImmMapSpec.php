@@ -87,6 +87,12 @@ class ImmMapSpec extends ObjectBehavior
         $this->plus("hi", "here")->eqv(ImmMap(["hello" => "there", "hi" => "here"]))->shouldBe(true);
     }
 
+    function its_plus_updates_value_when_key_exists()
+    {
+        $this->beConstructedWith(["hey" => "there", "hi" => "here"]);
+        $this->plus("hey", "you")->eqv(ImmMap(["hey" => "you", "hi" => "here"]))->shouldBe(true);
+    }
+
     function it_can_be_copied()
     {
         $this->beConstructedWith(["hello" => "there", "hi" => "here"]);
