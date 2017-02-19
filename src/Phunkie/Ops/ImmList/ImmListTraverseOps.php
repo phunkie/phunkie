@@ -3,10 +3,14 @@
 
 namespace Phunkie\Ops\ImmList;
 
+use const Phunkie\Functions\option\fromSome;
+use const Phunkie\Functions\option\isDefined;
 use function Phunkie\Functions\show\showArrayType;
-use Phunkie\Types\ImmList\NoSuchElementException;
 use Phunkie\Types\Kind;
 
+/**
+ * @mixin \Phunkie\Types\ImmList
+ */
 trait ImmListTraverseOps
 {
     public function traverse(callable $f): Kind
@@ -16,25 +20,29 @@ trait ImmListTraverseOps
 
     public function sequence(): Kind
     {
+        $typeConstructor = $this->guardIsListOfTypeConstructor();
+
+        $sequence = $this->takeWhile(isDefined)->length == $this->length ?
+            $typeConstructor($this->map(fromSome)) :
+            None();
+
+        if ($sequence instanceof Kind) {
+            return $sequence;
+        }
+
+        throw new \TypeError("$typeConstructor is not a type constructor");
+    }
+
+    private function guardIsListOfTypeConstructor(): string
+    {
         $listType = showArrayType($this->toArray());
         $typeConstructor = substr($listType, 0, strpos($listType, "<"));
         if ($typeConstructor == "") {
             throw new \TypeError("Cannot find a type constructor in elements of list type $listType");
         }
-
-        try {
-            $sequence = $typeConstructor($this->map(function($e) {
-            if ($e == None()) {
-                throw new NoSuchElementException;
-            }
-            return $e->get();
-        })); } catch (NoSuchElementException $e) {
-            return None();
+        if (!is_callable($typeConstructor)) {
+            throw new \TypeError("$typeConstructor is not a callable type constructor");
         }
-
-        if (is_callable($typeConstructor) && $sequence instanceof Kind) {
-            return $sequence;
-        }
-        throw new \TypeError("$typeConstructor is not a type constructor");
+        return $typeConstructor;
     }
 }

@@ -97,11 +97,27 @@ namespace Phunkie\Functions\immlist {
         });
     }
 
+    const takeWhile = "\\Phunkie\\Functions\\immlist\\takeWhile";
+    function takeWhile(callable $f)
+    {
+        return applyPartially([$f],func_get_args(),function(ImmList $list) use ($f) {
+            return $list->takeWhile($f);
+        });
+    }
+
     const drop = "\\Phunkie\\Functions\\immlist\\drop";
     function drop(int $n)
     {
         return applyPartially([$n],func_get_args(),function(ImmList $list) use ($n) {
             return ImmList(...array_slice($list->toArray(), $n < 0 ? 0 : $n));
+        });
+    }
+
+    const dropWhile = "\\Phunkie\\Functions\\immlist\\dropWhile";
+    function dropWhile(callable $f)
+    {
+        return applyPartially([$f],func_get_args(),function(ImmList $list) use ($f) {
+            return $list->dropWhile($f);
         });
     }
 

@@ -30,8 +30,7 @@ class ImmListSpec extends ObjectBehavior
 
     function let()
     {
-        $this->beAnInstanceOf(Cons::class);
-        $this->beConstructedWith(1,ImmList(2,3));
+        $this->beConstructedWith(1, 2, 3);
     }
 
     function it_is_showable()
@@ -84,49 +83,49 @@ class ImmListSpec extends ObjectBehavior
 
     function it_returns_its_length()
     {
-        $this->isAListContaining(1,2,3);
+        $this->beConstructedWith(1, 2, 3);
         $this->length->shouldBe(3);
     }
 
     function it_has_filter()
     {
-        $this->isAListContaining(1,2,3);
+        $this->beConstructedWith(1, 2, 3);
         $this->filter(function($x){return $x == 2;})->shouldBeLike(ImmList(2));
     }
 
     function it_has_reject()
     {
-        $this->isAListContaining(1,2,3);
+        $this->beConstructedWith(1, 2, 3);
         $this->reject(function($x){return $x == 2;})->shouldBeLike(ImmList(1, 3));
     }
 
     function it_implements_reduce()
     {
-        $this->isAListContaining(1,2,3);
+        $this->beConstructedWith(1, 2, 3);
         $this->reduce(function($x, $y){return $x  + $y;})->shouldBe(6);
     }
 
     function it_implements_reduce_string_example()
     {
-        $this->isAListContaining("a", "b", "c");
+        $this->beConstructedWith("a", "b", "c");
         $this->reduce(function($x, $y){return $x  . $y;})->shouldBe("abc");
     }
 
     function it_will_complain_if_reduce_returns_a_type_different_to_the_list_type()
     {
-        $this->isAListContaining(1,2,3);
+        $this->beConstructedWith(1,2,3);
         $this->shouldThrow()->duringReduce(function($x, $y){return "Oh no! a string!";});
     }
 
     function it_can_be_casted_to_array()
     {
-        $this->isAListContaining(1,2,3);
+        $this->beConstructedWith(1,2,3);
         $this->toArray()->shouldBe([1,2,3]);
     }
 
     function it_zips()
     {
-        $this->isAListContaining(1,2,3);
+        $this->beConstructedWith(1,2,3);
         $this->zip(ImmList("A", "B", "C"))->shouldBeLike(
             ImmList(Pair(1,"A"), Pair(2,"B"), Pair(3,"C"))
         );
@@ -134,44 +133,60 @@ class ImmListSpec extends ObjectBehavior
 
     function it_takes_n_elements_from_list()
     {
-        $this->isAListContaining(1,2,3);
+        $this->beConstructedWith(1,2,3);
         $this->take(2)->shouldBeLike(ImmList(1,2));
+    }
+
+    function it_takes_while_something_is_true()
+    {
+        $this->beConstructedWith(1,2,3,4,5,6);
+        $this->takeWhile(function($el) { return $el < 4; })->shouldBeLike(ImmList(1,2,3));
+        $this->takeWhile(function($el) { return $el < 9; })->shouldBeLike(ImmList(1,2,3,4,5,6));
+        $this->takeWhile(function($el) { return $el < 0; })->shouldBeLike(ImmList());
+    }
+
+    function it_drops_while_something_is_true()
+    {
+        $this->beConstructedWith(1,2,3,4,5,6);
+        $this->dropWhile(function($el) { return $el < 4; })->shouldBeLike(ImmList(4,5,6));
+        $this->dropWhile(function($el) { return $el < 9; })->shouldBeLike(ImmList());
+        $this->dropWhile(function($el) { return $el < 0; })->shouldBeLike(ImmList(1,2,3,4,5,6));
     }
 
     function it_drops_n_elements_from_list()
     {
-        $this->isAListContaining(1,2,3);
+        $this->beConstructedWith(1,2,3);
         $this->drop(2)->shouldBeLike(ImmList(3));
     }
 
     function it_implements_head()
     {
-        $this->isAListContaining(1,2,3);
+        $this->beConstructedWith(1,2,3);
         $this->head->shouldBe(1);
     }
 
     function it_implements_tail()
     {
-        $this->isAListContaining(1,2,3);
+        $this->beConstructedWith(1,2,3);
         $this->tail->shouldBeLike(ImmList(2,3));
     }
 
     function it_implements_init()
     {
-        $this->isAListContaining(1,2,3);
+        $this->beConstructedWith(1,2,3);
         $this->init->shouldBeLike(ImmList(1,2));
     }
 
     function it_implements_last()
     {
-        $this->isAListContaining(1,2,3);
+        $this->beConstructedWith(1,2,3);
         $this->last->shouldBe(3);
     }
 
     function it_implements_shortcut_for_mapping_over_class_members()
     {
         $_ = underscore();
-        $this->isAListContaining(new User("John"), new User("Alice"));
+        $this->beConstructedWith(new User("John"), new User("Alice"));
         $this->map($_->name)->map("strtoupper")->shouldBeLike(ImmList("JOHN", "ALICE"));
     }
 
@@ -205,7 +220,7 @@ class ImmListSpec extends ObjectBehavior
 
     function it_is_a_traverse()
     {
-        $this->isAListContaining(1,2,3);
+        $this->beConstructedWith(1,2,3);
         $this->shouldHaveType(Traverse::class);
 
         $this->traverse(function($x) { return Option($x); })
@@ -217,13 +232,13 @@ class ImmListSpec extends ObjectBehavior
 
     function it_implements_sequence()
     {
-        $this->isAListContaining(Some(1), Some(2), Some(3));
+        $this->beConstructedWith(Some(1), Some(2), Some(3));
         $this->sequence()->shouldBeLike(Some(ImmList(1,2,3)));
     }
 
     function it_returns_None_if_any_value_in_sequence_is_None()
     {
-        $this->isAListContaining(Some(1), None(), Some(3));
+        $this->beConstructedWith(Some(1), None(), Some(3));
         $this->sequence()->shouldBeLike(None());
     }
 
@@ -232,12 +247,6 @@ class ImmListSpec extends ObjectBehavior
         return ["beShowable" => function($sus){
             return usesTrait($sus, Show::class);
         }];
-    }
-
-    private function isAListContaining($x, ...$xs)
-    {
-        $this->beAnInstanceOf(Cons::class);
-        $this->beConstructedWith($x, ImmList(...$xs));
     }
 }
 

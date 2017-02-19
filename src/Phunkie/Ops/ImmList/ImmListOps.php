@@ -14,6 +14,7 @@ namespace Phunkie\Ops\ImmList;
 use BadMethodCallException;
 use Error;
 use function Phunkie\Functions\assertion\assertSameTypeAsCollectionType;
+use function Phunkie\Functions\immlist\concat;
 use function Phunkie\Functions\show\showArrayType;
 use Phunkie\PatternMatching\Match;
 use Phunkie\Types\ImmList;
@@ -124,9 +125,28 @@ trait ImmListOps
         return ImmList(...array_slice($this->toArray(), 0, $n < 0 ? 0 : $n));
     }
 
+    public function takeWhile(callable $f): ImmList
+    {
+        $loop = function(ImmList $list, ImmList $acc) use (&$loop, $f): ImmList {
+            if (!$list->isEmpty() && $f($list->head()) === true)
+                return $loop($list->tail(), concat($acc, $list->head()));
+            return $acc;
+        };
+        return $loop($this, ImmList());
+    }
+
     public function drop(int $n): ImmList
     {
         return ImmList(...array_slice($this->toArray(), $n < 0 ? 0 : $n));
+    }
+
+    public function dropWhile(callable $f): ImmList
+    {
+        $loop = function(ImmList $list) use (&$loop, $f): ImmList {
+            if ($list->isEmpty() || $f($list->head()) === false) return $list;
+            return $loop($list->tail());
+        };
+        return $loop($this);
     }
 
     public function reverse(): ImmList

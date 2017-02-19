@@ -16,8 +16,7 @@ use Phunkie\Types\Kind;
 interface FlatMap extends Functor
 {
     /**
-     * @param (TA) => Kind<TB> $f
-     * @return Kind<TB>
+     * (A => F<B>) => F(B)
      */
     public function flatMap(callable $f): Kind;
 }
