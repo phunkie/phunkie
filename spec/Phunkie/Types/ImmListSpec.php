@@ -210,6 +210,9 @@ class ImmListSpec extends ObjectBehavior
         $xs = flatten (ImmList(ImmList(1)));
         expect($xs)->toBeLike(ImmList(1));
 
+        $xs = flatten (ImmList(ImmList(1), ImmList(2)));
+        expect($xs)->toBeLike(ImmList(1, 2));
+
         $xs = ImmList("h");
         $f = function(string $s) { return ImmList($s . "e"); };
         $g = function(string $s) { return ImmList($s . "l"); };
