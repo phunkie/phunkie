@@ -4,19 +4,15 @@ namespace spec\Phunkie\Validation;
 
 use Phunkie\Cats\Functor;
 use function Phunkie\Functions\function1\compose;
+use const Phunkie\Functions\function1\identity;
+use function Phunkie\Functions\functor\fmap;
+use function Phunkie\Functions\validation\toOption;
 use Phunkie\Validation\Failure;
 use Phunkie\Validation\Success;
 use PhpSpec\ObjectBehavior;
 
 class ValidationSpec extends ObjectBehavior
 {
-    function it_is_a_functor()
-    {
-        $this->beAnInstanceOf(Success::class);
-        $this->beConstructedWith("yay");
-        $this->shouldHaveType(Functor::class);
-    }
-
     function it_is_right_if_success()
     {
         $this->beAnInstanceOf(Success::class);
@@ -31,20 +27,6 @@ class ValidationSpec extends ObjectBehavior
         $this->shouldBeLeft();
     }
 
-    function it_has_map_for_success()
-    {
-        $this->beAnInstanceOf(Success::class);
-        $this->beConstructedWith("yay");
-        $this->map("strlen")->shouldBeLike(Success(3));
-    }
-
-    function it_has_map_for_failure()
-    {
-        $this->beAnInstanceOf(Failure::class);
-        $this->beConstructedWith("nay");
-        $this->map("strlen")->shouldBeLike(Failure("nay"));
-    }
-
     function it_offers_a_curried_Either()
     {
         $success = compose(Either("nay"));
@@ -53,5 +35,35 @@ class ValidationSpec extends ObjectBehavior
         expect($success("yay"))->toBeLike(Success("yay"));
         expect($failure(None()))->toBeLike(Failure("nay"));
         expect($failure(null))->toBeLike(Failure("nay"));
+    }
+
+    function it_can_be_constructed_with_Attempt()
+    {
+        expect(Attempt(function(){ return 42; }))->toBeLike(Success(42));
+
+        $failure = Attempt(function(){ throw new \Exception("nay"); });
+        expect(($failure->fold(function(\Exception $e) {
+            return 'Failure(' . get_class($e) . '("' . $e->getMessage() . '")' . ')';
+        }))(identity))->toBe('Failure(Exception("nay"))');
+    }
+
+    function it_can_be_converted_to_an_option()
+    {
+        expect(toOption(Success(42)))->toBeLike(Some(42));
+        expect(toOption(Failure("nay")))->toBe(None());
+
+        expect(Success(42)->toOption())->toBeLike(Some(42));
+        expect(Failure("nay")->toOption())->toBe(None());
+    }
+
+    function it_is_a_functor()
+    {
+        $this->beAnInstanceOf(Success::class);
+        $this->beConstructedWith("yay");
+        $this->shouldHaveType(Functor::class);
+
+        $this->map("strlen")->shouldBeLike(Success(3));
+
+        expect((fmap ("strlen")) (Failure("nay")))->toBeLike(Failure("nay"));
     }
 }

@@ -17,9 +17,10 @@ use Phunkie\Cats\Show;
 use function Phunkie\Functions\semigroup\combine;
 use function Phunkie\Functions\semigroup\zero;
 use Phunkie\Ops\FunctorOps;
-use function Phunkie\PatternMatching\Referenced\Success as rSuccess;
-use function Phunkie\PatternMatching\Referenced\Failure as rFailure;
+use function Phunkie\PatternMatching\Referenced\Success as Valid;
+use function Phunkie\PatternMatching\Referenced\Failure as Invalid;
 use Phunkie\Types\Kind;
+use Phunkie\Types\Option;
 use TypeError;
 
 abstract class Validation implements Functor, Kind, Foldable
@@ -39,10 +40,15 @@ abstract class Validation implements Functor, Kind, Foldable
     }
 
     public function combine(Validation $that): Validation { $on = match($this, $that); switch(true) {
-        case $on(rSuccess($a), rSuccess($b)): return Success(combine($a, $b));
-        case $on(rFailure($x), rFailure($y)): return Failure(combine($x, $y));
+        case $on(Valid($a), Valid($b)): return Success(combine($a, $b));
+        case $on(Invalid($x), Invalid($y)): return Failure(combine($x, $y));
         case $on(Failure(_), _): return $this;
         case $on(_): return $that;}
+    }
+
+    public function toOption(): Option { $on = match($this); switch (true) {
+        case $on(Valid($a)): return Some($a);
+        case $on(Failure(_)): return None(); }
     }
 
     abstract public function getOrElse($default);
