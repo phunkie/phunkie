@@ -11,6 +11,7 @@
 
 namespace Phunkie\Validation;
 
+use const Phunkie\Functions\function1\identity;
 use function Phunkie\Functions\show\showValue;
 use Phunkie\Types\Kind;
 
@@ -41,5 +42,15 @@ class Success extends Validation
     public function fold($fe)
     {
         return function($fa) { return $fa($this->valid); };
+    }
+
+    public function flatten(): Kind
+    {
+        return $this->flatMap(identity);
+    }
+
+    public function flatMap(callable $f): Kind
+    {
+        return $f($this->valid);
     }
 }
