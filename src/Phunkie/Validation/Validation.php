@@ -11,8 +11,8 @@
 
 namespace Phunkie\Validation;
 
+use Phunkie\Cats\Applicative;
 use Phunkie\Cats\Foldable;
-use Phunkie\Cats\Functor;
 use Phunkie\Cats\Monad;
 use Phunkie\Cats\Show;
 use function Phunkie\Functions\semigroup\combine;
@@ -24,7 +24,7 @@ use Phunkie\Types\Kind;
 use Phunkie\Types\Option;
 use TypeError;
 
-abstract class Validation implements Monad, Kind, Foldable
+abstract class Validation implements Applicative, Monad, Kind, Foldable
 {
     use Show;
     use FunctorOps;

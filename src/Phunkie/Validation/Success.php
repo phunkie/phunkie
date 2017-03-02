@@ -15,7 +15,7 @@ use const Phunkie\Functions\function1\identity;
 use function Phunkie\Functions\show\showValue;
 use Phunkie\Types\Kind;
 
-class Success extends Validation
+final class Success extends Validation
 {
     private $valid;
 
@@ -32,6 +32,11 @@ class Success extends Validation
     public function getOrElse($default)
     {
         return $this->valid;
+    }
+
+    public function orElse(Validation $ignored)
+    {
+        return $this;
     }
 
     public function map(callable $f): Kind
@@ -52,5 +57,22 @@ class Success extends Validation
     public function flatMap(callable $f): Kind
     {
         return $f($this->valid);
+    }
+
+    public function apply(Kind $f): Kind {
+        switch (true) {
+            case $f instanceof Success && is_callable($f->valid): return Success(($f->valid)($this->valid));
+            case $f instanceof Failure && !is_callable(($f->fold(identity))(_)): return $f;
+        }
+    }
+
+    public function pure($a): Kind
+    {
+        return Success($a);
+    }
+
+    public function map2(Kind $fb, callable $f): Kind
+    {
+        return $this->apply($fb->map(function($b) use ($f) { return function($a) use ($f, $b) { return $f($a, $b);};}));
     }
 }

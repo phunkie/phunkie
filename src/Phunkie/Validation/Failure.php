@@ -11,11 +11,10 @@
 
 namespace Phunkie\Validation;
 
-use const Phunkie\Functions\function1\identity;
 use function Phunkie\Functions\show\showValue;
 use Phunkie\Types\Kind;
 
-class Failure extends Validation
+final class Failure extends Validation
 {
     private $invalid;
 
@@ -34,6 +33,11 @@ class Failure extends Validation
         return $default;
     }
 
+    public function orElse(Validation $another)
+    {
+        return $another;
+    }
+
     public function map(callable $f): Kind
     {
         return $this;
@@ -50,6 +54,23 @@ class Failure extends Validation
     }
 
     public function flatMap(callable $f): Kind
+    {
+        return $this;
+    }
+
+    public function apply(Kind $f): Kind
+    {
+        if ($f instanceof Failure && is_callable($f->invalid))
+            return Failure(($f->invalid)($this->invalid));
+        return $this;
+    }
+
+    public function pure($e): Kind
+    {
+        return Failure($e);
+    }
+
+    public function map2(Kind $fb, callable $f): Kind
     {
         return $this;
     }
