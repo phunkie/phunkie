@@ -8,11 +8,11 @@ abstract class Trampoline
     {
         $result = $this->get();
 
-        while ($result instanceof More) {
+        while ($result instanceof Trampoline) {
             $result = $result->get();
         }
 
-        return $result->get();
+        return $result;
     }
 
     abstract public function get();
