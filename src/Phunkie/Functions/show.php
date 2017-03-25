@@ -12,6 +12,7 @@
 namespace Phunkie\Functions\show {
 
     use Phunkie\Cats\Show;
+    use const Phunkie\Functions\function1\identity;
     use function Phunkie\Functions\type\normaliseType;
     use Phunkie\Types\Function1;
     use Phunkie\Types\ImmList;
@@ -21,6 +22,8 @@ namespace Phunkie\Functions\show {
     use Phunkie\Types\Pair;
     use Phunkie\Types\Tuple;
     use Phunkie\Types\Unit;
+    use Phunkie\Utils\Trampoline\Done;
+    use Phunkie\Utils\Trampoline\Trampoline;
     use Phunkie\Validation\Failure;
     use Phunkie\Validation\Success;
 
@@ -47,20 +50,23 @@ namespace Phunkie\Functions\show {
         case is_bool($value): return $value ? 'true' : 'false';
         case is_null($value): return 'null';
         case is_array($value):
-            if (is_assoc($value)) {
-                $valueToShow = [];
-                foreach ($value as $key => $elem) {
-                    $valueToShow[] = (is_string($key) ? '"' . $key . '"' : $key) . " => " . showValue($elem);
-                }
-                return '[' . implode(", ", $valueToShow) . ']';
-            }
-            return "[" . implode(", ", array_map(function ($e) { return showValue($e); }, $value)) . "]";
+            return showArrayValue($value);
         case is_object($value) && (new \ReflectionClass($value))->isAnonymous():
             return get_parent_class($value) === false ? "Anonymous@" . substr(ltrim(spl_object_hash($value), "0"), 0, 8) :
                 "Anonymous < " . get_parent_class($value) . "@" . substr(ltrim(spl_object_hash($value), "0"), 0, 8);
         case is_callable($value): return "<function>";
         case is_object($value): return get_class($value) . "@" . substr(ltrim(spl_object_hash($value), "0"), 0, 8);
         default: return $value;}
+    }
+
+    function showArrayValue(array $value): string
+    {
+        if (is_assoc($value)) {
+            return '[' . implode(", ", array_map(function($key, $value) {
+                return (is_string($key) ? '"' . $key . '"' : $key) . " => " . showValue($value);
+            }, array_keys($value), $value)) . ']';
+        }
+        return "[" . implode(", ", array_map(showValue, $value)) . "]";
     }
 
     const showType = "\\Phunkie\\Functions\\show\\showType";
@@ -82,13 +88,8 @@ namespace Phunkie\Functions\show {
         case is_object($value) && $value instanceof ImmSet: return "Set<" . showArrayType($value->toArray()) . ">";
         case is_object($value) && $value instanceof ImmMap: return "Map<" . showArrayType($value->keys()) . ", " . showArrayType($value->values()) . ">";
         case is_object($value) && $value instanceof Success: return "Validation<E, " . showType($value->getOrElse("")) . ">";
-        case is_object($value) && $value instanceof Failure: return "Validation<" . showType(($value->fold(Function1::identity()))(_)) . ", A>";
-        case is_object($value) && $value instanceof Tuple:
-            $types = [];
-            for ($i = 1; $i <= $value->getArity(); $i++) {
-                $types[] = showType($value->{"_$i"});
-            }
-            return "(" . implode(", ", $types) . ")";
+        case is_object($value) && $value instanceof Failure: return "Validation<" . showType(($value->fold(identity))(_)) . ", A>";
+        case is_object($value) && $value instanceof Tuple: return "(" . implode(", ", $value->map(showType)->toArray()) . ")";
         case is_object($value) && (new \ReflectionClass($value))->isAnonymous():
             return get_parent_class($value) === false ? "AnonymousClass" : "AnonymousClass < " . get_parent_class($value);
         case is_object($value): return get_class($value); }
@@ -106,11 +107,36 @@ namespace Phunkie\Functions\show {
             default: return "Mixed";}
         };
 
-        switch (count($value)) {
-            case 0: return "Nothing";
-            case 1: return showType(array_values($value)[0]);
-            case 2: return $combineTypes(showType(array_values($value)[0]), showType(array_values($value)[1]));
-            default: return $combineTypes(showType(array_values($value)[0]), showArrayType(array_slice($value, 1))); }
+        // Commenting out this recursive version for now.
+        // Using this as is would result in stack overflow when printing bigger arrays and lists.
+        // Need some time to optimise the tail call and/or add a trampoline.
+        // So for now, using the iterative approach below.
+        //
+        // $showArrayType = function($value) use ($combineTypes, &$showArrayType) {
+        //     switch (count($value)) {
+        //         case 0: return "Nothing";
+        //         case 1: return showType(array_values($value)[0]);
+        //         case 2: return $combineTypes(showType(array_values($value)[0]), showType(array_values($value)[1]));
+        //         default: return $combineTypes(showType(array_values($value)[0]), $showArrayType(array_slice($value, 1))); }
+        // };
+        // return $showArrayType($value);
+
+        $showArrayTypeIterative = function($value) use ($combineTypes, &$showArrayTypeIterative) {
+            $arrayValues = array_values($value);
+            $type = 'Nothing';
+            switch (count($arrayValues)) {
+                case 0: return $type;
+                case 1: return showType($arrayValues[0]);
+                default:
+                    for ($i = 0; $i < count($arrayValues); isset($arrayValues[$i+2]) ? $i = $i + 2 : $i++) {
+                        $type = $combineTypes($type, showType($arrayValues[$i]));
+                        if (isset($arrayValues[$i + 1])) $type = $combineTypes($type, showType($arrayValues[$i + 1]));
+                        if ($type == 'Mixed') return $type;
+                    }
+                    return $type;
+            }
+        };
+        return $showArrayTypeIterative($value);
     }
 
     const showKind = "\\Phunkie\\Functions\\show\\showKind";
