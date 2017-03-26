@@ -30,7 +30,7 @@ trait ImmListMonadOps
                 default: throw new \BadMethodCallException("Type mismatch");
             }
         }
-        return ImmList(...$b);
+        return \ImmList(...$b);
     }
 
     public function flatten(): Kind
