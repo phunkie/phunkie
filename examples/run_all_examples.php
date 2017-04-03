@@ -12,6 +12,7 @@ require_once __DIR__ . "/applicative.php";
 require_once __DIR__ . "/monad.php";
 require_once __DIR__ . "/pattern_matching.php";
 require_once __DIR__ . "/curry.php";
+require_once __DIR__ . "/comprehension.php";
 
 function printLn($value) { show($value); echo PHP_EOL; }
 
@@ -24,3 +25,4 @@ applicative_examples();
 monad_examples();
 pattern_matching_example();
 curry_examples();
+comprehension_examples();

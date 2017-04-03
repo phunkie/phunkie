@@ -473,3 +473,63 @@ $var11: ImmMap<String, Int> = Map("a" -> 1)
 phunkie > member("b")->set($m, Some(3))
 $var12: ImmMap<String, Int> = Map("a" -> 1, "b" -> 3)
 ```
+
+For comprehension
+-----------------
+```php
+<?php
+
+function letter($x)
+{
+    return Option($x);
+}
+
+function uppercase($x)
+{
+    return Option(strtoupper($x));
+}
+
+function quote($x)
+{
+    return Option('"' . $x . '"');
+}
+
+for_                            (__
+    ($l  ) ->_ (letter('x'))    ,__
+    ($u  ) ->_ (uppercase($l))  ,__
+    ($res) ->_ (quote($u))      )
+-> yields ($res);
+
+// The above is the equivalent of:
+
+$res = letter('x')->flatMap(function($l) {
+    return uppercase($l)->flatMap(function($u) {
+        return quote($u)->map(function($res) {
+            return $res;
+        });
+    });
+});
+```
+If the right hand side returns a tuple, it can be assigned to 2 separate variables
+
+```php
+<?php
+
+$x = for_ (__
+  ($left, $right) ->_ (Some(Pair("left", "right")))
+) -> yields ($right);
+
+// $x == "right"
+```
+
+You can `$_` for ignored returned values:
+
+```php
+<?php
+
+$x = for_ (__
+  ($_, $right) ->_ (Some(Pair("left", "right")))
+) -> yields ($right);
+
+// $x == "right"
+```
