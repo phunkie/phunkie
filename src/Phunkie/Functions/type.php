@@ -31,6 +31,7 @@ function normaliseType($type)
 {
     $scalars = [
         "int" => "Int",
+        "integer" => "Int",
         "string" => "String",
         "bool" => "Boolean",
         "callable" => "Callable",
