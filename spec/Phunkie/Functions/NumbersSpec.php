@@ -8,6 +8,7 @@ use function Phunkie\Functions\numbers\odd;
 use function Phunkie\Functions\numbers\increment;
 use function Phunkie\Functions\numbers\decrement;
 use PhpSpec\ObjectBehavior;
+use function Phunkie\Functions\numbers\signum;
 
 class NumbersSpec extends ObjectBehavior
 {
@@ -39,5 +40,12 @@ class NumbersSpec extends ObjectBehavior
     {
         expect(negate(1))->toBe(-1);
         expect(negate(-1))->toBe(1);
+    }
+
+    function it_implements_signum()
+    {
+        expect(signum(32))->toBe(1);
+        expect(signum(0))->toBe(0);
+        expect(signum(-32))->toBe(-1);
     }
 }

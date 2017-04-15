@@ -40,3 +40,9 @@ function negate(int $n): int
 {
     return $n * -1;
 }
+
+const signum = "\\Phunkie\\Functions\\numbers\\signum";
+function signum(int $n): int
+{
+    return $n > 0 ? 1 : ($n < 0 ? -1 : 0);
+}
