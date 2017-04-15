@@ -24,6 +24,7 @@ namespace {
 
 namespace Phunkie\Functions\comprehension {
 
+    use const Phunkie\Functions\function1\identity;
     use Phunkie\Types\Tuple;
 
     class Bind {
@@ -81,6 +82,22 @@ namespace Phunkie\Functions\comprehension {
             &$_11 = _, &$_12 = _, &$_13 = _, &$_14 = _, &$_15 = _, &$_16 = _, &$_17 = _, &$_18 = _, &$_19 = _,
             &$_20 = _, &$_21 = _)
         {
+            return $this->resolve(identity, $_1, $_2, $_3, $_4, $_5, $_6, $_7, $_8, $_9, $_10, $_11, $_12, $_13, $_14,
+                $_15, $_16, $_17, $_18, $_19, $_20, $_21);
+        }
+
+        public function call(callable $f, &$_1 = _, &$_2 = _, &$_3 = _, &$_4 = _, &$_5 = _, &$_6 = _, &$_7 = _, &$_8 = _, &$_9 = _, &$_10 = _,
+            &$_11 = _, &$_12 = _, &$_13 = _, &$_14 = _, &$_15 = _, &$_16 = _, &$_17 = _, &$_18 = _, &$_19 = _,
+            &$_20 = _, &$_21 = _)
+        {
+            return $this->resolve($f, $_1, $_2, $_3, $_4, $_5, $_6, $_7, $_8, $_9, $_10, $_11, $_12, $_13, $_14,
+                $_15, $_16, $_17, $_18, $_19, $_20, $_21);
+        }
+
+        private function resolve(callable $f, &$_1 = _, &$_2 = _, &$_3 = _, &$_4 = _, &$_5 = _, &$_6 = _, &$_7 = _, &$_8 = _, &$_9 = _, &$_10 = _,
+            &$_11 = _, &$_12 = _, &$_13 = _, &$_14 = _, &$_15 = _, &$_16 = _, &$_17 = _, &$_18 = _, &$_19 = _,
+            &$_20 = _, &$_21 = _)
+        {
             $result = [];
             for ($i = 1; $i <= 21; $i++) {
                 if (${"_$i"} !== _) {
@@ -88,14 +105,14 @@ namespace Phunkie\Functions\comprehension {
                 }
             }
 
-            $loop = function($binds) use (&$loop, $result) {
+            $loop = function($binds) use (&$loop, $result, $f) {
                 switch (count($binds)) {
                     case 0:
                         throw new \Error("for comprehension requires at least one binding");
                         break;
                     case 1:
                         $last = $binds[0];
-                        return $last->monad->map(function ($x) use ($last, $result) {
+                        return $last->monad->map(function ($x) use ($last, $result, $f) {
                             $last->bind->to($x);
                             switch (count($result)) {
                                 case 0:
@@ -104,11 +121,11 @@ namespace Phunkie\Functions\comprehension {
                                     if ($result[0] === _) {
                                         return Unit();
                                     }
-                                    return $result[0];
+                                    return $f($result[0]);
                                 case 2:
-                                    return Pair($result[0], $result[1]);
+                                    return $f === identity ? Pair($result[0], $result[1]) : $f($result[0], $result[1]);
                                 default:
-                                    return Tuple(...$result);
+                                    return $f === identity ? Tuple(...$result) : $f(...$result);
                             }
                         });
                         break;

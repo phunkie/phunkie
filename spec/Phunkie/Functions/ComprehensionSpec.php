@@ -3,6 +3,7 @@
 namespace spec\Phunkie\Functions;
 
 use PhpSpec\ObjectBehavior;
+use const Phunkie\Functions\semigroup\combine;
 
 class ComprehensionSpec extends ObjectBehavior
 {
@@ -26,7 +27,7 @@ class ComprehensionSpec extends ObjectBehavior
                 __ ($x) ->_ (Some('x')),
                 __ ($X) ->_ (Some(strtoupper($x)))
             ) -> yields ($X)
-        )->toBe(
+        )->toBeLike(
             Some('x')->flatMap(function($x) {
                 return Some(strtoupper($x))->map(function($X) {
                     return $X;
@@ -81,6 +82,22 @@ class ComprehensionSpec extends ObjectBehavior
             Some(Pair('x', 'y'))->map(function($pair) use ($y) {
                 $y = $pair->_2;
                 return $y;
+            })
+        );
+    }
+
+    function it_lets_you_apply_a_function_to_binded_variables()
+    {
+        expect(
+            for_ (
+                __ ( $x )      ->_ ( Some('x') ),
+                __ ( $y )      ->_ ( Some('y') )
+            ) -> call (combine, $x, $y)
+        )->toBeLike(
+            Some('x')->flatMap(function($x) {
+                return Some('y')->map(function($y) use ($x) {
+                    return call_user_func_array(combine, [$x, $y]);
+                });
             })
         );
     }
