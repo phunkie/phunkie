@@ -3,6 +3,7 @@
 namespace spec\Phunkie\Functions;
 
 use function Phunkie\Functions\numbers\even;
+use function Phunkie\Functions\numbers\negate;
 use function Phunkie\Functions\numbers\odd;
 use function Phunkie\Functions\numbers\increment;
 use function Phunkie\Functions\numbers\decrement;
@@ -32,5 +33,11 @@ class NumbersSpec extends ObjectBehavior
     {
         expect(decrement(1))->toBe(0);
         expect(decrement(2))->toBe(1);
+    }
+
+    function it_implements_negate()
+    {
+        expect(negate(1))->toBe(-1);
+        expect(negate(-1))->toBe(1);
     }
 }

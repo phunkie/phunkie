@@ -34,3 +34,9 @@ function decrement(int $n): int
 {
     return $n - 1;
 }
+
+const negate = "\\Phunkie\\Functions\\numbers\\negate";
+function negate(int $n): int
+{
+    return $n * -1;
+}
