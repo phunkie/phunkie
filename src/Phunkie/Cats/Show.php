@@ -13,7 +13,7 @@ namespace Phunkie\Cats;
 
 trait Show
 {
-    abstract function toString(): string;
+    abstract public function toString(): string;
     public function show()
     {
         return $this->toString();
