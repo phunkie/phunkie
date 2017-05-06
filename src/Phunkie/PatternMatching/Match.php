@@ -154,41 +154,23 @@ function matchByReference($condition, $value)
     switch (true) {
         case matchListByReference($condition, $value):
         case matchListHeadByReference($condition, $value):
-        case matchSomeByReference($condition, $value):
-        case matchValidationByReference($condition, $value):
             return true;
         default: return false;
     }
 }
 
-function matchValidationByReference($condition, $value) {
-    if ($condition instanceof ReferencedSuccess && $value instanceof Success) {
-        $condition->value = ($value->fold (_)) (identity);
-        return true;
-    } elseif ($condition instanceof ReferencedFailure && $value instanceof Failure) {
-        $condition->value = ($value->fold (identity)) (_);
-        return true;
-    }
-    return false;
-}
-
 function matchGenericByReference($condition, $object, $class)
 {
-
     if ($condition instanceof GenericReferenced && get_class($object) === $class) {
         $reflected = new \ReflectionClass($object);
         $parameters = $reflected->getConstructor()->getParameters();
         for ($i = 1; $i <= count($parameters); $i++) {
+            if (!$reflected->hasProperty($parameters[$i - 1]->getName())) {
+                throw new \Error("To use generic pattern matching you have to name the constructor argument as you ".
+                    "have named the class property");
+            }
             $condition->{"_$i"} = ((array) $object)["\0$class\0{$parameters[$i - 1]->getName()}"];
         }
-        return true;
-    }
-    return false;
-}
-
-function matchSomeByReference($condition, $value) {
-    if ($condition instanceof ReferencedSome && $value instanceof Some) {
-        $condition->value = $value->get();
         return true;
     }
     return false;

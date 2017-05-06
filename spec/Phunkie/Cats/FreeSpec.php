@@ -42,4 +42,20 @@ class FreeSpec extends ObjectBehavior
         $this->beConstructedWith(42);
         $this->foldMap(new NaturalTransformation(optionToList))->shouldBeLike(ImmList(42));
     }
+
+    function it_implements_foldMap_for_suspend()
+    {
+        $this->beAnInstanceOf(Suspend::class);
+        $this->beConstructedWith(Some(42));
+        $this->foldMap(new NaturalTransformation(optionToList))->shouldBeLike(ImmList(42));
+    }
+
+    function it_implements_foldMap_for_bind()
+    {
+        $this->beAnInstanceOf(Bind::class);
+        $this->beConstructedWith(Free::pure(Some(42)), function($e) {
+            return Free::pure(42);
+        });
+        $this->foldMap(new NaturalTransformation(optionToList))->shouldBeLike(ImmList(42));
+    }
 }
