@@ -23,6 +23,9 @@ namespace {
 }
 
 namespace Phunkie\PatternMatching\Referenced {
+
+    use Phunkie\Cats\Free\Pure;
+
     function ListWithTail(&$head, &$tail)
     {
         return new ListWithTail($head, $tail);
@@ -46,6 +49,11 @@ namespace Phunkie\PatternMatching\Referenced {
     function Failure(&$value)
     {
         return new Failure($value);
+    }
+
+    function Pure(&$value)
+    {
+        return new GenericReferenced(Pure::class, $value);
     }
 }
 

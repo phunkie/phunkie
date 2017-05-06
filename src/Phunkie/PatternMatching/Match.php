@@ -13,6 +13,7 @@ namespace Phunkie\PatternMatching;
 
 use const Phunkie\Functions\function1\identity;
 use Phunkie\PatternMatching\Referenced\Failure as ReferencedFailure;
+use Phunkie\PatternMatching\Referenced\GenericReferenced;
 use Phunkie\PatternMatching\Referenced\ListWithTail;
 use Phunkie\PatternMatching\Referenced\Some as ReferencedSome;
 use Phunkie\PatternMatching\Referenced\Success as ReferencedSuccess;
@@ -147,6 +148,9 @@ function matchesWildcardedNel($condition, $value)
 
 function matchByReference($condition, $value)
 {
+    if ($condition instanceof GenericReferenced) {
+        return matchGenericByReference($condition, $value, $condition->class);
+    }
     switch (true) {
         case matchListByReference($condition, $value):
         case matchListHeadByReference($condition, $value):
@@ -163,6 +167,20 @@ function matchValidationByReference($condition, $value) {
         return true;
     } elseif ($condition instanceof ReferencedFailure && $value instanceof Failure) {
         $condition->value = ($value->fold (identity)) (_);
+        return true;
+    }
+    return false;
+}
+
+function matchGenericByReference($condition, $object, $class)
+{
+
+    if ($condition instanceof GenericReferenced && get_class($object) === $class) {
+        $reflected = new \ReflectionClass($object);
+        $parameters = $reflected->getConstructor()->getParameters();
+        for ($i = 1; $i <= count($parameters); $i++) {
+            $condition->{"_$i"} = ((array) $object)["\0$class\0{$parameters[$i - 1]->getName()}"];
+        }
         return true;
     }
     return false;
