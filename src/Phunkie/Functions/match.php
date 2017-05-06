@@ -23,6 +23,11 @@ namespace {
 }
 
 namespace Phunkie\PatternMatching\Referenced {
+
+    use Phunkie\Types\Some as Just;
+    use Phunkie\Validation\Success as Valid;
+    use Phunkie\Validation\Failure as Invalid;
+
     function ListWithTail(&$head, &$tail)
     {
         return new ListWithTail($head, $tail);
@@ -35,17 +40,17 @@ namespace Phunkie\PatternMatching\Referenced {
 
     function Some(&$value)
     {
-        return new Some($value);
+        return new GenericReferenced(Just::class, $value);
     }
 
     function Success(&$value)
     {
-        return new Success($value);
+        return new GenericReferenced(Valid::class, $value);
     }
 
     function Failure(&$value)
     {
-        return new Failure($value);
+        return new GenericReferenced(Invalid::class, $value);
     }
 }
 

@@ -80,7 +80,8 @@ namespace Phunkie\Functions\show {
         case is_null($value): return "Null";
         case is_array($value): return is_assoc($value) ? "Array<" . showArrayType(array_keys($value)) . ", " . showArrayType($value) . ">" : "Array<" . showArrayType($value) . ">";
         case is_object($value) && $value instanceof Function1: return "Function1";
-        case is_callable($value): return "Callable";        case is_object($value) && $value instanceof Unit: return "Unit";
+        case is_callable($value): return "Callable";
+        case is_object($value) && $value instanceof Unit: return "Unit";
         case is_object($value) && $value == None(): return "None";
         case is_object($value) && $value instanceof Option: return "Option<" . showType($value->get()) . ">";
         case is_object($value) && $value instanceof Pair: return "(" . showType($value->_1) . ", " . showType($value->_2) . ")";

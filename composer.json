@@ -13,8 +13,8 @@
         "php": ">=7.0"
     },
     "require-dev": {
-        "phpspec/phpspec": "~2.5",
-        "bossa/phpspec2-expect": "~1.0.3",
+        "phpspec/phpspec": "~3.3",
+        "bossa/phpspec2-expect": "~2.2",
         "giorgiosironi/eris": "~0.7"
     },
     "autoload": {
