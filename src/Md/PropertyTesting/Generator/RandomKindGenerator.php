@@ -29,6 +29,16 @@ trait RandomKindGenerator
         );
     }
 
+    private function genImmSet($gen): Generator
+    {
+        return new MapGen(
+            function($sequence) {
+                return ImmSet(...$sequence);
+            },
+            new SequenceGen(new OneOfGen([$gen]))
+        );
+    }
+
     private function genFunction1()
     {
         return ElementsGen::fromArray([Function1(function($x):string { return gettype($x);})]);
@@ -39,7 +49,8 @@ trait RandomKindGenerator
         return new OneOfGen([
             $this->genImmList(new OneOfGen([new IntGen()])),
             $this->genOption(new IntGen()),
-            ElementsGen::fromArray([Function1(function($x):string { return gettype($x);})])
+            ElementsGen::fromArray([Function1(function($x):string { return gettype($x);})]),
+            $this->genImmSet(new OneOfGen([new IntGen()]))
         ]);
     }
 

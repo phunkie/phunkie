@@ -16,12 +16,13 @@ use Phunkie\Cats\Show;
 use function Phunkie\Functions\show\showValue;
 use function Phunkie\Functions\type\promote;
 use Phunkie\Ops\ImmSet\ImmSetApplicativeOps;
+use Phunkie\Ops\ImmSet\ImmSetEqOps;
 use Phunkie\Ops\ImmSet\ImmSetFunctorOps;
 use Phunkie\Utils\Iterator;
 
 class ImmSet implements Kind, Applicative
 {
-    use Show, ImmSetFunctorOps, ImmSetApplicativeOps;
+    use Show, ImmSetFunctorOps, ImmSetApplicativeOps, ImmSetEqOps;
     private $elements = [];
 
     public function __construct(...$elements)
