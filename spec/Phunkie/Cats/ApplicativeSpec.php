@@ -40,6 +40,12 @@ class ApplicativeSpec extends ObjectBehavior
         $a = function($x) { return $x + 42; };
         $f = function($x){ return $x; };
         expect($this->applicativeHomomorphism($fa, $a, $f))->toBe(true);
+
+        // Set
+        $fa = ImmSet(42);
+        $a = 42;
+        $f = function($x){ return $x + 1; };
+        expect($this->applicativeHomomorphism($fa, $a, $f))->toBe(true);
     }
 
     function it_obeys_the_interchange_law()
@@ -59,6 +65,12 @@ class ApplicativeSpec extends ObjectBehavior
         $fab = Function1(function(string $s) { return function($x) { return $x;}; });
         // @TODO Function1 applicative does not yet obey the interchange law
         // expect($this->applicativeInterchange($fa, $f, $fab))->toBe(true);
+
+        // Set
+        $fa = ImmSet();
+        $a = 42;
+        $f = function($x):string { return gettype($x);};
+        expect($this->applicativeInterchange($fa, $a, ImmSet($f)))->toBe(true);
     }
 
     function it_obeys_the_map_law()
@@ -75,6 +87,11 @@ class ApplicativeSpec extends ObjectBehavior
 
         // Function1
         $fa = Function1(function($x){ return $x; });
+        $f = function($x){ return $x + 1; };
+        expect($this->applicativeMap($fa, $f))->toBe(true);
+
+        // Set
+        $fa = ImmSet(42);
         $f = function($x){ return $x + 1; };
         expect($this->applicativeMap($fa, $f))->toBe(true);
     }

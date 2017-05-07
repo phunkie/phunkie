@@ -11,16 +11,18 @@
 
 namespace Phunkie\Types;
 
-use Phunkie\Cats\Functor;
+use Phunkie\Cats\Applicative;
 use Phunkie\Cats\Show;
 use function Phunkie\Functions\show\showValue;
 use function Phunkie\Functions\type\promote;
+use Phunkie\Ops\ImmSet\ImmSetApplicativeOps;
+use Phunkie\Ops\ImmSet\ImmSetEqOps;
 use Phunkie\Ops\ImmSet\ImmSetFunctorOps;
 use Phunkie\Utils\Iterator;
 
-class ImmSet implements Kind, Functor
+class ImmSet implements Kind, Applicative
 {
-    use Show, ImmSetFunctorOps;
+    use Show, ImmSetFunctorOps, ImmSetApplicativeOps, ImmSetEqOps;
     private $elements = [];
 
     public function __construct(...$elements)
@@ -110,5 +112,10 @@ class ImmSet implements Kind, Functor
             }
         }
         return ImmSet(...$new);
+    }
+
+    public function isEmpty(): bool
+    {
+        return [] === $this->elements;
     }
 }
