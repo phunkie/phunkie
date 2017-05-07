@@ -370,7 +370,7 @@ $var12: Array<Nothing> = []
 Pattern Matching
 ----------------
 
-###Working withLists
+### Working withLists
 
 ```php
 <?php
@@ -385,7 +385,7 @@ function sum(ImmList $list): int { $on = match($list); switch(true) {
 }
 ```
 
-###Validation monads wildcards
+### Validation monads wildcards
 
 ```php
 <?php
@@ -403,7 +403,7 @@ $on = match($yay()); switch (true) {
 }
 ```
 
-###Option wildcards
+### Option wildcards
 
 ```php
 <?php
