@@ -36,4 +36,9 @@ final class Pair extends Tuple
     {
         return "Pair(" . showValue(parent::__get("_1")) . ", " . showValue(parent::__get("_2")) . ")";
     }
+
+    public function showType()
+    {
+        return sprintf("(%s)", implode(", ", $this->getTypeVariables()));
+    }
 }

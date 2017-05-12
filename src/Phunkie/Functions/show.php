@@ -71,6 +71,7 @@ namespace Phunkie\Functions\show {
 
     const showType = "\\Phunkie\\Functions\\show\\showType";
     function showType($value) { switch (true) {
+        case is_showable($value): return $value->showType();
         case is_integer($value): return "Int";
         case is_float($value):
         case is_double($value): return "Double";
@@ -79,18 +80,7 @@ namespace Phunkie\Functions\show {
         case is_bool($value): return "Boolean";
         case is_null($value): return "Null";
         case is_array($value): return is_assoc($value) ? "Array<" . showArrayType(array_keys($value)) . ", " . showArrayType($value) . ">" : "Array<" . showArrayType($value) . ">";
-        case is_object($value) && $value instanceof Function1: return "Function1";
         case is_callable($value): return "Callable";
-        case is_object($value) && $value instanceof Unit: return "Unit";
-        case is_object($value) && $value == None(): return "None";
-        case is_object($value) && $value instanceof Option: return "Option<" . showType($value->get()) . ">";
-        case is_object($value) && $value instanceof Pair: return "(" . showType($value->_1) . ", " . showType($value->_2) . ")";
-        case is_object($value) && $value instanceof ImmList: return "List<" . showArrayType($value->toArray()) . ">";
-        case is_object($value) && $value instanceof ImmSet: return "Set<" . showArrayType($value->toArray()) . ">";
-        case is_object($value) && $value instanceof ImmMap: return "Map<" . showArrayType($value->keys()) . ", " . showArrayType($value->values()) . ">";
-        case is_object($value) && $value instanceof Success: return "Validation<E, " . showType($value->getOrElse("")) . ">";
-        case is_object($value) && $value instanceof Failure: return "Validation<" . showType(($value->fold(identity))(_)) . ", A>";
-        case is_object($value) && $value instanceof Tuple: return "(" . implode(", ", $value->map(showType)->toArray()) . ")";
         case is_object($value) && (new \ReflectionClass($value))->isAnonymous():
             return get_parent_class($value) === false ? "AnonymousClass" : "AnonymousClass < " . get_parent_class($value);
         case is_object($value): return get_class($value); }

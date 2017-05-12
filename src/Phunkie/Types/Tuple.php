@@ -15,6 +15,7 @@ use Error;
 use Phunkie\Cats\Functor;
 use Phunkie\Cats\Show;
 use function Phunkie\Functions\functor\fmap;
+use const Phunkie\Functions\show\showType;
 use const Phunkie\Functions\show\showValue;
 use Phunkie\Ops\Tuple\TupleFunctorOps;
 use Phunkie\Utils\Copiable;
@@ -63,6 +64,11 @@ class Tuple implements Copiable, Functor, Kind
         return "(" . implode(", ", fmap(showValue, ImmList(...$this->values))->toArray()) . ")";
     }
 
+    public function showType()
+    {
+        return sprintf("(%s)", implode(", ", $this->getTypeVariables()));
+    }
+
     public function toArray(): array
     {
         return $this->values;
@@ -71,6 +77,16 @@ class Tuple implements Copiable, Functor, Kind
     public function getArity(): int
     {
         return count($this->values);
+    }
+
+    public function getTypeArity(): int
+    {
+        return $this->getArity();
+    }
+
+    public function getTypeVariables(): array
+    {
+        return array_map(showType, $this->values);
     }
 
     private function guardNumArgs(int $numArgs)

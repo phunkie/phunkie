@@ -11,11 +11,22 @@
 
 namespace Phunkie\Cats;
 
+use Phunkie\Types\Kind;
+
 trait Show
 {
     abstract public function toString(): string;
+
     public function show()
     {
         return $this->toString();
+    }
+
+    public function showType()
+    {
+        if ($this instanceof Kind) {
+            return sprintf($this::kind . "<%s>", implode(", ", $this->getTypeVariables()));
+        }
+        return get_class($this);
     }
 }

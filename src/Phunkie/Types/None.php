@@ -26,4 +26,5 @@ final class None extends Option
     public function get() { throw new \RuntimeException("Illegal get() call on None"); }
     public function isDefined(): bool { return false; }
     public function isEmpty():bool { return true; }
+    public function showType(): string { return "None"; }
 }

@@ -15,6 +15,7 @@ use Phunkie\Cats\Applicative;
 use Phunkie\Cats\Foldable;
 use Phunkie\Cats\Monad;
 use Phunkie\Cats\Show;
+use function Phunkie\Functions\show\showType;
 use function Phunkie\Functions\show\showValue;
 use Phunkie\Ops\Option\OptionApplicativeOps;
 use Phunkie\Ops\Option\OptionEqOps;
@@ -35,7 +36,19 @@ abstract class Option implements Kind, Applicative, Monad, Foldable
     abstract public function get();
     abstract public function isDefined();
     abstract public function isEmpty();
-    public function toString(): string {
+
+    public function toString(): string
+    {
         return $this->isEmpty() ? "None" : "Some(". showValue($this->get()) . ")";
+    }
+
+    public function getTypeArity(): int
+    {
+        return $this->isEmpty() ? 0 : 1;
+    }
+
+    public function getTypeVariables(): array
+    {
+        return $this->isEmpty() ? [] : [showType($this->get())];
     }
 }
