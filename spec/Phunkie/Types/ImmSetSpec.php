@@ -11,6 +11,9 @@ use function Phunkie\Functions\functor\allAs;
 use function Phunkie\Functions\functor\asVoid;
 use function Phunkie\Functions\functor\fmap;
 use function Phunkie\Functions\functor\zipWith;
+use function Phunkie\Functions\monad\bind;
+use function Phunkie\Functions\monad\flatten;
+use function Phunkie\Functions\monad\mcompose;
 use const Phunkie\Functions\numbers\increment;
 use Phunkie\Types\ImmSet;
 
@@ -122,6 +125,25 @@ class ImmSetSpec extends ObjectBehavior
 
         $xs = ((map2 (function($x, $y) { return $x + $y; })) (ImmSet(1))) (ImmSet(2));
         expect($xs)->toBeLike(ImmSet(3));
+    }
+
+    function it_is_a_monad()
+    {
+        $xs = (bind (function($a) { return ImmSet($a +1); })) (ImmSet(1));
+        expect($xs)->toBeLike(ImmSet(2));
+
+        $xs = flatten (ImmSet(ImmSet(1)));
+        expect($xs)->toBeLike(ImmSet(1));
+
+        $xs = flatten (ImmSet(ImmSet(1), ImmSet(2)));
+        expect($xs)->toBeLike(ImmSet(1, 2));
+
+        $xs = ImmSet("h");
+        $f = function(string $s) { return ImmSet($s . "e"); };
+        $g = function(string $s) { return ImmSet($s . "l"); };
+        $h = function(string $s) { return ImmSet($s . "o"); };
+        $hello = mcompose($f, $g, $g, $h);
+        expect($hello($xs))->toBeLike(ImmSet("hello"));
     }
 
     function it_returns_an_empty_set_when_an_empty_set_is_applied()

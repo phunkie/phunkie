@@ -12,17 +12,19 @@
 namespace Phunkie\Types;
 
 use Phunkie\Cats\Applicative;
+use Phunkie\Cats\Monad;
 use Phunkie\Cats\Show;
 use function Phunkie\Functions\show\showValue;
 use function Phunkie\Functions\type\promote;
 use Phunkie\Ops\ImmSet\ImmSetApplicativeOps;
 use Phunkie\Ops\ImmSet\ImmSetEqOps;
 use Phunkie\Ops\ImmSet\ImmSetFunctorOps;
+use Phunkie\Ops\ImmSet\ImmSetMonadOps;
 use Phunkie\Utils\Iterator;
 
-class ImmSet implements Kind, Applicative
+class ImmSet implements Kind, Applicative, Monad
 {
-    use Show, ImmSetFunctorOps, ImmSetApplicativeOps, ImmSetEqOps;
+    use Show, ImmSetFunctorOps, ImmSetApplicativeOps, ImmSetEqOps, ImmSetMonadOps;
     private $elements = [];
 
     public function __construct(...$elements)

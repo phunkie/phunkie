@@ -28,6 +28,12 @@ class MonadSpec extends ObjectBehavior
         $f = function(int $x):Kind { return ImmList(gettype($x)); };
         $g = function(string $x): Kind { return ImmList(strlen($x) % 2 == 0); };
         expect($this->flapMapAssociativity($fa, $f, $g))->toBe(true);
+
+        // Set
+        $fa = ImmSet(1,2,3);
+        $f = function(int $x):Kind { return ImmSet(gettype($x)); };
+        $g = function(string $x): Kind { return ImmSet(strlen($x) % 2 == 0); };
+        expect($this->flapMapAssociativity($fa, $f, $g))->toBe(true);
     }
 
     /**
@@ -48,6 +54,12 @@ class MonadSpec extends ObjectBehavior
         $a = 1;
         $f = function(int $x): Kind { return ImmList(($x + 2) % 2 == 0); };
         expect($this->leftIdentity($fa, $a, $f))->toBe(true);
+
+        // Set
+        $fa = ImmSet(1,2,3);
+        $a = 1;
+        $f = function(int $x): Kind { return ImmSet(($x + 2) % 2 == 0); };
+        expect($this->leftIdentity($fa, $a, $f))->toBe(true);
     }
 
     function it_obeys_the_law_of_right_identity()
@@ -58,6 +70,10 @@ class MonadSpec extends ObjectBehavior
 
         // List
         $fa = ImmList(1,2,3);
+        expect($this->rightIdentity($fa))->toBe(true);
+
+        // Set
+        $fa = ImmSet(1,2,3);
         expect($this->rightIdentity($fa))->toBe(true);
     }
 }
