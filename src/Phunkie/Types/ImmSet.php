@@ -14,6 +14,7 @@ namespace Phunkie\Types;
 use Phunkie\Cats\Applicative;
 use Phunkie\Cats\Monad;
 use Phunkie\Cats\Show;
+use function Phunkie\Functions\show\showArrayType;
 use function Phunkie\Functions\show\showValue;
 use function Phunkie\Functions\type\promote;
 use Phunkie\Ops\ImmSet\ImmSetApplicativeOps;
@@ -73,6 +74,16 @@ class ImmSet implements Kind, Applicative, Monad
     public function toString(): string
     {
         return "Set(" . implode(", ", array_map(function($e) { return showValue($e); }, $this->elements)) . ")";
+    }
+
+    public function getTypeArity(): int
+    {
+        return 1;
+    }
+
+    public function getTypeVariables(): array
+    {
+        return [showArrayType($this->elements)];
     }
 
     public function iterator()

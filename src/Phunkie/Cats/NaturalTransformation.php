@@ -24,16 +24,19 @@ class NaturalTransformation
 
     public function toString(): string
     {
+        return "NaturalTransformation" . "@" . substr(ltrim(spl_object_hash($this), "0"), 0, 8);
+    }
+
+    public function showType()
+    {
         return "~>[$this->from, $this->to]";
     }
 
     public function __get($member)
     {
         switch ($member) {
-            case "from":
-            case "F": return $this->from;
-            case "to":
-            case "G": return $this->to;
+            case "from": return $this->from;
+            case "to": return $this->to;
         }
         throw new \Error("$member is not a member of Natural Transformation");
     }

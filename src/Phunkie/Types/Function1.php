@@ -87,6 +87,24 @@ final class Function1 implements Kind, Applicative
             normaliseType($this->reflection->getReturnType()) ?: "?");
     }
 
+    public function getTypeArity(): int
+    {
+        return 2;
+    }
+
+    public function getTypeVariables(): array
+    {
+        return [
+            normaliseType($this->reflection->getParameters()[0]->getType()) ?: "?",
+            normaliseType($this->reflection->getReturnType()) ?: "?"
+        ];
+    }
+
+    public function showType()
+    {
+        return "Function1";
+    }
+
     private function invokeFunctionOnArg($arg)
     {
         return call_user_func($this->f, $arg);

@@ -17,6 +17,7 @@ use Phunkie\Cats\Monad;
 use Phunkie\Cats\Show;
 use function Phunkie\Functions\semigroup\combine;
 use function Phunkie\Functions\semigroup\zero;
+use function Phunkie\Functions\show\showType;
 use Phunkie\Ops\FunctorOps;
 use function Phunkie\PatternMatching\Referenced\Success as Valid;
 use function Phunkie\PatternMatching\Referenced\Failure as Invalid;
@@ -28,6 +29,7 @@ abstract class Validation implements Applicative, Monad, Kind, Foldable
 {
     use Show;
     use FunctorOps;
+    const kind = "Validation";
     public function isRight(): bool { switch (true) {
         case $this instanceof Failure: return false;
         case $this instanceof Success: return true;
@@ -38,6 +40,16 @@ abstract class Validation implements Applicative, Monad, Kind, Foldable
         case $this instanceof Success: return false;
         case $this instanceof Failure: return true;
         default: throw new TypeError("Validation cannot be extended outside namespace"); }
+    }
+
+    public function getTypeArity(): int
+    {
+        return 2;
+    }
+
+    public function getTypeVariables(): array { $on = match($this); switch(true) {
+        case $on(Valid($a)): return ['E', showType($a)];
+        case $on(Invalid($e)): return [showType($e), 'A'];}
     }
 
     public function combine(Validation $that): Validation { $on = match($this, $that); switch(true) {

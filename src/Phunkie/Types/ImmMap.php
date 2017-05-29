@@ -14,6 +14,7 @@ namespace Phunkie\Types;
 use ArrayAccess, SplObjectStorage;
 use Phunkie\Cats\Functor;
 use Phunkie\Cats\Show;
+use function Phunkie\Functions\show\showArrayType;
 use function Phunkie\Functions\show\showValue;
 use function Phunkie\Functions\type\promote;
 use Phunkie\Ops\ImmMap\ImmMapEqOps;
@@ -118,6 +119,16 @@ final class ImmMap implements ArrayAccess, Copiable, Functor, Kind
             $mappings[] = showValue($k instanceof ImmString || $k instanceof ImmInteger ? $k->get() : $k) . " -> " . showValue($this->values[$k]);
         }
         return "Map(" . implode(", ", $mappings) . ")";
+    }
+
+    public function getTypeArity(): int
+    {
+        return 2;
+    }
+
+    public function getTypeVariables(): array
+    {
+        return [showArrayType($this->keys()), showArrayType($this->values())];
     }
 
     public function plus($k, $v)

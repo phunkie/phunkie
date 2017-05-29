@@ -23,6 +23,11 @@ final class Unit extends Tuple
         return '()';
     }
 
+    public function showType()
+    {
+        return 'Unit';
+    }
+
     public function __get($member)
     {
         throw new Error("$member is not a member of Unit");

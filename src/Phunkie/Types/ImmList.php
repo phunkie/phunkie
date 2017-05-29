@@ -16,6 +16,7 @@ use Phunkie\Cats\Foldable;
 use Phunkie\Cats\Monad;
 use Phunkie\Cats\Show;
 use Phunkie\Cats\Traverse;
+use function Phunkie\Functions\show\showArrayType;
 use const Phunkie\Functions\show\showValue;
 use function Phunkie\Functions\type\promote;
 use Phunkie\Ops\ImmList\ImmListApplicativeOps;
@@ -62,6 +63,21 @@ class ImmList implements Kind, Applicative, Monad, Traverse, Foldable
             $storage[promote($k)] = $v;
         }
         return new Iterator($storage);
+    }
+
+    public function getTypeArity(): int
+    {
+        return 1;
+    }
+
+    public function getTypeVariables(): array
+    {
+        return $this->isEmpty() ? ["Nothing"] : [showArrayType($this->toArray())];
+    }
+
+    public function showType()
+    {
+        return sprintf("List<%s>", $this->getTypeVariables()[0]);
     }
 
     private function constructNonEmptyList(int $argc, array $argv)

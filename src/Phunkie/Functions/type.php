@@ -34,11 +34,16 @@ function normaliseType($type)
         "integer" => "Int",
         "string" => "String",
         "bool" => "Boolean",
+        "boolean" => "Boolean",
         "callable" => "Callable",
         "null" => "Null",
         "double" => "Double",
         "float" => "Float",
-        "resource" => "Resource"
+        "resource" => "Resource",
+        "mixed" => "Mixed",
+        "void" => "Void",
+        "array" => "Array",
+        "object" => "Object",
     ];
 
     return is_string($type) && isset($scalars[$type]) ? $scalars[$type] : $type;

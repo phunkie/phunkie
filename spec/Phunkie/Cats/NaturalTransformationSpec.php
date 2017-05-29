@@ -22,7 +22,7 @@ class NaturalTransformationSpec extends ObjectBehavior
     function it_is_showable()
     {
         $this->shouldBeShowable();
-        $this->show()->shouldReturn("~>[Option, ImmList]");
+        $this->showType()->shouldReturn("~>[Option, ImmList]");
     }
 
     function getMatchers()

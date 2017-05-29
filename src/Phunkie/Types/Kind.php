@@ -16,5 +16,6 @@ namespace Phunkie\Types;
  */
 interface Kind
 {
-
+    public function getTypeArity(): int;
+    public function getTypeVariables(): array;
 }
