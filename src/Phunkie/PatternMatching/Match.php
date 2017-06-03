@@ -161,7 +161,7 @@ function matchByReference($condition, $value)
 
 function matchGenericByReference($condition, $object, $class)
 {
-    if ($condition instanceof GenericReferenced && get_class($object) === $class) {
+    if ($condition instanceof GenericReferenced && is_object($object) && get_class($object) === $class) {
         $reflected = new \ReflectionClass($object);
         $parameters = $reflected->getConstructor()->getParameters();
         for ($i = 1; $i <= count($parameters); $i++) {
