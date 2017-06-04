@@ -45,7 +45,7 @@ class State
      */
     public function get()
     {
-        return new State(function($s) { return Pair($s, $s); });
+        return new State(function($s) { return \Pair($s, $s); });
     }
 
     /**
@@ -54,7 +54,7 @@ class State
      */
     public function gets(callable $f): State
     {
-        return new State(function($s) use ($f) { return Pair($s, $f($s)); });
+        return new State(function($s) use ($f) { return \Pair($s, $f($s)); });
     }
 
     /**
@@ -63,7 +63,7 @@ class State
      */
     public function put($s): State
     {
-        return new State(function($ignore) use ($s) { return Pair($s, Unit()); });
+        return new State(function($ignore) use ($s) { return \Pair($s, Unit()); });
     }
 
     /**
@@ -72,7 +72,7 @@ class State
      */
     public function modify(callable $f)
     {
-        return new State(function($s) use ($f) { return Pair($f($s), Unit()); });
+        return new State(function($s) use ($f) { return \Pair($f($s), Unit()); });
     }
 
     /**
@@ -83,7 +83,7 @@ class State
     {
         return new State(function($s) use ($f) {
             $state = $this->run($s);
-            return Pair($state->_1, $f($state->_2));
+            return \Pair($state->_1, $f($state->_2));
         });
     }
 

@@ -169,7 +169,11 @@ function matchGenericByReference($condition, $object, $class)
                 throw new \Error("To use generic pattern matching you have to name the constructor argument as you ".
                     "have named the class property");
             }
-            $condition->{"_$i"} = ((array) $object)["\0$class\0{$parameters[$i - 1]->getName()}"];
+            if (isset(((array) $object)["\0$class\0{$parameters[$i - 1]->getName()}"])) {
+                $condition->{"_$i"} = ((array)$object)["\0$class\0{$parameters[$i - 1]->getName()}"];
+            } elseif (isset(((array)$object)["{$parameters[$i - 1]->getName()}"])) {
+                $condition->{"_$i"} = ((array)$object)["{$parameters[$i - 1]->getName()}"];
+            }
         }
         return true;
     }
