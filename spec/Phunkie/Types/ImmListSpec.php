@@ -122,6 +122,18 @@ class ImmListSpec extends ObjectBehavior
         $this->beConstructedWith(1,2,3);
         $this->toArray()->shouldBe([1,2,3]);
     }
+    
+    function it_can_be_transposed()
+    {
+        $this->beConstructedWith(ImmList(1,2,3), ImmList(4,5,6));
+        $this->transpose()->shouldBeLike(
+            ImmList(
+                ImmList(1,4),
+                ImmList(2,5),
+                ImmList(3,6)
+            )
+        );
+    }
 
     function it_zips()
     {

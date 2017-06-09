@@ -163,6 +163,15 @@ trait ImmListOps
         }
     }
 
+    public function transpose()
+    {
+        $new = [];
+        foreach ($this->head->toArray() as $i => $values) {
+            $new[] = $this->map(function(ImmList $list) use ($i) { return $list->nth($i)->get(); });
+        }
+        return ImmList(...$new);
+    }
+
     private function mkStringOneArgument($glue): string
     {
         return implode($glue, array_map(function($e) { return is_string($e) ? $e : showValue($e); }, $this->toArray()));
