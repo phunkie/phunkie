@@ -230,6 +230,12 @@ namespace Phunkie\Functions\immlist {
             return $listOrString->reduce($f);
         });
     }
+
+    const transpose = "\\Phunkie\\Functions\\immlist\\transpose";
+    function transpose(ImmList $list)
+    {
+        return $list->transpose();
+    }
 }
 
 namespace Phunkie\Functions\immlist\local {

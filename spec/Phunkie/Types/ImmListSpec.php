@@ -12,6 +12,7 @@ use function Phunkie\Functions\monad\flatten;
 use function Phunkie\Functions\monad\mcompose;
 use function Phunkie\Functions\show\showValue;
 use function Phunkie\Functions\show\usesTrait;
+use function Phunkie\Functions\immlist\transpose;
 use Phunkie\Ops\ImmList\ImmListApplicativeOps;
 use Phunkie\Types\Cons;
 use Phunkie\Types\Nil;
@@ -126,13 +127,13 @@ class ImmListSpec extends ObjectBehavior
     function it_can_be_transposed()
     {
         $this->beConstructedWith(ImmList(1,2,3), ImmList(4,5,6));
-        $this->transpose()->shouldBeLike(
-            ImmList(
-                ImmList(1,4),
-                ImmList(2,5),
-                ImmList(3,6)
-            )
+        $transposed = ImmList(
+            ImmList(1, 4),
+            ImmList(2, 5),
+            ImmList(3, 6)
         );
+        $this->transpose()->shouldBeLike($transposed);
+        expect(transpose(ImmList(ImmList(1,2,3), ImmList(4,5,6))))->toBeLike($transposed);
     }
 
     function it_zips()
