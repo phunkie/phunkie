@@ -32,10 +32,20 @@ abstract class Option implements Kind, Applicative, Monad, Foldable
         OptionMonadOps,
         OptionFoldableOps,
         OptionMonoidOps;
+    protected $t;
     abstract public function getOrElse($t);
     abstract public function get();
     abstract public function isDefined();
     abstract public function isEmpty();
+
+    final protected function __construct($t = null)
+    {
+        if ($this instanceof Some) {
+            $this->t = $t;
+        } elseif (!$this instanceof None) {
+            throw new \Error("Option can only be Some or None");
+        }
+    }
 
     public function toString(): string
     {

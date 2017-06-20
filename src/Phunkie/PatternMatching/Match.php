@@ -11,12 +11,9 @@
 
 namespace Phunkie\PatternMatching;
 
-use const Phunkie\Functions\function1\identity;
-use Phunkie\PatternMatching\Referenced\Failure as ReferencedFailure;
 use Phunkie\PatternMatching\Referenced\GenericReferenced;
 use Phunkie\PatternMatching\Referenced\ListWithTail;
 use Phunkie\PatternMatching\Referenced\Some as ReferencedSome;
-use Phunkie\PatternMatching\Referenced\Success as ReferencedSuccess;
 use Phunkie\PatternMatching\Wildcarded\Function1 as WildcardedFunction1;
 use Phunkie\PatternMatching\Wildcarded\ImmList as WildcardedCons;
 use Phunkie\PatternMatching\Referenced\ListNoTail;
@@ -25,7 +22,6 @@ use Phunkie\Types\ImmList;
 use Phunkie\Types\NonEmptyList;
 use Phunkie\Types\Option;
 use Phunkie\Types\Some;
-use Phunkie\Utils\Comparable;
 use Phunkie\Validation\Failure;
 use Phunkie\Validation\Success;
 
@@ -70,6 +66,7 @@ function conditionIsValid($condition, $value)
 {
     switch (true) {
         case $condition === _:
+        case matchSomeByReference($condition, $value):
         case matchByReference($condition, $value):
         case matchesNone($condition, $value):
         case matchesNil($condition, $value):
@@ -101,6 +98,15 @@ function sameTypeSameValue($condition, $value)
     return gettype($condition) == gettype($value) &&
            ($value == $condition || ($condition instanceof ImmList && $condition->eqv($value)));
 }
+
+function matchSomeByReference($condition, $value)
+{
+    if ($condition instanceof ReferencedSome && $value instanceof Some) {
+        $condition->value = $value->get();
+        return true;
+    }
+    return false;
+ }
 
 function matchesNone($condition, $value)
 {

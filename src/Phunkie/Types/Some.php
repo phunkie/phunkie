@@ -13,8 +13,6 @@ namespace Phunkie\Types;
 
 final class Some extends Option
 {
-    private $t;
-    private function __construct($t) { $this->t = $t; }
     private function __clone() {}
     public static function instance()
     {

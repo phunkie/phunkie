@@ -23,8 +23,6 @@ namespace {
 }
 
 namespace Phunkie\PatternMatching\Referenced {
-
-    use Phunkie\Types\Some as Just;
     use Phunkie\Validation\Success as Valid;
     use Phunkie\Validation\Failure as Invalid;
 
@@ -40,7 +38,7 @@ namespace Phunkie\PatternMatching\Referenced {
 
     function Some(&$value)
     {
-        return new GenericReferenced(Just::class, $value);
+        return new Some($value);
     }
 
     function Success(&$value)

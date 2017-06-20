@@ -14,7 +14,6 @@ namespace Phunkie\Types;
 final class None extends Option
 {
     private static $instance;
-    private function __construct() {}
     private function __clone() {}
     public static function instance() {
         return self::$instance == null ? self::$instance = new None() : self::$instance;
