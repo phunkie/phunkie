@@ -22,12 +22,15 @@ use Phunkie\Ops\Option\OptionEqOps;
 use Phunkie\Ops\Option\OptionFoldableOps;
 use Phunkie\Ops\Option\OptionMonadOps;
 use Phunkie\Ops\Option\OptionMonoidOps;
+use Phunkie\Ops\Option\OptionOps;
+use Phunkie\Utils\Traversable;
 
-abstract class Option implements Kind, Applicative, Monad, Foldable
+abstract class Option implements Kind, Applicative, Monad, Foldable, Traversable
 {
     use Show;
     const kind = "Option";
     use OptionApplicativeOps,
+        OptionOps,
         OptionEqOps,
         OptionMonadOps,
         OptionFoldableOps,

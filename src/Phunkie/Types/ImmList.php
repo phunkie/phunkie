@@ -27,8 +27,9 @@ use Phunkie\Ops\ImmList\ImmListMonoidOps;
 use Phunkie\Ops\ImmList\ImmListOps;
 use Phunkie\Ops\ImmList\ImmListTraverseOps;
 use Phunkie\Utils\Iterator;
+use Phunkie\Utils\Traversable;
 
-class ImmList implements Kind, Applicative, Monad, Traverse, Foldable
+class ImmList implements Kind, Applicative, Monad, Traverse, Foldable, Traversable
 {
     use Show;
     use ImmListOps,

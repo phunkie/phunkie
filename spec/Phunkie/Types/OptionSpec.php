@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of Phunkie, library with functional structures for PHP.
+ *
+ * (c) Marcello Duarte <marcello.duarte@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace spec\Phunkie\Types;
 
 use Phunkie\Cats\Show;
@@ -19,6 +28,7 @@ use Phunkie\Ops\Option\OptionApplicativeOps;
 
 use Eris\TestTrait;
 use Eris\Generator\IntegerGenerator as IntGen;
+use Phunkie\Utils\WithFilter;
 
 /**
  * @mixin OptionApplicativeOps
@@ -50,6 +60,24 @@ class OptionSpec extends ObjectBehavior
                 return $x + 1;
             }))->toBeLike(Some($a + 1));
         });
+    }
+
+    function it_has_filter()
+    {
+        $this->filter(function($x){return $x == 1;})
+            ->shouldBeLike(Some(1));
+    }
+
+    function it_has_withFilter()
+    {
+        $this->withFilter(function($x){return $x == 1;})
+            ->shouldBeAnInstanceOf(WithFilter::class);
+    }
+
+    function its_withFilter_plus_map_to_identity_is_equivalent_to_filter()
+    {
+        $this->withFilter(function($x){return $x == 1;})->map(function($x) { return $x;})
+            ->shouldBeLike($this->filter(function($x){return $x == 1;}));
     }
 
     function it_is_an_applicative()

@@ -28,6 +28,7 @@ use function Phunkie\PatternMatching\Referenced\ListNoTail;
 use function Phunkie\PatternMatching\Referenced\ListWithTail;
 use function \Phunkie\PatternMatching\Referenced\Failure as Invalid;
 use function \Phunkie\PatternMatching\Referenced\Success as Valid;
+use Phunkie\Utils\WithFilter;
 
 trait ImmListOps
 {
@@ -86,6 +87,11 @@ trait ImmListOps
     public function filter(callable $condition): ImmList
     {
         return ImmList(...array_filter($this->toArray(), $condition));
+    }
+
+    public function withFilter(callable $filter): WithFilter
+    {
+        return new WithFilter($this, $filter);
     }
 
     public function reject(callable $condition): ImmList

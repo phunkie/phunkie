@@ -1,26 +1,29 @@
 <?php
 
+/*
+ * This file is part of Phunkie, library with functional structures for PHP.
+ *
+ * (c) Marcello Duarte <marcello.duarte@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace spec\Phunkie\Types;
 
-use Phunkie\Cats\Show;
-use Phunkie\Cats\Traverse;
-use function Phunkie\Functions\applicative\ap;
-use function Phunkie\Functions\applicative\pure;
-use function Phunkie\Functions\applicative\map2;
-use function Phunkie\Functions\monad\bind;
-use function Phunkie\Functions\monad\flatten;
-use function Phunkie\Functions\monad\mcompose;
-use function Phunkie\Functions\show\showValue;
-use function Phunkie\Functions\show\usesTrait;
+use Phunkie\Cats\{Show,Traverse};
+use function Phunkie\Functions\applicative\{ap,pure,map2};
+use function Phunkie\Functions\monad\{bind,flatten,mcompose};
+use function Phunkie\Functions\show\{showValue,usesTrait};
 use function Phunkie\Functions\immlist\transpose;
 use Phunkie\Ops\ImmList\ImmListApplicativeOps;
-use Phunkie\Types\Cons;
 use Phunkie\Types\Nil;
 use PhpSpec\ObjectBehavior;
 
 use Eris\TestTrait;
 use Eris\Generator\SequenceGenerator as SeqGen;
 use Eris\Generator\IntegerGenerator as IntGen;
+use Phunkie\Utils\WithFilter;
 
 /**
  * @mixin ImmListApplicativeOps
@@ -92,6 +95,20 @@ class ImmListSpec extends ObjectBehavior
     {
         $this->beConstructedWith(1, 2, 3);
         $this->filter(function($x){return $x == 2;})->shouldBeLike(ImmList(2));
+    }
+
+    function it_has_withFilter()
+    {
+        $this->beConstructedWith(1, 2, 3);
+        $this->withFilter(function($x){return $x == 2;})
+            ->shouldBeAnInstanceOf(WithFilter::class);
+    }
+
+    function its_withFilter_plus_map_to_identity_is_equivalent_to_filter()
+    {
+        $this->beConstructedWith(1, 2, 3);
+        $this->withFilter(function($x){return $x == 2;})->map(function($x) { return $x;})
+            ->shouldBeLike($this->filter(function($x){return $x == 2;}));
     }
 
     function it_has_reject()
