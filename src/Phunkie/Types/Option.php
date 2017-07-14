@@ -37,8 +37,8 @@ abstract class Option implements Kind, Applicative, Monad, Foldable, Traversable
         OptionMonoidOps;
     protected $t;
     abstract public function getOrElse($t);
-    abstract public function isDefined();
-    abstract public function isEmpty();
+    abstract public function isDefined(): bool;
+    abstract public function isEmpty(): bool;
 
     final protected function __construct($t = null)
     {
