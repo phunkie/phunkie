@@ -12,7 +12,6 @@
 namespace Phunkie\Ops\ImmList;
 
 use BadMethodCallException;
-use Phunkie\Cats\Functor;
 use Phunkie\Types\Function1;
 use Phunkie\Types\ImmList;
 use Phunkie\Types\Kind;

@@ -12,10 +12,6 @@
 namespace Phunkie\Ops\ImmMap;
 
 use Phunkie\Algebra\Eq;
-use function Phunkie\Functions\show\show;
-use function Phunkie\Functions\type\promote;
-use Phunkie\Types\ImmInteger;
-use Phunkie\Types\ImmString;
 
 trait ImmMapEqOps
 {

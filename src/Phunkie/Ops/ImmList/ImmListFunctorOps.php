@@ -12,8 +12,6 @@
 namespace Phunkie\Ops\ImmList;
 
 use Phunkie\Ops\FunctorOps;
-use Phunkie\PatternMatching\Underscore;
-use Phunkie\PatternMatching\Wildcard;
 use Phunkie\Types\Kind;
 
 trait ImmListFunctorOps

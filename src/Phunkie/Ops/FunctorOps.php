@@ -11,7 +11,6 @@
 
 namespace Phunkie\Ops;
 
-use Phunkie\Cats\Functor;
 use Phunkie\Types\Kind;
 
 trait FunctorOps
