@@ -15,7 +15,6 @@ use Phunkie\Algebra\Eq;
 use function Phunkie\Functions\semigroup\combine;
 use function Phunkie\Functions\semigroup\zero;
 use function \Phunkie\Functions\show\usesTrait;
-use function Phunkie\Functions\show\show;
 
 trait MonoidLaws
 {

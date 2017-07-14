@@ -11,11 +11,9 @@
 
 namespace Phunkie\Ops\Option;
 
-use Phunkie\Algebra\Monoid;
 use function Phunkie\Functions\currying\applyPartially;
 use function Phunkie\Functions\semigroup\combine;
 use function Phunkie\Functions\semigroup\zero;
-use Phunkie\Types\Function1;
 
 trait OptionFoldableOps
 {
