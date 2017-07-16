@@ -41,14 +41,11 @@ namespace {
 namespace Phunkie\Functions\immlist {
 
     use function Phunkie\Functions\currying\applyPartially;
-    use const Phunkie\Functions\function1\identity;
     use function Phunkie\Functions\immlist\local\assertListOrString;
     use const Phunkie\Functions\immlist\local\FIRST_ARGUMENT;
-    use function Phunkie\Functions\immlist\local\formatError;
     use const Phunkie\Functions\immlist\local\SECOND_ARGUMENT;
     use Phunkie\Types\ImmList;
     use Phunkie\Types\ImmList\NoSuchElementException;
-    use Phunkie\Validation\Failure;
 
     const head = "\\Phunkie\\Functions\\immlist\\head";
     function head($listOrString)

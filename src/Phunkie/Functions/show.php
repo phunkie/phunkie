@@ -12,20 +12,8 @@
 namespace Phunkie\Functions\show {
 
     use Phunkie\Cats\Show;
-    use const Phunkie\Functions\function1\identity;
     use function Phunkie\Functions\type\normaliseType;
-    use Phunkie\Types\Function1;
-    use Phunkie\Types\ImmList;
-    use Phunkie\Types\ImmMap;
-    use Phunkie\Types\ImmSet;
     use Phunkie\Types\Option;
-    use Phunkie\Types\Pair;
-    use Phunkie\Types\Tuple;
-    use Phunkie\Types\Unit;
-    use Phunkie\Utils\Trampoline\Done;
-    use Phunkie\Utils\Trampoline\Trampoline;
-    use Phunkie\Validation\Failure;
-    use Phunkie\Validation\Success;
 
     const show = "\\Phunkie\\Functions\\show\\show";
     function show(...$values)
