@@ -16,6 +16,7 @@ use Phunkie\Cats\Monad;
 
 interface Traversable extends Functor, Monad
 {
-    public function filter(callable $filter);
+    public function filter(callable $filter): Traversable;
     public function withFilter(callable $filter): WithFilter;
+    public function withEach(callable $block);
 }

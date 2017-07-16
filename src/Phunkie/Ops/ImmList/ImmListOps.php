@@ -28,8 +28,12 @@ use function Phunkie\PatternMatching\Referenced\ListNoTail;
 use function Phunkie\PatternMatching\Referenced\ListWithTail;
 use function \Phunkie\PatternMatching\Referenced\Failure as Invalid;
 use function \Phunkie\PatternMatching\Referenced\Success as Valid;
+use Phunkie\Utils\Traversable;
 use Phunkie\Utils\WithFilter;
 
+/**
+ * @mixin ImmList
+ */
 trait ImmListOps
 {
     abstract public function toArray(): array;
@@ -84,7 +88,11 @@ trait ImmListOps
         return false;
     }
 
-    public function filter(callable $condition): ImmList
+    /**
+     * @param callable $condition
+     * @return Traversable|ImmList
+     */
+    public function filter(callable $condition): Traversable
     {
         return ImmList(...array_filter($this->toArray(), $condition));
     }
@@ -92,6 +100,13 @@ trait ImmListOps
     public function withFilter(callable $filter): WithFilter
     {
         return new WithFilter($this, $filter);
+    }
+
+    public function withEach(callable $block)
+    {
+        foreach($this->toArray() as $item) {
+            $block($item);
+        }
     }
 
     public function reject(callable $condition): ImmList

@@ -12,6 +12,7 @@
 namespace Phunkie\Types;
 
 use Phunkie\Types\ImmList\NoSuchElementException;
+use Phunkie\Utils\Traversable;
 
 final class Nil extends ImmList
 {
@@ -90,7 +91,11 @@ final class Nil extends ImmList
         return "List()";
     }
 
-    public function filter(callable $condition): ImmList
+    /**
+     * @param callable $condition
+     * @return Traversable|ImmList
+     */
+    public function filter(callable $condition): Traversable
     {
         return Nil();
     }

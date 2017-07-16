@@ -12,6 +12,7 @@
 namespace Phunkie\Ops\Option;
 
 use Phunkie\Types\Option;
+use Phunkie\Utils\Traversable;
 use Phunkie\Utils\WithFilter;
 
 /**
@@ -19,7 +20,11 @@ use Phunkie\Utils\WithFilter;
  */
 trait OptionOps
 {
-    public function filter(callable $condition): Option
+    /**
+     * @param callable $condition
+     * @return Traversable|Option
+     */
+    public function filter(callable $condition): Traversable
     {
         return $this->isEmpty() ? $this : ($condition($this->get()) ? $this : None());
     }
@@ -27,5 +32,12 @@ trait OptionOps
     public function withFilter(callable $filter): WithFilter
     {
         return new WithFilter($this, $filter);
+    }
+
+    public function withEach(callable $block)
+    {
+        if ($this->isDefined()) {
+            $block($this->get());
+        }
     }
 }
