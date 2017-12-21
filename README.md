@@ -28,7 +28,7 @@ $var1: None = None
 phunkie > Option(42)
 $var2: Option<Int> = Some(42)
 
-punkie > Option(null)
+phunkie > Option(null)
 $var3: None = None
 ```
 
