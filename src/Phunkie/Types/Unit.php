@@ -38,7 +38,7 @@ final class Unit extends Tuple
         throw new Error("$arg is not a member of Unit");
     }
 
-    public function copy(array $parameters)
+    public function copy(array $parameters): Tuple
     {
         throw new Error("copy is not a member of Unit");
     }
