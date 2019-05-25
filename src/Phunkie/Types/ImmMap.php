@@ -86,7 +86,7 @@ final class ImmMap implements ArrayAccess, Copiable, Functor, Kind
 
     public function contains($offset)
     {
-        return $this->offsetExists($offset);
+        return $this->offsetExists(promote($offset));
     }
 
     public function getOrElse($offset, $default)
@@ -133,6 +133,10 @@ final class ImmMap implements ArrayAccess, Copiable, Functor, Kind
 
     public function plus($k, $v)
     {
+        if ($this->contains($k)) {
+            return $this->minus($k)->plus($k, $v);
+        }
+
         $mappings = clone $this->values;
         $mappings->attach(promote($k), $v);
         $map = new self();
