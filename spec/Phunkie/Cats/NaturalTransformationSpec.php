@@ -25,7 +25,7 @@ class NaturalTransformationSpec extends ObjectBehavior
         $this->showType()->shouldReturn("~>[Option, ImmList]");
     }
 
-    function getMatchers()
+    function getMatchers(): array
     {
         return ["beShowable" => function($sus){
             return usesTrait($sus, Show::class);

@@ -20,7 +20,7 @@ use Phunkie\Ops\ImmList\ImmListApplicativeOps;
 use Phunkie\Types\Nil;
 use PhpSpec\ObjectBehavior;
 
-use Eris\TestTrait;
+use Md\PropertyTesting\TestTrait;
 use Eris\Generator\SequenceGenerator as SeqGen;
 use Eris\Generator\IntegerGenerator as IntGen;
 use Phunkie\Utils\WithFilter;
@@ -275,7 +275,7 @@ class ImmListSpec extends ObjectBehavior
         $this->sequence()->shouldBeLike(None());
     }
 
-    function getMatchers()
+    function getMatchers(): array
     {
         return ["beShowable" => function($sus){
             return usesTrait($sus, Show::class);

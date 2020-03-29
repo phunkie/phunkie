@@ -6,7 +6,7 @@ use Eris\Generator\BooleanGenerator;
 use Eris\Generator\IntegerGenerator as IntGen;
 use Eris\Generator\SequenceGenerator;
 use Eris\Generator\StringGenerator;
-use Eris\TestTrait;
+use Md\PropertyTesting\TestTrait;
 use function Phunkie\Functions\semigroup\combine;
 use function Phunkie\Functions\show\show;
 use Phunkie\Laws\SemigroupLaws;

@@ -2,7 +2,7 @@
 
 namespace spec\Phunkie\Cats\Functor;
 
-use Eris\TestTrait;
+use Md\PropertyTesting\TestTrait;
 use Phunkie\Laws\InvariantLaws;
 use Md\PropertyTesting\Generator\RandomKindGenerator;
 use PhpSpec\ObjectBehavior;

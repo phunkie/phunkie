@@ -24,7 +24,7 @@ class Function1Spec extends ObjectBehavior
     {
         $this->beConstructedWith(function(int $x):int { return $x + 1; });
         $this->shouldBeShowable();
-        expect(showValue($this->getWrappedObject()))->toReturn("Function1(int=>int)");
+        expect(showValue($this->getWrappedObject()))->toReturn("Function1(Int=>Int)");
     }
 
     function it_is_has_applicative_ops()
@@ -38,7 +38,7 @@ class Function1Spec extends ObjectBehavior
         $this->apply(Function1(identity))->eqv(Function1::identity(), Some(42))->shouldBe(true);
     }
 
-    function getMatchers()
+    function getMatchers(): array
     {
         return ["beShowable" => function($sus){
             return usesTrait($sus, Show::class);

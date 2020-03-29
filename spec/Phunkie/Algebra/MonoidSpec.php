@@ -6,7 +6,7 @@ use Eris\Generator\BooleanGenerator;
 use Eris\Generator\IntegerGenerator as IntGen;
 use Eris\Generator\SequenceGenerator;
 use Eris\Generator\StringGenerator;
-use Eris\TestTrait;
+use Md\PropertyTesting\TestTrait;
 use Phunkie\Laws\MonoidLaws;
 use Md\PropertyTesting\Generator\RandomKindGenerator;
 use PhpSpec\ObjectBehavior;
@@ -15,6 +15,11 @@ use Eris\Generator\ElementsGenerator as ElementsGen;
 class MonoidSpec extends ObjectBehavior
 {
     use TestTrait, MonoidLaws, RandomKindGenerator;
+
+    function let()
+    {
+        $this->beAnInstanceOf(AMonoid::class);
+    }
 
     function it_obeys_the_law_of_combine_left_identity_with_integers()
     {
@@ -159,4 +164,9 @@ class MonoidSpec extends ObjectBehavior
             expect($this->combineRightIdentity($x))->toBe(true);
         });
     }
+}
+
+class AMonoid implements \Phunkie\Algebra\Monoid {
+  public function zero() {}
+  public function combine($one, $another) {}
 }

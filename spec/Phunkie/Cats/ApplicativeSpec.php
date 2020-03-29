@@ -8,6 +8,10 @@ use PhpSpec\ObjectBehavior;
 
 use Eris\TestTrait;
 
+abstract class C extends \Phunkie\Cats\Applicative {
+  
+}
+
 class ApplicativeSpec extends ObjectBehavior
 {
     use ApplicativeLaws,TestTrait,RandomKindGenerator;

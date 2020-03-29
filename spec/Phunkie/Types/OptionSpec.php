@@ -26,7 +26,7 @@ use PhpSpec\ObjectBehavior;
 
 use Phunkie\Ops\Option\OptionApplicativeOps;
 
-use Eris\TestTrait;
+use Md\PropertyTesting\TestTrait;
 use Eris\Generator\IntegerGenerator as IntGen;
 use Phunkie\Utils\WithFilter;
 
@@ -139,7 +139,7 @@ class OptionSpec extends ObjectBehavior
         });
     }
 
-    function getMatchers()
+    function getMatchers(): array
     {
         return [
             "beUsing" => function($sus, $trait){

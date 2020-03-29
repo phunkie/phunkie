@@ -49,7 +49,7 @@ class FunctorCompositeSpec extends ObjectBehavior
         $fa->map($xs, function($x) { return $x + 1;})->shouldBeLike(ImmList(Some(2), None(), Some(3)));
     }
 
-    function getMatchers()
+    function getMatchers(): array
     {
         return ['beShowable' => function($object) {
             return is_showable($object);

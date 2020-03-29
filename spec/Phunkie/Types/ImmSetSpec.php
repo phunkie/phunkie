@@ -17,7 +17,7 @@ use function Phunkie\Functions\monad\mcompose;
 use const Phunkie\Functions\numbers\increment;
 use Phunkie\Types\ImmSet;
 
-use Eris\TestTrait;
+use Md\PropertyTesting\TestTrait;
 use Eris\Generator\SequenceGenerator as SeqGen;
 use Eris\Generator\IntegerGenerator as IntGen;
 

@@ -2,7 +2,7 @@
 
 namespace spec\Phunkie\Cats;
 
-use Eris\TestTrait;
+use Md\PropertyTesting\TestTrait;
 use Phunkie\Laws\FunctorLaws;
 use Phunkie\Types\Function1;
 use Md\PropertyTesting\Generator\RandomKindGenerator;
