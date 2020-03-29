@@ -1,8 +1,7 @@
 language: php
 
 php:
-  - '7.0'
-  - '7.1'
+  - '7.4'
 
 script:
    - bin/phpspec run --format=dot
