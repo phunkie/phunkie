@@ -83,8 +83,8 @@ final class Function1 implements Kind, Applicative
     public function toString(): string
     {
         return sprintf("Function1(%s=>%s)",
-            normaliseType($this->reflection->getParameters()[0]->getType()) ?: "?",
-            normaliseType($this->reflection->getReturnType()) ?: "?");
+            normaliseType($this->reflection->getParameters()[0]->getType()->getName()) ?: "?",
+            normaliseType($this->reflection->getReturnType()->getName()) ?: "?");
     }
 
     public function getTypeArity(): int

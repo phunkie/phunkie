@@ -51,7 +51,7 @@ class NaturalTransformation
         $reflection = method_exists($this->f, "__invoke") ?
             new \ReflectionMethod($this->f, "__invoke") :
             new \ReflectionFunction($this->f);
-        $this->from = ltrim(normaliseType($reflection->getParameters()[0]->getType()) ?: "?", "Phunkie\\Types\\");
-        $this->to = ltrim(normaliseType($reflection->getReturnType()) ?: "?", "Phunkie\\Types\\");
+        $this->from = ltrim(normaliseType($reflection->getParameters()[0]->getType()->getName()) ?: "?", "Phunkie\\Types\\");
+        $this->to = ltrim(normaliseType($reflection->getReturnType()->getName()) ?: "?", "Phunkie\\Types\\");
     }
 }
