@@ -23,10 +23,12 @@ trait OptionFunctorOps
 {
     use FunctorOps;
 
-    public function map(callable $f): Kind { switch (true) {
-        case $this->isEmpty(): return None();
-        case ($f($this->get()) instanceof None || $f($this->get()) === null): return None();
-        default: return Some($f($this->get())); }
+    public function map(callable $f): Kind
+    {
+        if ($this->isEmpty()) return None();
+        $result = $f($this->get());
+        if ($result instanceof None || $result === null) return None();
+        else return Some($result);
     }
 
     public function imap(callable $f,callable $g): Kind
