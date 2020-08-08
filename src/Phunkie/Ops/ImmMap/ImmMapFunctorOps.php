@@ -17,7 +17,7 @@ trait ImmMapFunctorOps
     {
         $mappings = new SplObjectStorage();
         $key = $value = null;
-        foreach($this->iterator() as $k => $v) {
+        foreach($this->copy()->iterator() as $k => $v) {
             (assign($key, $value))($f(Pair($k, $v)));
             $mappings[promote($key)] = $value;
         }
