@@ -19,12 +19,12 @@ trait ImmListFunctorOps
     use FunctorOps;
     public function map(callable $f): Kind
     {
-        return ImmList(...array_map(function($element) use ($f){
+        return ImmList(...array_map(function ($element) use ($f) {
             return $f($element);
         }, $this->values));
     }
 
-    public function imap(callable $f,callable $g): Kind
+    public function imap(callable $f, callable $g): Kind
     {
         return $this->map($f);
     }

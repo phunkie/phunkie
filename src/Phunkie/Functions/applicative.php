@@ -4,8 +4,8 @@ namespace Phunkie\Functions\applicative;
 
 use Phunkie\Cats\Applicative;
 use Phunkie\Cats\Apply;
-use function Phunkie\Functions\currying\applyPartially;
 use Phunkie\Types\Kind;
+use function Phunkie\Functions\currying\applyPartially;
 
 /**
  * F<A -> B> -> F<A> -> F<B>
@@ -13,7 +13,7 @@ use Phunkie\Types\Kind;
 const ap = "\\Phunkie\\Functions\\applicative\\ap";
 function ap(Kind $f)
 {
-    return applyPartially([$f],func_get_args(), function(Applicative $applicative) use ($f) {
+    return applyPartially([$f], func_get_args(), function (Applicative $applicative) use ($f) {
         return $applicative->apply($f);
     });
 }
@@ -21,7 +21,7 @@ function ap(Kind $f)
 const pure = "\\Phunkie\\Functions\\applicative\\pure";
 function pure($context)
 {
-    return applyPartially([$context],func_get_args(), function($a) use ($context) {
+    return applyPartially([$context], func_get_args(), function ($a) use ($context) {
         if (($fa = $context($a)) instanceof Applicative) {
             return $fa;
         }
@@ -32,8 +32,8 @@ function pure($context)
 const map2 = "\\Phunkie\\Functions\\applicative\\map2";
 function map2(callable $f)
 {
-    return applyPartially([$f],func_get_args(), function(Apply $fa) use ($f) {
-        return function(Apply $fb) use ($fa, $f) {
+    return applyPartially([$f], func_get_args(), function (Apply $fa) use ($f) {
+        return function (Apply $fb) use ($fa, $f) {
             return $fa->map2($fb, $f);
         };
     });

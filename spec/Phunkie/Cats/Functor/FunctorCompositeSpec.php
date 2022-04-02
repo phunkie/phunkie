@@ -3,56 +3,77 @@
 namespace spec\Phunkie\Cats\Functor;
 
 use Phunkie\Cats\Functor\FunctorComposite;
-use function Phunkie\Functions\show\is_showable;
 use Phunkie\Types\Function1;
 use Phunkie\Types\ImmList;
 use Phunkie\Types\Option;
-use PhpSpec\ObjectBehavior;
+use Md\Unit\TestCase;
+use function Phunkie\Functions\show\is_showable;
 
 /**
  * @mixin FunctorComposite
  */
-class FunctorCompositeSpec extends ObjectBehavior
+class FunctorCompositeSpec extends TestCase
 {
-    function let()
+    private $functor;
+
+    public function setUp(): void
     {
-        $this->beConstructedWith(Option::kind);
+        $this->functor = new FunctorComposite(Option::kind);
     }
 
-    function it_is_initializable()
+    /**
+     * @test
+     */
+    public function it_works_like_a_functor()
     {
-        $this->shouldHaveType(FunctorComposite::class);
+        $this->assertIsLike(
+            Some(2),
+            $this->functor->map(Option(1), function ($x) {
+                return $x + 1;
+            })
+        );
     }
 
-    function it_works_like_a_functor()
+    /**
+     * @test
+     */
+    public function it_is_showable()
     {
-        $this->map(Option(1), function($x) {return $x + 1;})->shouldBeLike(Some(2));
+        $this->assertTrue(is_showable($this->functor));
+        $this->assertEquals(
+            'Functor(Option)',
+            $this->functor->toString(),
+        );
     }
 
-    function it_is_showable()
+    /**
+     * @test
+     */
+    public function it_is_composable()
     {
-        $this->shouldBeShowable();
-        $this->toString()->shouldReturn('Functor(Option)');
+        $this->assertEquals(
+            'Functor(Option(List))',
+            $this->functor->compose(ImmList::kind)->toString()
+        );
+        $this->assertEquals(
+            'Functor(Option(List(Function1)))',
+            $this->functor->compose(ImmList::kind)->compose(Function1::kind)->toString()
+        );
     }
 
-    function it_is_composable()
+    /**
+     * @test
+     */
+    public function it_composes_functor_functionality()
     {
-        $this->compose(ImmList::kind)->toString()->shouldReturn('Functor(Option(List))');
-        $this->compose(ImmList::kind)->compose(Function1::kind)->toString('Functor(Option(List(Function1)))');
-    }
-
-    function it_composes_functor_functionality()
-    {
-        $this->beConstructedWith(ImmList::kind);
-        $fa = $this->compose(Option::kind);
+        $functor = (new FunctorComposite(ImmList::kind));
+        $fa = $functor->compose(Option::kind);
         $xs = ImmList(Some(1), None(), Some(2));
-        $fa->map($xs, function($x) { return $x + 1;})->shouldBeLike(ImmList(Some(2), None(), Some(3)));
-    }
-
-    function getMatchers(): array
-    {
-        return ['beShowable' => function($object) {
-            return is_showable($object);
-        }];
+        $this->assertIsLike(
+            $fa->map($xs, function ($x) {
+                return $x + 1;
+            }),
+            ImmList(Some(2), None(), Some(3))
+        );
     }
 }

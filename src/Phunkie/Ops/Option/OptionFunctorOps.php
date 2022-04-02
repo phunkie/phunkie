@@ -25,13 +25,18 @@ trait OptionFunctorOps
 
     public function map(callable $f): Kind
     {
-        if ($this->isEmpty()) return None();
+        if ($this->isEmpty()) {
+            return None();
+        }
         $result = $f($this->get());
-        if ($result instanceof None || $result === null) return None();
-        else return Some($result);
+        if ($result instanceof None || $result === null) {
+            return None();
+        } else {
+            return Some($result);
+        }
     }
 
-    public function imap(callable $f,callable $g): Kind
+    public function imap(callable $f, callable $g): Kind
     {
         return $this->map($f);
     }

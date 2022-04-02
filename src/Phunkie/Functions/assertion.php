@@ -11,9 +11,9 @@
 
 namespace Phunkie\Functions\assertion;
 
+use Phunkie\Validation\Validation;
 use function Phunkie\Functions\show\showArrayType;
 use function Phunkie\Functions\show\showType;
-use Phunkie\Validation\Validation;
 
 const assertSameTypeAsCollectionType = "\\Phunkie\\Functions\\assertion\\assertSameTypeAsCollectionType";
 function assertSameTypeAsCollectionType($a, $collection, $message = None): Validation

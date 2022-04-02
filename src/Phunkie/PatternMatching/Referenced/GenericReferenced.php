@@ -4,12 +4,32 @@ namespace Phunkie\PatternMatching\Referenced;
 
 class GenericReferenced
 {
-    const UNUSED_ARGUMENT = "GenericReferenced::UNUSED_ARGUMENT";
-    public $_1, $_2, $_3, $_4, $_5, $_6, $_7, $_8, $_9, $_10, $_11, $_12, $_13, $_14,
-        $_15, $_16, $_17, $_18, $_19, $_20, $_21;
+    public const UNUSED_ARGUMENT = "GenericReferenced::UNUSED_ARGUMENT";
+    public $_1;
+    public $_2;
+    public $_3;
+    public $_4;
+    public $_5;
+    public $_6;
+    public $_7;
+    public $_8;
+    public $_9;
+    public $_10;
+    public $_11;
+    public $_12;
+    public $_13;
+    public $_14;
+    public $_15;
+    public $_16;
+    public $_17;
+    public $_18;
+    public $_19;
+    public $_20;
+    public $_21;
     public $class;
 
-    public function __construct($class,
+    public function __construct(
+        $class,
         &$_1 = self::UNUSED_ARGUMENT,
         &$_2 = self::UNUSED_ARGUMENT,
         &$_3 = self::UNUSED_ARGUMENT,
@@ -30,7 +50,8 @@ class GenericReferenced
         &$_18 = self::UNUSED_ARGUMENT,
         &$_19 = self::UNUSED_ARGUMENT,
         &$_20 = self::UNUSED_ARGUMENT,
-        &$_21 = self::UNUSED_ARGUMENT)
+        &$_21 = self::UNUSED_ARGUMENT
+    )
     {
         for ($i = 1; $i <= 21; $i++) {
             $this->{"_$i"} = &${"_$i"};

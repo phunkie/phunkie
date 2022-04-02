@@ -14,16 +14,17 @@ namespace Phunkie\Types;
 use Error;
 use Phunkie\Cats\Functor;
 use Phunkie\Cats\Show;
-use function Phunkie\Functions\functor\fmap;
-use const Phunkie\Functions\show\showType;
-use const Phunkie\Functions\show\showValue;
 use Phunkie\Ops\Tuple\TupleFunctorOps;
 use Phunkie\Utils\Copiable;
 use TypeError;
+use function Phunkie\Functions\functor\fmap;
+use const Phunkie\Functions\show\showType;
+use const Phunkie\Functions\show\showValue;
 
 class Tuple implements Copiable, Functor, Kind
 {
-    use Show, TupleFunctorOps;
+    use Show;
+    use TupleFunctorOps;
     private $values;
 
     final public function __construct(...$values)
@@ -137,6 +138,6 @@ class Tuple implements Copiable, Functor, Kind
 
     private function keyFromMember($arg): int
     {
-        return ((integer)substr($arg, 1)) - 1;
+        return ((int)substr($arg, 1)) - 1;
     }
 }

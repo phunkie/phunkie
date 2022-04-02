@@ -1,3 +1,5 @@
 vendor
 bin
 composer.lock
+/tests
+*.cache

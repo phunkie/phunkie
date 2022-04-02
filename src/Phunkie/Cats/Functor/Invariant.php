@@ -15,5 +15,5 @@ use Phunkie\Types\Kind;
 
 interface Invariant
 {
-    public function imap(callable $f,callable $g): Kind;
+    public function imap(callable $f, callable $g): Kind;
 }

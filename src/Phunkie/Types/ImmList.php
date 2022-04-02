@@ -16,9 +16,6 @@ use Phunkie\Cats\Foldable;
 use Phunkie\Cats\Monad;
 use Phunkie\Cats\Show;
 use Phunkie\Cats\Traverse;
-use function Phunkie\Functions\show\showArrayType;
-use const Phunkie\Functions\show\showValue;
-use function Phunkie\Functions\type\promote;
 use Phunkie\Ops\ImmList\ImmListApplicativeOps;
 use Phunkie\Ops\ImmList\ImmListEqOps;
 use Phunkie\Ops\ImmList\ImmListFoldableOps;
@@ -28,21 +25,26 @@ use Phunkie\Ops\ImmList\ImmListOps;
 use Phunkie\Ops\ImmList\ImmListTraverseOps;
 use Phunkie\Utils\Iterator;
 use Phunkie\Utils\Traversable;
+use function Phunkie\Functions\show\showArrayType;
+use function Phunkie\Functions\type\promote;
+use const Phunkie\Functions\show\showValue;
 
 class ImmList implements Kind, Applicative, Monad, Traverse, Foldable, Traversable
 {
     use Show;
-    use ImmListOps,
-        ImmListApplicativeOps,
-        ImmListEqOps,
-        ImmListMonadOps,
-        ImmListFoldableOps,
-        ImmListMonoidOps,
-        ImmListTraverseOps;
+    use ImmListOps;
+    use ImmListApplicativeOps;
+    use ImmListEqOps;
+    use ImmListMonadOps;
+    use ImmListFoldableOps;
+    use ImmListMonoidOps;
+    use ImmListTraverseOps;
 
-    const kind = ImmList;
+    public const kind = ImmList;
     private $values;
-    final public function __construct() { switch (get_class($this)) {
+    final public function __construct()
+    {
+        switch (get_class($this)) {
         case NonEmptyList::class: $this->constructNonEmptyList(func_num_args(), func_get_args()); break;
         case Cons::class: $this->constructCons(func_num_args(), func_get_args()); break;
         case Nil::class: $this->constructNil(func_num_args()); break;
@@ -55,7 +57,10 @@ class ImmList implements Kind, Applicative, Monad, Traverse, Foldable, Traversab
         return $this->map(showValue)->mkString("List(", ', ', ')');
     }
 
-    public function toArray(): array { return $this->values; }
+    public function toArray(): array
+    {
+        return $this->values;
+    }
 
     public function iterator(): Iterator
     {

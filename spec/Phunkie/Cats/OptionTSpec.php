@@ -2,44 +2,67 @@
 
 namespace spec\Phunkie\Cats;
 
-use PhpSpec\ObjectBehavior;
+use Md\Unit\TestCase;
+// use Phunkie\Cats\OptionT;
 use Prophecy\Argument;
 
 /**
  * @mixin \Phunkie\Cats\OptionT
  */
-class OptionTSpec extends ObjectBehavior
+class OptionTSpec extends TestCase
 {
-    function it_implements_map()
+    /**
+     * @test
+     */
+    public function it_implements_map()
     {
-        $this->beConstructedWith(ImmList(Some(1), None(), Some(2)));
-        $this->map(function ($x) { return $x + 1; })
-           ->shouldBeLike(OptionT(ImmList(Some(2), None(), Some(3))));
+        $m = OptionT(ImmList(Some(1), None(), Some(2)));
+        $this->assertIsLike(
+            $m->map(function ($x) {
+                return $x + 1;
+            }),
+            OptionT(ImmList(Some(2), None(), Some(3)))
+        );
     }
 
-
-    function it_implements_flatMap()
+    /**
+     * @test
+     */
+    public function it_implements_flatMap()
     {
-        $this->beConstructedWith(ImmList(Some(1), None(), Some(2)));
-        $this->flatMap(function ($x) { return OptionT(ImmList(Some($x + 1))); })
-            ->shouldBeLike(OptionT(ImmList(Some(2), None(), Some(3))));
+        $m = OptionT(ImmList(Some(1), None(), Some(2)));
+        $this->assertIsLike(
+            $m->flatMap(function ($x) {
+                return OptionT(ImmList(Some($x + 1)));
+            }),
+            OptionT(ImmList(Some(2), None(), Some(3)))
+        );
     }
 
-    function it_immplements_isDefined()
+    /**
+     * @test
+     */
+    public function it_implements_isDefined()
     {
-        $this->beConstructedWith(ImmList(Some(1), None(), Some(2)));
-        $this->isDefined()->shouldBeLike(ImmList(true, false, true));
+        $m = OptionT(ImmList(Some(1), None(), Some(2)));
+        $this->assertIsLike($m->isDefined(), ImmList(true, false, true));
     }
 
-    function it_immplements_isEmpty()
+    /**
+     * @test
+     */
+    public function it_immplements_isEmpty()
     {
-        $this->beConstructedWith(ImmList(Some(1), None(), Some(2)));
-        $this->isEmpty()->shouldBeLike(ImmList(false, true, false));
+        $m = OptionT(ImmList(Some(1), None(), Some(2)));
+        $this->assertIsLike($m->isEmpty(), ImmList(false, true, false));
     }
 
-    function it_immplements_getOrElse()
+    /**
+     * @test
+     */
+    public function it_immplements_getOrElse()
     {
-        $this->beConstructedWith(ImmList(Some(1), None(), Some(2)));
-        $this->getOrElse(42)->shouldBeLike(ImmList(1, 42, 2));
+        $m = OptionT(ImmList(Some(1), None(), Some(2)));
+        $this->assertIsLike($m->getOrElse(42), ImmList(1, 42, 2));
     }
 }

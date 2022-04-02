@@ -14,7 +14,11 @@ require_once __DIR__ . "/pattern_matching.php";
 require_once __DIR__ . "/curry.php";
 require_once __DIR__ . "/comprehension.php";
 
-function printLn($value) { show($value); echo PHP_EOL; }
+function printLn($value)
+{
+    show($value);
+    echo PHP_EOL;
+}
 
 option_examples();
 list_examples();

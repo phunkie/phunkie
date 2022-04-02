@@ -23,7 +23,13 @@ trait MonadLaws
      */
     public function flapMapAssociativity(Kind $fa, callable $f, callable $g): bool
     {
-        return $fa->flatMap($f)->flatMap($g) == $fa->flatMap( function($a) use ($f,$g) { return $f($a)->flatMap( function($b) use ($g) { return $g($b); } ) ;} );
+        return $fa->flatMap($f)->flatMap($g) == $fa->flatMap(function ($a) use ($f, $g) {
+            return $f($a)->flatMap(
+                function ($b) use ($g) {
+                return $g($b);
+            }
+            ) ;
+        });
     }
 
     public function leftIdentity(Kind $fa, $a, callable $f): bool
@@ -33,6 +39,8 @@ trait MonadLaws
 
     public function rightIdentity(Kind $fa): bool
     {
-        return $fa->flatMap(function($a) use ($fa) { return $fa->pure($a); }) == $fa;
+        return $fa->flatMap(function ($a) use ($fa) {
+            return $fa->pure($a);
+        }) == $fa;
     }
 }

@@ -15,8 +15,6 @@ use Phunkie\Cats\Applicative;
 use Phunkie\Cats\Foldable;
 use Phunkie\Cats\Monad;
 use Phunkie\Cats\Show;
-use function Phunkie\Functions\show\showType;
-use function Phunkie\Functions\show\showValue;
 use Phunkie\Ops\Option\OptionApplicativeOps;
 use Phunkie\Ops\Option\OptionEqOps;
 use Phunkie\Ops\Option\OptionFoldableOps;
@@ -24,17 +22,19 @@ use Phunkie\Ops\Option\OptionMonadOps;
 use Phunkie\Ops\Option\OptionMonoidOps;
 use Phunkie\Ops\Option\OptionOps;
 use Phunkie\Utils\Traversable;
+use function Phunkie\Functions\show\showType;
+use function Phunkie\Functions\show\showValue;
 
 abstract class Option implements Kind, Applicative, Monad, Foldable, Traversable
 {
     use Show;
-    const kind = "Option";
-    use OptionApplicativeOps,
-        OptionOps,
-        OptionEqOps,
-        OptionMonadOps,
-        OptionFoldableOps,
-        OptionMonoidOps;
+    use OptionApplicativeOps;
+    use OptionOps;
+    use OptionEqOps;
+    use OptionMonadOps;
+    use OptionFoldableOps;
+    use OptionMonoidOps;
+    public const kind = "Option";
     protected $t;
     abstract public function getOrElse($t);
     abstract public function isDefined(): bool;

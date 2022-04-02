@@ -12,7 +12,9 @@
 namespace Phunkie\Ops\Option;
 
 use BadMethodCallException;
-use Phunkie\Types\{Kind, Option, None};
+use Phunkie\Types\Kind;
+use Phunkie\Types\Option;
+use Phunkie\Types\None;
 
 /**
  * @mixin Option
@@ -20,8 +22,12 @@ use Phunkie\Types\{Kind, Option, None};
 trait OptionApplicativeOps
 {
     use OptionFunctorOps;
-    public function pure($a): Kind { return Option($a); }
-    public function apply(Kind $f): Kind {
+    public function pure($a): Kind
+    {
+        return Option($a);
+    }
+    public function apply(Kind $f): Kind
+    {
         switch (true) {
             case !$this instanceof Option: throw new BadMethodCallException();
             case $this->isEmpty(): return None();
@@ -32,6 +38,10 @@ trait OptionApplicativeOps
 
     public function map2(Kind $fb, callable $f): Kind
     {
-        return $this->apply($fb->map(function($b) use ($f) { return function($a) use ($f, $b) { return $f($a, $b);};}));
+        return $this->apply($fb->map(function ($b) use ($f) {
+            return function ($a) use ($f, $b) {
+                return $f($a, $b);
+            };
+        }));
     }
 }

@@ -14,7 +14,7 @@ trait ImmSetApplicativeOps
     {
         $apply = function () use ($f) {
             $result = [];
-            foreach($this->toArray() as $a) {
+            foreach ($this->toArray() as $a) {
                 foreach ($f->toArray() as $ff) {
                     if (!is_callable($ff)) {
                         throw new TypeError(sprintf("`apply` takes Set<callable>, Set<%s> given", gettype($ff)));
@@ -37,7 +37,11 @@ trait ImmSetApplicativeOps
 
     public function map2(Kind $fb, callable $f): Kind
     {
-        return $this->apply($fb->map(function($b) use ($f) { return function($a) use ($f, $b) { return $f($a, $b);};}));
+        return $this->apply($fb->map(function ($b) use ($f) {
+            return function ($a) use ($f, $b) {
+                return $f($a, $b);
+            };
+        }));
     }
 
     public function pure($a): Kind

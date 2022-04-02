@@ -1,29 +1,42 @@
 {
     "name": "phunkie/phunkie",
-    "description":  "Functional structures library for PHP",
-    "license":      "MIT",
-    "type":         "library",
-    "authors":      [
+    "description": "Functional structures library for PHP",
+    "license": "MIT",
+    "type": "library",
+    "authors": [
         {
-            "name":      "Marcello Duarte",
-            "homepage":  "http://marcelloduarte.net/"
+            "name": "Marcello Duarte",
+            "homepage": "http://marcelloduarte.net/"
         }
     ],
     "require": {
         "php": ">=7.4"
     },
     "require-dev": {
-        "phpspec/phpspec": "~6",
-        "bossa/phpspec2-expect": "~3",
-        "giorgiosironi/eris": "~0.11"
+        "ergebnis/composer-normalize": "^2",
+        "friendsofphp/php-cs-fixer": "^3",
+        "giorgiosironi/eris": "^0",
+        "phpunit/phpunit": "^9"
     },
     "autoload": {
         "psr-0": {
-            "": ["src/"]
+            "": [
+                "src/"
+            ]
         },
-        "files": ["src/Phunkie/Functions/common.php"]
+        "files": [
+            "src/Phunkie/Functions/common.php"
+        ]
     },
     "config": {
+        "allow-plugins": {
+            "ergebnis/composer-normalize": true
+        },
         "bin-dir": "bin"
+    },
+    "scripts": {
+        "cs-fix": "bin/php-cs-fixer fix --config=.php-cs-fixer.php --diff --verbose",
+        "test": "bin/phpunit -c phpunit.xml.dist --do-not-cache-result",
+        "test-debug": "bin/phpunit -c phpunit.xml.dist --debug"
     }
 }

@@ -6,30 +6,38 @@ use Md\PropertyTesting\TestTrait;
 use Phunkie\Laws\FunctorLaws;
 use Phunkie\Types\Function1;
 use Md\PropertyTesting\Generator\RandomKindGenerator;
-use PhpSpec\ObjectBehavior;
+use PHPUnit\Framework\TestCase;
 
-class FunctorSpec extends ObjectBehavior
+class FunctorSpec extends TestCase
 {
-    use FunctorLaws,TestTrait,RandomKindGenerator;
+    use FunctorLaws;
+    use TestTrait;
+    use RandomKindGenerator;
 
-    function it_obeys_the_identity_law_of_covariance()
+    /**
+     * @test
+     */
+    public function it_obeys_the_identity_law_of_covariance()
     {
         $this->forAll(
             $this->genRandomFA()
-        )->then(function($fa) {
+        )->then(function ($fa) {
             $arg = $fa instanceof Function1 ? Some(42) : None();
-            expect($this->covariantIdentity($fa, $arg))->toBe(true);
+            $this->assertTrue($this->covariantIdentity($fa, $arg));
         });
     }
 
-    function it_obeys_the_composition_law_of_covariance()
+    /**
+     * @test
+     */
+    public function it_obeys_the_composition_law_of_covariance()
     {
         $this->forAll(
             $this->genRandomFA(),
             $this->genFunctionStringToInt(),
             $this->genFunctionStringToInt()
-        )->then(function($fa, $f, $g) {
-            expect($this->covariantComposition($fa, $f, $g))->toBe(true);
+        )->then(function ($fa, $f, $g) {
+            $this->assertTrue($this->covariantComposition($fa, $f, $g));
         });
     }
 }

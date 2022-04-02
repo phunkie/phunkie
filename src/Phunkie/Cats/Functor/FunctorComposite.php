@@ -20,10 +20,13 @@ use Phunkie\Types\Option;
 
 class FunctorComposite
 {
-    use Show,FunctorOps;
+    use Show;
+    use FunctorOps;
     protected $kinds = [];
 
-    public function __construct(string $kind) { switch ($kind) {
+    public function __construct(string $kind)
+    {
+        switch ($kind) {
         case ImmList::kind: case Option::kind: case Function1::kind: $this->kinds[] = $kind; break;
         default: throw new \RuntimeException("Composing functor of kind $kind is not supported"); }
     }
@@ -41,24 +44,30 @@ class FunctorComposite
 
     public function compose(string $g): FunctorComposite
     {
-        $functor = new class($g, $this) extends FunctorComposite {
+        $functor = new class ($g, $this) extends FunctorComposite {
             use Show;
             private $fa;
-            public function __construct(string $g, FunctorComposite $fa) {
+            public function __construct(string $g, FunctorComposite $fa)
+            {
                 parent::__construct($g);
                 $this->fa = $fa;
             }
-            public function map(Kind $fga, callable $f) {
-                return $this->fa->map($fga, function($ga) use ($f) { return $ga->map($f); });
+            public function map(Kind $fga, callable $f)
+            {
+                return $this->fa->map($fga, function ($ga) use ($f) {
+                    return $ga->map($f);
+                });
             }
         };
         $functor->kinds = array_merge($this->kinds, $functor->kinds);
         return $functor;
     }
 
-    function toString(): string
+    public function toString(): string
     {
-        $covertImmListToList = function($kind) { return $kind == ImmList::kind ? 'List' : $kind; };
+        $covertImmListToList = function ($kind) {
+            return $kind == ImmList::kind ? 'List' : $kind;
+        };
         $kinds = array_map($covertImmListToList, $this->kinds);
         return "Functor(" . implode("(", $kinds) . str_repeat(")", count($kinds));
     }

@@ -2,144 +2,255 @@
 
 namespace spec\Phunkie\Types;
 
-use PhpSpec\ObjectBehavior;
+use Md\Unit\TestCase;
 use Phunkie\Cats\Functor;
+use Phunkie\Types\Pair;
 use function Phunkie\Functions\functor\allAs;
 use function Phunkie\Functions\functor\asVoid;
 use function Phunkie\Functions\functor\fmap;
 use function Phunkie\Functions\functor\zipWith;
 use function Phunkie\Functions\show\show;
-use Phunkie\Types\Pair;
 
 /**
  * @mixin \Phunkie\Types\ImmMap
  */
-class ImmMapSpec extends ObjectBehavior
+class ImmMapSpec extends TestCase
 {
-    function it_can_be_created_with_associative_arrays()
+    /**
+     * @test
+     */
+    public function it_can_be_created_with_associative_arrays()
     {
-        $this->beConstructedWith(["hello" => "there"]);
-        $this->get("hello")->shouldBeLike(Some("there"));
+        $map = ImmMap(["hello" => "there"]);
+        $this->assertIsLike($map->get("hello"), Some("there"));
     }
 
-    function it_returns_None_when_key_does_not_exist()
+    /**
+     * @test
+     */
+    public function it_returns_None_when_key_does_not_exist()
     {
-        $this->beConstructedWith(["hello" => "there"]);
-        $this->get("hi")->shouldBeLike(None());
+        $map = ImmMap(["hello" => "there"]);
+        $this->assertIsLike($map->get("hi"), None());
     }
 
-    function it_can_be_constructed_with_an_even_number_of_objects()
+    /**
+     * @test
+     */
+    public function it_can_be_constructed_with_an_even_number_of_objects()
     {
-        $this->beConstructedWith(
-            new AccountNumber(1), new Account("John smith"),
-            new AccountNumber(2), new Account("Chuck Norris")
+        $map = ImmMap(
+            new AccountNumber(1),
+            new Account("John smith"),
+            new AccountNumber(2),
+            new Account("Chuck Norris")
         );
 
-        $this->get(new AccountNumber(2))->shouldBeLike(Some(new Account("Chuck Norris")));
+        $this->assertIsLike(
+            $map->get(new AccountNumber(2)),
+            Some(new Account("Chuck Norris"))
+        );
     }
 
-    function it_cannot_be_constructed_with_an_odd_number()
+    /**
+     * @test
+     */
+    public function it_cannot_be_constructed_with_an_odd_number()
     {
-        $this->beConstructedWith(
-            new AccountNumber(1), new Account("John smith"),
-            new AccountNumber(2), new Account("Chuck Norris"),
+        $this->expectError();
+        $this->expectErrorMessage("not enough arguments for constructor ImmMap");
+
+        $map = ImmMap(
+            new AccountNumber(1),
+            new Account("John smith"),
+            new AccountNumber(2),
+            new Account("Chuck Norris"),
             new AccountNumber(3)
         );
-
-        $this->shouldThrow()->duringInstantiation();
     }
 
-    function it_also_complains_on_one_argument_if_it_is_not_an_array()
+    /**
+     * @test
+     */
+    public function it_also_complains_on_one_argument_if_it_is_not_an_array()
     {
-        $this->beConstructedWith(new AccountNumber(1));
-        $this->shouldThrow()->duringInstantiation();
+        $this->expectError();
+
+        $map = ImmMap(new AccountNumber(1));
     }
 
-    function it_lets_you_check_if_a_key_exists()
+    /**
+     * @test
+     */
+    public function it_lets_you_check_if_a_key_exists()
     {
-        $this->beConstructedWith(["hello" => "there"]);
-        $this->contains("hello")->shouldReturn(true);
-        $this->contains("hi")->shouldReturn(false);
+        $map = ImmMap(["hello" => "there"]);
+        $this->assertTrue($map->contains("hello"));
+        $this->assertFalse($map->contains("hi"));
     }
 
-    function it_lets_you_set_a_default_value()
+    /**
+     * @test
+     */
+    public function it_lets_you_set_a_default_value()
     {
-        $this->beConstructedWith(["hello" => "there"]);
-        $this->getOrElse("hi", "here")->shouldReturn("here");
-        $this->getOrElse("hello", "here")->shouldReturn("there");
+        $map = ImmMap(["hello" => "there"]);
+        $this->assertEquals("here", $map->getOrElse("hi", "here"));
+        $this->assertEquals("there", $map->getOrElse("hello", "here"));
     }
 
-    function it_is_showable()
+    /**
+     * @test
+     */
+    public function it_is_showable()
     {
-        $this->beConstructedWith(["hi" => "here", "hello" => "there"]);
-        $this->toString()->shouldBe('Map("hi" -> "here", "hello" -> "there")');
+        $map = ImmMap(["hi" => "here", "hello" => "there"]);
+        $this->assertEquals($map->toString(), 'Map("hi" -> "here", "hello" -> "there")');
     }
 
-    function it_has_minus()
+    /**
+     * @test
+     */
+    public function it_has_minus()
     {
-        $this->beConstructedWith(["hello" => "there", "hi" => "here"]);
-        $this->minus("hi")->eqv(ImmMap(["hello" => "there"]))->shouldBe(true);
+        $map = ImmMap(["hello" => "there", "hi" => "here"]);
+        $this->assertTrue(
+            $map->minus("hi")->eqv(ImmMap(["hello" => "there"]))
+        );
     }
 
-    function it_has_plus()
+    /**
+     * @test
+     */
+    public function it_has_plus()
     {
-        $this->beConstructedWith(["hello" => "there"]);
-        $this->plus("hi", "here")->eqv(ImmMap(["hello" => "there", "hi" => "here"]))->shouldBe(true);
+        $map = ImmMap(["hello" => "there"]);
+        $this->assertTrue(
+            $map
+                ->plus("hi", "here")
+                ->eqv(ImmMap(["hello" => "there", "hi" => "here"]))
+        );
     }
 
-    function it_replaces_value_when_adding_with_same_key()
+    /**
+     * @test
+     */
+    public function it_replaces_value_when_adding_with_same_key()
     {
-        $this->beConstructedWith(["hello" => "there", "hi" => "here"]);
-        $this->plus("hi", "nowhere")->eqv(ImmMap(["hello" => "there", "hi" => "nowhere"]))->shouldBe(true);
+        $map = ImmMap(["hello" => "there", "hi" => "here"]);
+        $this->assertTrue(
+            $map
+                ->plus("hi", "nowhere")
+                ->eqv(ImmMap(["hello" => "there", "hi" => "nowhere"]))
+        );
     }
 
-    function it_can_be_copied()
+    /**
+     * @test
+     */
+    public function it_can_be_copied()
     {
-        $this->beConstructedWith(["hello" => "there", "hi" => "here"]);
-        $this->copy()->show()->shouldBe($this->getWrappedObject()->show());
+        $map = ImmMap(["hello" => "there", "hi" => "here"]);
+        $this->assertEquals($map->copy()->show(), $map->show());
     }
 
-    function it_is_a_functor()
+    /**
+     * @test
+     */
+    public function it_is_a_functor()
     {
-        $this->beConstructedWith(["a" => 1, "b" => 2, "c" => 3]);
-        $this->shouldHaveType(Functor::class);
-        $increment = function(Pair $keyValue) {
-            return Pair($keyValue->_1,  $keyValue->_2 + 1);
+        $f = ImmMap(["a" => 1, "b" => 2, "c" => 3]);
+        $increment = function (Pair $keyValue) {
+            return Pair($keyValue->_1, $keyValue->_2 + 1);
         };
 
-        $this->map($increment)->eqv(ImmMap(["a" => 2, "b" => 3, "c" => 4]))->shouldBe(true);
-        expect(fmap($increment, ImmMap(["a" => 1, "b" => 2, "c" => 3]))->eqv(ImmMap(["a" => 2, "b" => 3, "c" => 4])))->toBe(true);
+        $this->assertTrue(
+            $f->map($increment)->eqv(ImmMap(["a" => 2, "b" => 3, "c" => 4]))
+        );
+        $this->assertTrue(
+            fmap(
+                $increment,
+                ImmMap(["a" => 1, "b" => 2, "c" => 3])
+            )
+                    ->eqv(
+                        ImmMap(["a" => 2, "b" => 3, "c" => 4])
+                    )
+        );
 
-        $this->as(Pair("a", 0))->eqv(ImmMap(["a" => 0]))->shouldBe(true);
-        expect(allAs(Pair("a", 0), ImmMap(["a" => 1, "b" => 2, "c" => 3]))->eqv(ImmMap(["a" => 0])))->toBe(true);
+        $this->assertTrue($f->as(Pair("a", 0))->eqv(ImmMap(["a" => 0])));
+        $this->assertTrue(
+            allAs(Pair("a", 0), ImmMap(["a" => 1, "b" => 2, "c" => 3]))
+                ->eqv(ImmMap(["a" => 0]))
+        );
 
-        $this->as(Pair(_, 0))->eqv(ImmMap(["a" => 0, "b" => 0, "c" => 0]))->shouldBe(true);
-        expect(allAs(Pair(_, 0), ImmMap(["a" => 1, "b" => 2, "c" => 3]))->eqv(ImmMap(["a" => 0, "b" => 0, "c" => 0])))->toBe(true);
+        $this->assertTrue(
+            $f->as(Pair(_, 0))->eqv(ImmMap(["a" => 0, "b" => 0, "c" => 0]))
+        );
+        $this->assertTrue(
+            allAs(Pair(_, 0), ImmMap(["a" => 1, "b" => 2, "c" => 3]))
+                ->eqv(ImmMap(["a" => 0, "b" => 0, "c" => 0]))
+        );
 
-        $this->void()->eqv(ImmMap(["a" => Unit(), "b" => Unit(), "c" => Unit()]))->shouldBe(true);
-        expect(asVoid(ImmMap(["a" => 1, "b" => 2, "c" => 3]))->eqv(ImmMap(["a" => Unit(), "b" => Unit(), "c" => Unit()])))->toBe(true);
+        $this->assertTrue(
+            $f->void()->eqv(ImmMap(["a" => Unit(), "b" => Unit(), "c" => Unit()]))
+        );
+        $this->assertTrue(
+            asVoid(
+                ImmMap(["a" => 1, "b" => 2, "c" => 3])
+            )
+                    ->eqv(
+                        ImmMap(["a" => Unit(), "b" => Unit(), "c" => Unit()])
+                    )
+        );
 
-        $this->zipWith(function($x) { return 2 * $x; })->eqv(ImmMap(["a" => Pair(1,2), "b" => Pair(2,4), "c" => Pair(3,6)]))->shouldBe(true);
-        expect(zipWith(function($x) { return 2 * $x; }, ImmMap(["a" => 1, "b" => 2, "c" => 3]))->eqv(
-            ImmMap(["a" => Pair(1,2), "b" => Pair(2,4), "c" => Pair(3,6)])
-        ))->toBe(true);
+        $this->assertTrue(
+            $f
+                ->zipWith(function ($x) {
+                    return 2 * $x;
+                })
+                ->eqv(
+                    ImmMap(
+                        [
+                            "a" => Pair(1, 2),
+                            "b" => Pair(2, 4),
+                            "c" => Pair(3, 6)
+                        ]
+                    )
+                )
+        );
+        $this->assertTrue(
+            zipWith(
+                function ($x) {
+                    return 2 * $x;
+                },
+                ImmMap(["a" => 1, "b" => 2, "c" => 3])
+            )->eqv(
+                ImmMap(
+                    [
+                        "a" => Pair(1, 2),
+                        "b" => Pair(2, 4),
+                        "c" => Pair(3, 6)
+                    ]
+                )
+            )
+        );
     }
 }
 
-
-
-
-
-
-
-
-
-class AccountNumber {
+class AccountNumber
+{
     private $number;
-    public function __construct(int $number) { $this->number = $number; }
+    public function __construct(int $number)
+    {
+        $this->number = $number;
+    }
 }
 
-class Account {
+class Account
+{
     private $name;
-    public function __construct(string $name) { $this->name = $name; }
+    public function __construct(string $name)
+    {
+        $this->name = $name;
+    }
 }

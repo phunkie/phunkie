@@ -1,12 +1,13 @@
 <?php
 
 use Phunkie\Algebra\Monoid;
-use function Phunkie\Functions\show\show;
 use Phunkie\Cats\Show as Showable;
-use function Phunkie\Functions\state\modify;
 use Phunkie\Types\ImmList;
+use function Phunkie\Functions\show\show;
+use function Phunkie\Functions\state\modify;
 
-class Balance {
+class Balance
+{
     use Showable;
     public $amount;
 
@@ -15,10 +16,14 @@ class Balance {
         $this->amount = $amount;
     }
 
-    public function toString() { return "Balance({$this->amount})"; }
+    public function toString()
+    {
+        return "Balance({$this->amount})";
+    }
 }
 
-class Transaction {
+class Transaction
+{
     public $accountNo;
     public $amount;
 
@@ -29,7 +34,7 @@ class Transaction {
     }
 }
 
-$balancesMonoid = new class implements Monoid {
+$balancesMonoid = new class () implements Monoid {
     public function zero()
     {
         return new Balance(0);
@@ -58,11 +63,11 @@ $transactions = [
 ];
 
 $updateBalance = function (ImmList $txns) use ($balancesMonoid) {
-    return modify(function($b) use ($txns, $balancesMonoid) {
-        return $txns->foldLeft($b, function($a, $txn) use ($balancesMonoid) {
+    return modify(function ($b) use ($txns, $balancesMonoid) {
+        return $txns->foldLeft($b, function ($a, $txn) use ($balancesMonoid) {
             return $balancesMonoid->combine($a, [$txn->accountNo => new Balance($txn->amount)]);
         });
     });
 };
 
-show($updateBalance(ImmList(...$transactions))->run($balances) );
+show($updateBalance(ImmList(...$transactions))->run($balances));

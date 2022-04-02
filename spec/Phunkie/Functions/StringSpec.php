@@ -2,7 +2,7 @@
 
 namespace spec\Phunkie\Functions;
 
-use PhpSpec\ObjectBehavior;
+use PHPUnit\Framework\TestCase;
 use function Phunkie\Functions\immlist\concat;
 use function Phunkie\Functions\immlist\drop;
 use function Phunkie\Functions\immlist\dropWhile;
@@ -23,100 +23,162 @@ use function Phunkie\Functions\string\unlines;
 use function Phunkie\Functions\string\unwords;
 use function Phunkie\Functions\string\words;
 
-class StringSpec extends ObjectBehavior
+class StringSpec extends TestCase
 {
-    function it_has_head()
+    /**
+     * @test
+     */
+    public function it_has_head()
     {
-        expect(head('hello'))->toBe('h');
+        $this->assertEquals(head('hello'), 'h');
     }
 
-    function it_has_init()
+    /**
+     * @test
+     */
+    public function it_has_init()
     {
-        expect(init('hello'))->toBe('hell');
+        $this->assertEquals(init('hello'), 'hell');
     }
 
-    function it_has_tail()
+    /**
+     * @test
+     */
+    public function it_has_tail()
     {
-        expect(tail('hello'))->toBe('ello');
+        $this->assertEquals(tail('hello'), 'ello');
     }
 
-    function it_has_last()
+    /**
+     * @test
+     */
+    public function it_has_last()
     {
-        expect(last('hello'))->toBe('o');
+        $this->assertEquals(last('hello'), 'o');
     }
 
-    function it_has_reverse()
+    /**
+     * @test
+     */
+    public function it_has_reverse()
     {
-        expect(reverse("hello"))->toBe("olleh");
+        $this->assertEquals(reverse("hello"), "olleh");
     }
 
-    function it_has_length()
+    /**
+     * @test
+     */
+    public function it_has_length()
     {
-        expect(length("hello"))->toBe(5);
+        $this->assertEquals(length("hello"), 5);
     }
 
-    function it_has_concat()
+    /**
+     * @test
+     */
+    public function it_has_concat()
     {
-        expect(concat('h', 3, "llo"))->toBe("h3llo");
+        $this->assertEquals(concat('h', 3, "llo"), "h3llo");
     }
 
-    function it_has_take()
+    /**
+     * @test
+     */
+    public function it_has_take()
     {
-        expect((take(3))("hello"))->toBe("hel");
+        $this->assertEquals((take(3))("hello"), "hel");
     }
 
-    function it_has_takeWhile()
+    /**
+     * @test
+     */
+    public function it_has_takeWhile()
     {
-        expect((takeWhile(function($char) { return $char != 'l'; }))("hello"))->toBe("he");
+        $this->assertEquals((takeWhile(function ($char) {
+            return $char != 'l';
+        }))("hello"), "he");
     }
 
-    function it_has_drop()
+    /**
+     * @test
+     */
+    public function it_has_drop()
     {
-        expect((drop(3))("hello"))->toBe("lo");
+        $this->assertEquals((drop(3))("hello"), "lo");
     }
 
-    function it_has_dropWhile()
+    /**
+     * @test
+     */
+    public function it_has_dropWhile()
     {
-        expect((dropWhile(function($char) { return $char != 'l'; }))("hello"))->toBe("llo");
+        $this->assertEquals((dropWhile(function ($char) {
+            return $char != 'l';
+        }))("hello"), "llo");
     }
 
-    function it_has_nth()
+    /**
+     * @test
+     */
+    public function it_has_nth()
     {
-        expect((nth(4))("hello"))->toBeLike(Some("o"));
-        expect((nth(6))("hello"))->toBeLike(None());
+        $this->assertTrue((nth(4))("hello") == Some("o"));
+        $this->assertTrue((nth(6))("hello") == None());
     }
 
-    function it_has_filter()
+    /**
+     * @test
+     */
+    public function it_has_filter()
     {
-        expect((filter(function($c) { return $c == 'l';}))('hello'))->toBe('ll');
+        $this->assertEquals((filter(function ($c) {
+            return $c == 'l';
+        }))('hello'), 'll');
     }
 
-    function it_has_reject()
+    /**
+     * @test
+     */
+    public function it_has_reject()
     {
-        expect((reject(function($c) { return $c == 'l';}))('hello'))->toBe('heo');
+        $this->assertEquals((reject(function ($c) {
+            return $c == 'l';
+        }))('hello'), 'heo');
     }
 
-    function it_has_reduce()
+    /**
+     * @test
+     */
+    public function it_has_reduce()
     {
-        expect((reduce(function($a, $b) { return $a < $b ? $a : $b;}))('hello'))->toBe('e');
+        $this->assertEquals((reduce(function ($a, $b) {
+            return $a < $b ? $a : $b;
+        }))('hello'), 'e');
     }
 
-    function it_has_lines()
+    /**
+     * @test
+     */
+    public function it_has_lines()
     {
-        expect(lines("hello
+        $this->assertTrue(lines("hello
 how are you
-every thing ok"))->toBeLike(ImmList('hello', 'how are you', 'every thing ok'));
+every thing ok") == ImmList('hello', 'how are you', 'every thing ok'));
 
-        expect(unlines(ImmList('hello', 'how are you', 'every thing ok')))->toBe(
+        $this->assertEquals(
+            unlines(ImmList('hello', 'how are you', 'every thing ok')),
             "hello
 how are you
 every thing ok"
         );
     }
 
-    function it_has_words()
+    /**
+     * @test
+     */
+    public function it_has_words()
     {
-        expect(words("hello how are you"))->toBeLike(ImmList('hello', 'how', 'are', 'you'));
-        expect(unwords(ImmList('hello', 'how', 'are', 'you')))->toBe("hello how are you");
+        $this->assertTrue(words("hello how are you") == ImmList('hello', 'how', 'are', 'you'));
+        $this->assertEquals(unwords(ImmList('hello', 'how', 'are', 'you')), "hello how are you");
     }
 }

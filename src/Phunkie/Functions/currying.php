@@ -14,7 +14,7 @@ namespace Phunkie\Functions\currying;
 const curry = "\\Phunkie\\Functions\\currying\\curry";
 function curry($f)
 {
-    return function($a) use ($f) {
+    return function ($a) use ($f) {
         return function ($b) use ($a, $f) {
             return $f($a, $b);
         };
@@ -24,12 +24,13 @@ function curry($f)
 const uncurry = "\\Phunkie\\Functions\\currying\\uncurry";
 function uncurry($f)
 {
-    return function($a, $b) use ($f) {
+    return function ($a, $b) use ($f) {
         return ($f($a))($b);
     };
 }
 
-function applyPartially($declaredArgs, $passedArgs, $f) {
+function applyPartially($declaredArgs, $passedArgs, $f)
+{
     $countOfPassedArgs = count($passedArgs);
     $countOfDeclaredArgs = count($declaredArgs);
 

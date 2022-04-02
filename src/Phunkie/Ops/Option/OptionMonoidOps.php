@@ -11,9 +11,9 @@
 
 namespace Phunkie\Ops\Option;
 
-use function Phunkie\Functions\semigroup\combine;
 use Phunkie\Types\Option;
 use RuntimeException;
+use function Phunkie\Functions\semigroup\combine;
 
 /**
  * @mixin \Phunkie\Types\Option
@@ -25,7 +25,9 @@ trait OptionMonoidOps
         return None();
     }
 
-    public function combine(Option $b) { switch (true) {
+    public function combine(Option $b)
+    {
+        switch (true) {
         case !$this instanceof Option: throw new RuntimeException("Options ops imported to non-option");
         case $this->isEmpty(): return $b;
         case $b->isEmpty(): return $this;

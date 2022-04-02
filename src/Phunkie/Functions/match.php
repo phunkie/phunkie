@@ -11,18 +11,22 @@
 
 namespace {
 
-    use Phunkie\PatternMatching\Match;
+    use Phunkie\PatternMatching\PMatch;
     use Phunkie\PatternMatching\Underscore;
 
-    function match(...$values)
+    function pmatch(...$values)
     {
-        return new Match(...$values);
+        return new PMatch(...$values);
     }
 
-    function underscore() { return new Underscore(); }
+    function underscore()
+    {
+        return new Underscore();
+    }
 }
 
 namespace Phunkie\PatternMatching\Referenced {
+
     use Phunkie\Validation\Success as Valid;
     use Phunkie\Validation\Failure as Invalid;
 
@@ -55,8 +59,12 @@ namespace Phunkie\PatternMatching\Referenced {
 namespace Phunkie\PatternMatching\Wildcarded {
     function ImmList($head, $tail)
     {
-        if ($head == Nil) $head = Nil();
-        if ($tail == Nil) $tail = Nil();
+        if ($head == Nil) {
+            $head = Nil();
+        }
+        if ($tail == Nil) {
+            $tail = Nil();
+        }
         return new ImmList($head, $tail);
     }
 }

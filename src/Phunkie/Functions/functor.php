@@ -12,7 +12,10 @@
 namespace {
     use Phunkie\Cats\Functor\FunctorComposite;
 
-    function Functor($type)  { return new FunctorComposite($type); }
+    function Functor($type)
+    {
+        return new FunctorComposite($type);
+    }
 }
 
 namespace Phunkie\Functions\functor {
@@ -21,15 +24,17 @@ namespace Phunkie\Functions\functor {
     use function Phunkie\Functions\currying\applyPartially;
 
     const fmap = "\\Phunkie\\Functions\\functor\\fmap";
-    function fmap(callable $f) {
-        return applyPartially([$f],func_get_args(),function(Functor $functor) use ($f) {
+    function fmap(callable $f)
+    {
+        return applyPartially([$f], func_get_args(), function (Functor $functor) use ($f) {
             return $functor->map($f);
         });
     }
 
     const allAs = "\\Phunkie\\Functions\\functor\\allAs";
-    function allAs($b) {
-        return applyPartially([$b],func_get_args(),function(Functor $functor) use ($b) {
+    function allAs($b)
+    {
+        return applyPartially([$b], func_get_args(), function (Functor $functor) use ($b) {
             return $functor->as($b);
         });
     }
@@ -41,8 +46,9 @@ namespace Phunkie\Functions\functor {
     }
 
     const zipWith = "\\Phunkie\\Functions\\functor\\zipWith";
-    function zipWith($f) {
-        return applyPartially([$f],func_get_args(),function(Functor $functor) use ($f) {
+    function zipWith($f)
+    {
+        return applyPartially([$f], func_get_args(), function (Functor $functor) use ($f) {
             return $functor->zipWith($f);
         });
     }

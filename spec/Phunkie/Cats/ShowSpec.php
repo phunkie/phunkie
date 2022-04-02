@@ -2,72 +2,89 @@
 
 namespace spec\Phunkie\Cats;
 
+use PHPUnit\Framework\TestCase;
+use stdClass;
 use function Phunkie\Functions\show\showType;
 use function Phunkie\Functions\show\showValue;
-use PhpSpec\ObjectBehavior;
-use stdClass;
 
-class ShowSpec extends ObjectBehavior
+class ShowSpec extends TestCase
 {
-    function it_prints_types()
+    /**
+     * @test
+     */
+    public function it_prints_types()
     {
-        expect(showType(1))->toReturn("Int");
-        expect(showType("1"))->toReturn("String");
-        expect(showType(27.23))->toReturn("Double");
-        expect(showType(null))->toReturn("Null");
-        expect(showType(true))->toReturn("Boolean");
-        expect(showType(STDIN))->toReturn("Resource");
-        expect(showType([1,2,3]))->toReturn("Array<Int>");
-        expect(showType([]))->toReturn("Array<Nothing>");
-        expect(showType(["foo"=>"bar"]))->toReturn("Array<String, String>");
-        expect(showType(function(){}))->toReturn("Callable");
+        $this->assertEquals(showType(1), "Int");
+        $this->assertEquals(showType("1"), "String");
+        $this->assertEquals(showType(27.23), "Double");
+        $this->assertEquals(showType(null), "Null");
+        $this->assertEquals(showType(true), "Boolean");
+        $this->assertEquals(showType(STDIN), "Resource");
+        $this->assertEquals(showType([1,2,3]), "Array<Int>");
+        $this->assertEquals(showType([]), "Array<Nothing>");
+        $this->assertEquals(showType(["foo"=>"bar"]), "Array<String, String>");
+        $this->assertEquals(showType(function () {
+        }), "Callable");
 
-        expect(showType(Unit()))->toReturn("Unit");
-        expect(showType(None()))->toReturn("None");
-        expect(showType(Some(42)))->toReturn("Option<Int>");
-        expect(showType(ImmList(1,2,3)))->toReturn("List<Int>");
-        expect(showType(ImmList(Some(1),Some(2),Some(3))))->toReturn("List<Option<Int>>");
-        expect(showType(Nil()))->toReturn("List<Nothing>");
-        expect(showType(ImmList(1,2,"f")))->toReturn("List<Mixed>");
-        expect(showType(ImmList(Some(32), Some(56), None())))->toReturn("List<Option<Int>>");
-        expect(showType(Function1(function(int $x):bool { return $x == 42; })))->toReturn("Function1");
+        $this->assertEquals(showType(Unit()), "Unit");
+        $this->assertEquals(showType(None()), "None");
+        $this->assertEquals(showType(Some(42)), "Option<Int>");
+        $this->assertEquals(showType(ImmList(1, 2, 3)), "List<Int>");
+        $this->assertEquals(showType(ImmList(Some(1), Some(2), Some(3))), "List<Option<Int>>");
+        $this->assertEquals(showType(Nil()), "List<Nothing>");
+        $this->assertEquals(showType(ImmList(1, 2, "f")), "List<Mixed>");
+        $this->assertEquals(showType(ImmList(Some(32), Some(56), None())), "List<Option<Int>>");
+        $this->assertEquals(showType(Function1(function (int $x): bool {
+            return $x == 42;
+        })), "Function1");
 
-        expect(showType(Pair(42, "42")))->toReturn("(Int, String)");
+        $this->assertEquals(showType(Pair(42, "42")), "(Int, String)");
 
-        expect(showType(Success("yay")))->toReturn("Validation<E, String>");
-        expect(showType(Failure(new \Exception())))->toReturn("Validation<Exception, A>");
+        $this->assertEquals(showType(Success("yay")), "Validation<E, String>");
+        $this->assertEquals(showType(Failure(new \Exception())), "Validation<Exception, A>");
 
-        expect(showType(Tuple(1,true,"")))->toReturn("(Int, Boolean, String)");
+        $this->assertEquals(showType(Tuple(1, true, "")), "(Int, Boolean, String)");
 
-        expect(showType(new class{}))->toReturn("AnonymousClass");
-        expect(showType(new class extends SomeSuperClass {}))->toReturn("AnonymousClass < " . SomeSuperClass::class);
+        $this->assertEquals(showType(new class () {}), "AnonymousClass");
+        $this->assertEquals(showType(new class () extends SomeSuperClass {}), "AnonymousClass < " . SomeSuperClass::class);
     }
 
-    function it_prints_value()
+    /**
+     * @test
+     */
+    public function it_prints_value()
     {
-        expect(showValue(1))->shouldReturn("1");
-        expect(showValue("1"))->shouldReturn('"1"');
-        expect(showValue(true))->shouldReturn("true");
-        expect(showValue(null))->shouldReturn("null");
-        expect(showValue([1,2,3]))->shouldReturn("[1, 2, 3]");
-        expect(showValue(function(int $x):bool { return $x == 42; }))->shouldReturn("<function>");
+        $this->assertEquals(showValue(1), "1");
+        $this->assertEquals(showValue("1"), '"1"');
+        $this->assertEquals(showValue(true), "true");
+        $this->assertEquals(showValue(null), "null");
+        $this->assertEquals(showValue([1,2,3]), "[1, 2, 3]");
+        $this->assertEquals(showValue(function (int $x): bool {
+            return $x == 42;
+        }), "<function>");
 
-        expect(showValue(Some(42)))->shouldReturn(Some(42)->show());
-        expect(showValue(ImmList(42)))->shouldReturn(ImmList(42)->show());
-        expect(showValue(Function1(function(int $x):bool { return $x == 42; })))
-            ->shouldReturn(Function1(function(int $x):bool { return $x == 42; })->show());
-        expect(showValue(Success(42)))->shouldReturn(Success(42)->show());
-        expect(showValue(Failure(42)))->shouldReturn(Failure(42)->show());
-        expect(showValue(Tuple(42)))->shouldReturn(Tuple(42)->show());
+        $this->assertEquals(showValue(Some(42)), Some(42)->show());
+        $this->assertEquals(showValue(ImmList(42)), ImmList(42)->show());
+        $this->assertEquals(
+            showValue(Function1(function (int $x): bool {
+                return $x == 42;
+            })),
+            Function1(function (int $x): bool {
+                return $x == 42;
+            })->show()
+        );
+        $this->assertEquals(showValue(Success(42)), Success(42)->show());
+        $this->assertEquals(showValue(Failure(42)), Failure(42)->show());
+        $this->assertEquals(showValue(Tuple(42)), Tuple(42)->show());
 
         $object = new stdClass();
-        expect(showValue($object))->toReturn(get_class($object) . "@" . $this->hash($object));
+        $this->assertEquals(showValue($object), get_class($object) . "@" . $this->hash($object));
 
-        $object = new class{};
-        expect(showValue($object))->toReturn("Anonymous" . "@" . $this->hash($object));
+        $object = new class () {};
+        $this->assertEquals(showValue($object), "Anonymous" . "@" . $this->hash($object));
 
-        $object = new class extends SomeSuperClass {};
-        expect(showValue($object))->toReturn("Anonymous < " . SomeSuperClass::class . "@" . $this->hash($object));
+        $object = new class () extends SomeSuperClass {};
+        $this->assertEquals(showValue($object), "Anonymous < " . SomeSuperClass::class . "@" . $this->hash($object));
     }
 
     private function hash($object)
@@ -76,6 +93,6 @@ class ShowSpec extends ObjectBehavior
     }
 }
 
-class SomeSuperClass {
-
+class SomeSuperClass
+{
 }

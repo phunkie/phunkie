@@ -3,13 +3,18 @@
 namespace spec\Phunkie\Cats;
 
 use Phunkie\Cats\StateT;
-use PhpSpec\ObjectBehavior;
+use Md\Unit\TestCase;
 
-class StateTSpec extends ObjectBehavior
+class StateTSpec extends TestCase
 {
-    function it_runs_function_under_a_context()
+    /**
+     * @test
+     */
+    public function it_runs_function_under_a_context()
     {
-        $this->beConstructedWith(Some(function($n) { return Some(Pair($n + 1, $n)); }));
-        $this->run(1)->shouldBeLike(Some(Pair(2,1)));
+        $s = new StateT(Some(function ($n) {
+            return Some(Pair($n + 1, $n));
+        }));
+        $this->assertIsLike($s->run(1), (Some(Pair(2, 1))));
     }
 }

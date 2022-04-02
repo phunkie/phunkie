@@ -12,7 +12,7 @@
 namespace Phunkie\Types;
 
 use Phunkie\Cats\Show;
-use function \Phunkie\Functions\show\showValue;
+use function Phunkie\Functions\show\showValue;
 
 final class Pair extends Tuple
 {
@@ -20,7 +20,7 @@ final class Pair extends Tuple
 
     public function __get($i)
     {
-        switch($i) {
+        switch ($i) {
             case "_1": return parent::__get("_1"); break;
             case "_2": return parent::__get("_2"); break;
         }
@@ -32,7 +32,7 @@ final class Pair extends Tuple
         throw new \TypeError("Pairs are immutable");
     }
 
-    function toString(): string
+    public function toString(): string
     {
         return "Pair(" . showValue(parent::__get("_1")) . ", " . showValue(parent::__get("_2")) . ")";
     }

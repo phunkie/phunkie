@@ -18,7 +18,7 @@ final class Nil extends ImmList
 {
     public function __get($property)
     {
-        switch($property) {
+        switch ($property) {
             case 'length': return 0;
             case 'head': return $this->head();
             case 'tail': return $this->tail();
@@ -30,7 +30,7 @@ final class Nil extends ImmList
 
     public function __set($property, $unused)
     {
-        switch($property) {
+        switch ($property) {
             case 'length': throw new \BadMethodCallException("Can't change the value of members of a ImmList");
         }
         throw new \Error("value $property is not a member of ImmList");
@@ -86,7 +86,7 @@ final class Nil extends ImmList
         return Pair(Nil(), Nil());
     }
 
-    function toString(): string
+    public function toString(): string
     {
         return "List()";
     }

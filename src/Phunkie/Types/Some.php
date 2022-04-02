@@ -13,7 +13,9 @@ namespace Phunkie\Types;
 
 final class Some extends Option
 {
-    private function __clone() {}
+    private function __clone()
+    {
+    }
     public static function instance()
     {
         $numArgs = func_num_args();
@@ -27,7 +29,16 @@ final class Some extends Option
     {
         return $this->t;
     }
-    public function get() { return $this->t; }
-    public function isDefined(): bool { return true; }
-    public function isEmpty(): bool { return false; }
+    public function get()
+    {
+        return $this->t;
+    }
+    public function isDefined(): bool
+    {
+        return true;
+    }
+    public function isEmpty(): bool
+    {
+        return false;
+    }
 }

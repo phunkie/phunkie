@@ -1,5 +1,4 @@
-Phunkie
-=======
+# Phunkie
 
 [![Build Status](https://travis-ci.org/phunkie/phunkie.svg?branch=master)](https://travis-ci.org/phunkie/phunkie)
 
@@ -13,11 +12,11 @@ Welcome to phunkie console.
 
 Type in expressions to have them evaluated.
 
-phunkie > 
+phunkie >
 ```
 
-Options
--------
+## Options
+
 ```
 phunkie > Some(1)
 $var0: Option<Int> = Some(1)
@@ -32,9 +31,10 @@ phunkie > Option(null)
 $var3: None = None
 ```
 
-Immutable Lists
----------------
+## Immutable Lists
+
 You can import phunkie modules with the `:import` command. Use `:help` for more information
+
 ```bash
 phunkie > ImmList(2,3,4)
 $var0: List<Int> = List(2, 3, 4)
@@ -85,8 +85,8 @@ phunkie > ImmList("A","B","C")->zip(ImmList(1,2,3))
 $var10: List<(String, Int)> = List(Pair("A", 1), Pair("B", 2), Pair("C", 3))
 ```
 
-Immutable Sets and Immutable Maps
----------------------------------
+## Immutable Sets and Immutable Maps
+
 ```bash
 phunkie > ImmSet(1,2,3)
 $var0: Set<Int> = Set(1, 2, 3)
@@ -132,8 +132,8 @@ phunkie ( )
 $var9: Map<Id, String> = Map(Id@2d05ca0 -> "John Smith", Id@2d05ca1 -> "Chuck Norris", Id@2d05ca2 -> "Jack Bauer")
 ```
 
-Function1
----------
+## Function1
+
 ```bash
 phunkie > $f = Function1('strlen')
 $f : Function1 = Function1(?=>?)
@@ -160,8 +160,8 @@ phunkie > $h("hello")
 $var3: Boolean = false
 ```
 
-Functor
--------
+## Functor
+
 ```bash
 phunkie > Some(1)->map(function($x) { return $x + 1;})
 $var0: Option<Int> = Some(2)
@@ -182,8 +182,8 @@ phunkie > fmap (function($x) { return $x + 1;}, Some(42))
 $var4: Option<Int> = Some(43)
 ```
 
-Foldable
---------
+## Foldable
+
 ```bash
 phunkie > ImmList(1,2,3)->foldLeft(0)(function($x, $y) { return $x + $y; })
 $var0: Int = 6
@@ -195,8 +195,8 @@ phunkie > ImmList("a", "b", "c")->foldRight("<--")(function($x, $y) { return $x 
 $var2: String = "abc<--"
 ```
 
-Currying
---------
+## Currying
+
 ```bash
 phunkie > $curried = ImmList(1,2,3)->foldLeft(0)(_)
 $curried : Callable = <function>
@@ -223,8 +223,8 @@ phunkie > $take(2, ImmList(1,2,3))
 $var2: List<Int> = List(1, 2)
 ```
 
-Functor Composite
------------------
+## Functor Composite
+
 ```bash
 phunkie > $fa = Functor(Option)
 $fa : Phunkie\Cats\Functor\FunctorComposite = Functor(Option)
@@ -242,8 +242,8 @@ phunkie > $fa->map(Option(ImmList(1,2,3)), function($x) { return $x + 1; })
 $var1: Option<List<Int>> = Some(List(2, 3, 4))
 ```
 
-Applicative
------------
+## Applicative
+
 ```bash
 phunkie > None()->pure(42)
 $var0: Option<Int> = Some(42)
@@ -270,8 +270,8 @@ phunkie > ImmList(1,2,3)->map2(ImmList(4,5,6), function($x, $y) { return $x + $y
 $var7: List<Int> = List(5, 6, 7, 6, 7, 8, 7, 8, 9)
 ```
 
-Monad
------
+## Monad
+
 ```bash
 phunkie > ImmList(1,2,3)->flatMap(function($x) { return Some($x + 1); })
 $var0: List<Int> = List(2, 3, 4)
@@ -304,8 +304,8 @@ phunkie > ImmList(ImmList(1,2,3))->flatten()
 $var9: List<Int> = List(1, 2, 3)
 ```
 
-Kleisli
--------
+## Kleisli
+
 ```bash
 phunkie > $f = kleisli(function($x) { return Some($x + 1); })
 $f: Phunkie\Cats\Kleisli = Phunkie\Cats\Kleisli@7b902640
@@ -320,8 +320,8 @@ phunkie > $x->run(3)
 $var0: Option<Int> = Some(8)
 ```
 
-Monoid
-------
+## Monoid
+
 ```bash
 phunkie > :import semigroup/*
 Imported function \Phunkie\Functions\semigroup\combine()
@@ -367,8 +367,7 @@ phunkie > zero([1,2,3])
 $var12: Array<Nothing> = []
 ```
 
-Pattern Matching
-----------------
+## Pattern Matching
 
 ### Working withLists
 
@@ -378,7 +377,7 @@ use Phunkie\Types\ImmList;
 use function Phunkie\PatternMatching\Referenced\ListWithTail;
 use function Phunkie\PatternMatching\Referenced\ListNoTail;
 
-function sum(ImmList $list): int { $on = match($list); switch(true) {
+function sum(ImmList $list): int { $on = pmatch($list); switch(true) {
     case $on(Nil): return 0;
     case $on(ListNoTail($x, Nil)): return $x;
     case $on(ListWithTail($x, $xs)): return $x + sum($xs);}
@@ -391,13 +390,13 @@ function sum(ImmList $list): int { $on = match($list); switch(true) {
 <?php
 
 $boom = function () { return Failure(Nel(new \Exception("Boom!"))); };
-$on = match($boom()); switch (true) {
+$on = pmatch($boom()); switch (true) {
     case $on(Success(_)): return 2; break;
     case $on(Failure(_)): return 10; break;
 }
 
 $yay = function () { return Success("yay!"); };
-$on = match($yay()); switch (true) {
+$on = pmatch($yay()); switch (true) {
     case $on(Failure(_)): return 2; break;
     case $on(Success(_)): return 10; break;
 }
@@ -408,14 +407,14 @@ $on = match($yay()); switch (true) {
 ```php
 <?php
 
-$on = match(None()); switch (true) {
+$on = pmatch(None()); switch (true) {
     case $on(None): return 10; break;
     case $on(Some(_)): return 2; break;
 }
 ```
 
-Lenses
-------
+## Lenses
+
 ```bash
 phunkie > :import lens/*
 imported function \Phunkie\Functions\lens\trivial()
@@ -474,8 +473,8 @@ phunkie > member("b")->set($m, Some(3))
 $var12: ImmMap<String, Int> = Map("a" -> 1, "b" -> 3)
 ```
 
-For comprehension
------------------
+## For comprehension
+
 ```php
 <?php
 
@@ -510,6 +509,7 @@ $res = letter('x')->flatMap(function($l) {
     });
 });
 ```
+
 If the right hand side returns a tuple, it can be assigned to 2 separate variables
 
 ```php
@@ -533,3 +533,4 @@ $x = for_ (__
 
 // $x == "right"
 ```
+

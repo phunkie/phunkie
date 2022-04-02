@@ -20,7 +20,7 @@ class Id
 {
     private $a;
 
-    public function __construct( $a)
+    public function __construct($a)
     {
         $this->a = $a;
     }

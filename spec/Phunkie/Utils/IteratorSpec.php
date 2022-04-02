@@ -3,68 +3,103 @@
 namespace spec\Phunkie\Utils;
 
 use Phunkie\Utils\Iterator;
-use PhpSpec\ObjectBehavior;
+use Md\Unit\TestCase;
 
-class IteratorSpec extends ObjectBehavior
+class IteratorSpec extends TestCase
 {
-    function let()
+    private $it;
+
+    public function setUp(): void
     {
-        $this->beConstructedWith(new \SplObjectStorage());
+        $this->it = new Iterator(new \SplObjectStorage());
     }
 
-    function it_is_initializable()
+    /**
+     * @test
+     */
+    public function it_is_initializable()
     {
-        $this->shouldHaveType('Phunkie\Utils\Iterator');
+        $ref = new \ReflectionClass($this->it);
+        $this->assertEquals('Phunkie\\Utils\\Iterator', $ref->getName());
     }
 
     /////////////////////
     // Lists           //
     /////////////////////
-    function it_can_be_created_from_lists()
+
+    /**
+     * @test
+     */
+    public function it_can_be_created_from_lists()
     {
-        expect(ImmList(1,2,3)->iterator())->toHaveType(Iterator::class);
+        $this->assertInstanceOf(\Iterator::class, ImmList(1, 2, 3)->iterator());
     }
 
-    function it_is_countable_after_created_from_lists()
+    /**
+     * @test
+     */
+    public function it_is_countable_after_created_from_lists()
     {
-        expect(ImmList(1,2,3)->iterator())->toHaveCount(3);
+        $this->assertCount(3, ImmList(1, 2, 3)->iterator());
     }
 
-    function it_is_array_access()
+    /**
+     * @test
+     */
+    public function it_is_array_access()
     {
-        expect(ImmList(1,2,3)->iterator())->toHaveType(\ArrayAccess::class);
+        $this->assertInstanceOf(\ArrayAccess::class, ImmList(1, 2, 3)->iterator());
     }
 
-    function it_lets_you_access_lists_elements_via_array_notation()
+    /**
+     * @test
+     */
+    public function it_lets_you_access_lists_elements_via_array_notation()
     {
-        expect(ImmList(1,2,3)->iterator()[0])->toBeLike(Some(1));
-        expect(ImmList(1,2,3)->iterator()[1])->toBeLike(Some(2));
-        expect(ImmList(1,2,3)->iterator()[2])->toBeLike(Some(3));
-        expect(ImmList(1,2,3)->iterator()[3])->toBeLike(None());
+        $this->assertIsLike(ImmList(1, 2, 3)->iterator()[0], Some(1));
+        $this->assertIsLike(ImmList(1, 2, 3)->iterator()[1], Some(2));
+        $this->assertIsLike(ImmList(1, 2, 3)->iterator()[2], Some(3));
+        $this->assertIsLike(ImmList(1, 2, 3)->iterator()[3], None());
     }
 
-    function it_is_immutable_after_created_from_lists()
+    /**
+     * @test
+     */
+    public function it_is_immutable_after_created_from_lists()
     {
-        expect(ImmList(1,2,3)->iterator())->toThrow()->duringOffsetSet(42);
-        expect(ImmList(1,2,3)->iterator())->toThrow()->duringOffsetUnset();
+        $list = ImmList(1, 2, 3)->iterator();
+        $this->expectError();
+        $this->expectErrorMessage("Iterators are immutable");
+
+        $list[42] = 32;
     }
 
-    function it_lets_you_check_if_a_list_index_exists()
+    /**
+     * @test
+     */
+    public function it_lets_you_check_if_a_list_index_exists()
     {
-        expect(isset(ImmList(1,2,3)->iterator()[2]))->toBe(true);
-        expect(isset(ImmList(1,2,3)->iterator()[3]))->toBe(false);
+        $this->assertTrue(isset(ImmList(1, 2, 3)->iterator()[2]));
+        $this->assertFalse(isset(ImmList(1, 2, 3)->iterator()[3]));
     }
 
-    function it_is_foreachable_after_created_from_lists()
+    /**
+     * @test
+     */
+    public function it_is_foreachable_after_created_from_lists()
     {
-        $dataProvider = [ 1, 2, 3];
+        $dataProvider = [1, 2, 3];
 
-        foreach(ImmList(1,2,3)->iterator() as $v) {
-            expect($v)->toBe(current($dataProvider)); next($dataProvider);
+        foreach (ImmList(1, 2, 3)->iterator() as $v) {
+            $this->assertEquals(current($dataProvider), $v);
+            next($dataProvider);
         }
     }
 
-    function it_is_foreachable_with_key_and_value_after_created_from_lists()
+    /**
+     * @test
+     */
+    public function it_is_foreachable_with_key_and_value_after_created_from_lists()
     {
         $dataProvider = [
             0, 1,
@@ -72,68 +107,98 @@ class IteratorSpec extends ObjectBehavior
             2, 3
         ];
 
-        foreach(ImmList(1,2,3)->iterator() as $k => $v) {
-            expect($k)->toBe(current($dataProvider)); next($dataProvider);
-            expect($v)->toBe(current($dataProvider)); next($dataProvider);
+        foreach (ImmList(1, 2, 3)->iterator() as $k => $v) {
+            $this->assertEquals($k, current($dataProvider));
+            next($dataProvider);
+            $this->assertEquals($v, current($dataProvider));
+            next($dataProvider);
         }
     }
 
     /////////////////////
     // Maps            //
     /////////////////////
-    function it_can_be_created_from_Maps()
+
+    /**
+     * @test
+     */
+    public function it_can_be_created_from_Maps()
     {
-        expect(ImmMap([1,2,3,4])->iterator())->toHaveType(Iterator::class);
+        $this->assertInstanceOf(Iterator::class, ImmMap([1,2,3,4])->iterator());
     }
 
-    function it_is_countable_after_created_from_maps()
+    /**
+     * @test
+     */
+    public function it_is_countable_after_created_from_maps()
     {
-        expect(ImmMap([1,2,3])->iterator())->toHaveCount(3);
+        $this->assertCount(3, ImmMap([1,2,3])->iterator());
     }
 
-    function it_lets_you_access_map_elements_via_array_notation()
+    /**
+     * @test
+     */
+    public function it_lets_you_access_map_elements_via_array_notation()
     {
-        expect(ImmMap([1,2,3])->iterator()[0])->toBeLike(Some(1));
-        expect(ImmMap([1,2,3])->iterator()[1])->toBeLike(Some(2));
-        expect(ImmMap([1,2,3])->iterator()[2])->toBeLike(Some(3));
-        expect(ImmMap([1,2,3])->iterator()[3])->toBeLike(None());
+        $this->assertIsLike(ImmMap([1,2,3])->iterator()[0], Some(1));
+        $this->assertIsLike(ImmMap([1,2,3])->iterator()[1], Some(2));
+        $this->assertIsLike(ImmMap([1,2,3])->iterator()[2], Some(3));
+        $this->assertIsLike(ImmMap([1,2,3])->iterator()[3], None());
 
-        expect(ImmMap(["a" => 1,"b" => 2])->iterator()["a"])->toBeLike(Some(1));
+        $this->assertIsLike(ImmMap(["a" => 1,"b" => 2])->iterator()["a"], Some(1));
 
-        $ob1 = new \stdClass(); $ob2 = new \stdClass();
-        expect(ImmMap($ob1, 1, $ob2, 2)->iterator()[$ob1])->toBeLike(Some(1));
+        $ob1 = new \stdClass();
+        $ob2 = new \stdClass();
+        $this->assertIsLike(ImmMap($ob1, 1, $ob2, 2)->iterator()[$ob1], Some(1));
     }
 
-    function it_is_immutable_after_created_from_maps()
+    /**
+     * @test
+     */
+    public function it_is_immutable_after_created_from_maps()
     {
-        expect(ImmMap([1,2,3])->iterator())->toThrow()->duringOffsetSet(42);
-        expect(ImmMap([1,2,3])->iterator())->toThrow()->duringOffsetUnset();
+        $map = ImmMap([1, 2, 3])->iterator();
+        $this->expectError();
+        $this->expectErrorMessage("Iterators are immutable");
+
+        $map[42] = 32;
     }
 
-    function it_lets_you_check_if_a_map_key_exists()
+    /**
+     * @test
+     */
+    public function it_lets_you_check_if_a_map_key_exists()
     {
-        expect(isset(ImmMap([1,2,3])->iterator()[2]))->toBe(true);
-        expect(isset(ImmMap([1,2,3])->iterator()[3]))->toBe(false);
+        $this->assertTrue(isset(ImmMap([1,2,3])->iterator()[2]));
+        $this->assertFalse(isset(ImmMap([1,2,3])->iterator()[3]));
 
         // string key
-        expect(isset(ImmMap(["a" => 1,"b" => 2])->iterator()["a"]))->toBe(true);
-        expect(isset(ImmMap(["a" => 1,"b" => 2])->iterator()["c"]))->toBe(false);
+        $this->assertTrue(isset(ImmMap(["a" => 1,"b" => 2])->iterator()["a"]));
+        $this->assertFalse(isset(ImmMap(["a" => 1,"b" => 2])->iterator()["c"]));
 
         // object key
-        $ob1 = new \stdClass(); $ob2 = new \stdClass();
-        expect(isset(ImmMap($ob1, 1, $ob2, 2)->iterator()[$ob1]))->toBe(true);
+        $ob1 = new \stdClass();
+        $ob2 = new \stdClass();
+        $this->assertTrue(isset(ImmMap($ob1, 1, $ob2, 2)->iterator()[$ob1]));
     }
 
-    function it_is_foreachable_after_created_from_maps()
+    /**
+     * @test
+     */
+    public function it_is_foreachable_after_created_from_maps()
     {
-        $dataProvider = [ 1, 2, 3];
+        $dataProvider = [1, 2, 3];
 
-        foreach(ImmMap([1,2,3])->iterator() as $v) {
-            expect($v)->toBe(current($dataProvider)); next($dataProvider);
+        foreach (ImmMap([1, 2, 3])->iterator() as $v) {
+            $this->assertEquals($v, current($dataProvider));
+            next($dataProvider);
         }
     }
 
-    function it_is_foreachable_with_key_and_value_after_created_from_maps()
+    /**
+     * @test
+     */
+    public function it_is_foreachable_with_key_and_value_after_created_from_maps()
     {
         $map = [
             "a" => 1,
@@ -141,9 +206,9 @@ class IteratorSpec extends ObjectBehavior
             "c" => 3
         ];
 
-        foreach(ImmMap($map)->iterator() as $k => $v) {
-            expect($k)->toBe(key($map));
-            expect($v)->toBe(current($map));
+        foreach (ImmMap($map)->iterator() as $k => $v) {
+            $this->assertEquals($k, key($map));
+            $this->assertEquals($v, current($map));
             next($map);
         }
     }
@@ -151,51 +216,84 @@ class IteratorSpec extends ObjectBehavior
     /////////////////////
     // Sets            //
     /////////////////////
-    function it_can_be_created_from_Sets()
+
+    /**
+     * @test
+     */
+    public function it_can_be_created_from_Sets()
     {
-        expect(ImmSet(1,2,3,4)->iterator())->toHaveType(Iterator::class);
+        $this->assertInstanceOf(Iterator::class, ImmSet(1, 2, 3, 4)->iterator());
     }
 
-    function it_is_countable_after_created_from_sets()
+    /**
+     * @test
+     */
+    public function it_is_countable_after_created_from_sets()
     {
-        expect(ImmSet(1,2,3)->iterator())->toHaveCount(3);
+        $this->assertCount(3, ImmSet(1, 2, 3)->iterator());
+        // expect(ImmSet(1, 2, 3)->iterator())->toHaveCount(3);
     }
 
-    function it_is_array_access_after_created_from_sets()
+    /**
+     * @test
+     */
+    public function it_is_array_access_after_created_from_sets()
     {
-        expect(ImmSet(1,2,3)->iterator())->toHaveType(\ArrayAccess::class);
+        $this->assertInstanceOf(\ArrayAccess::class, ImmSet(1, 2, 3)->iterator());
+        // expect(ImmSet(1, 2, 3)->iterator())->toHaveType(\ArrayAccess::class);
     }
 
-    function it_lets_you_access_sets_elements_via_array_notation()
+    /**
+     * @test
+     */
+    public function it_lets_you_access_sets_elements_via_array_notation()
     {
-        expect(ImmSet(1,2,3)->iterator()[0])->toBeLike(Some(1));
-        expect(ImmSet(1,2,3)->iterator()[1])->toBeLike(Some(2));
-        expect(ImmSet(1,2,3)->iterator()[2])->toBeLike(Some(3));
-        expect(ImmSet(1,2,3)->iterator()[3])->toBeLike(None());
+        $this->assertIsLike(ImmSet(1, 2, 3)->iterator()[0], Some(1));
+        $this->assertIsLike(ImmSet(1, 2, 3)->iterator()[1], Some(2));
+        $this->assertIsLike(ImmSet(1, 2, 3)->iterator()[2], Some(3));
+        $this->assertIsLike(ImmSet(1, 2, 3)->iterator()[3], None());
     }
 
-    function it_is_immutable_after_created_from_sets()
+    /**
+     * @test
+     */
+    public function it_is_immutable_after_created_from_sets()
     {
-        expect(ImmSet(1,2,3)->iterator())->toThrow()->duringOffsetSet(42);
-        expect(ImmSet(1,2,3)->iterator())->toThrow()->duringOffsetUnset();
+        $set = ImmSet(1, 2, 3)->iterator();
+        $this->expectError();
+        $this->expectErrorMessage("Iterators are immutable");
+
+        $set[42] = 32;
+        // expect(ImmSet(1, 2, 3)->iterator())->toThrow()->duringOffsetSet(42);
+        // expect(ImmSet(1, 2, 3)->iterator())->toThrow()->duringOffsetUnset();
     }
 
-    function it_lets_you_check_if_a_set_index_exists()
+    /**
+     * @test
+     */
+    public function it_lets_you_check_if_a_set_index_exists()
     {
-        expect(isset(ImmSet(1,2,3)->iterator()[2]))->toBe(true);
-        expect(isset(ImmSet(1,2,3)->iterator()[3]))->toBe(false);
+        $this->assertTrue(isset(ImmSet(1, 2, 3)->iterator()[2]));
+        $this->assertFalse(isset(ImmSet(1, 2, 3)->iterator()[3]));
     }
 
-    function it_is_foreachable_after_created_from_sets()
+    /**
+     * @test
+     */
+    public function it_is_foreachable_after_created_from_sets()
     {
-        $dataProvider = [ 1, 2, 3];
+        $dataProvider = [1, 2, 3];
 
-        foreach(ImmSet(1,2,3)->iterator() as $v) {
-            expect($v)->toBe(current($dataProvider)); next($dataProvider);
+        foreach (ImmSet(1, 2, 3)->iterator() as $v) {
+            $this->assertEquals($v, current($dataProvider));
+            next($dataProvider);
         }
     }
 
-    function it_is_foreachable_with_key_and_value_after_created_from_sets()
+    /**
+     * @test
+     */
+    public function it_is_foreachable_with_key_and_value_after_created_from_sets()
     {
         $dataProvider = [
             0, 1,
@@ -203,9 +301,11 @@ class IteratorSpec extends ObjectBehavior
             2, 3
         ];
 
-        foreach(ImmSet(1,2,3)->iterator() as $k => $v) {
-            expect($k)->toBe(current($dataProvider)); next($dataProvider);
-            expect($v)->toBe(current($dataProvider)); next($dataProvider);
+        foreach (ImmSet(1, 2, 3)->iterator() as $k => $v) {
+            $this->assertEquals($k, current($dataProvider));
+            next($dataProvider);
+            $this->assertEquals($v, current($dataProvider));
+            next($dataProvider);
         }
     }
 }

@@ -11,9 +11,9 @@
 
 namespace Phunkie\Laws;
 
-use const Phunkie\Functions\function1\identity;
 use Phunkie\Types\Function1;
 use Phunkie\Types\Kind;
+use const Phunkie\Functions\function1\identity;
 
 trait InvariantLaws
 {
@@ -33,6 +33,8 @@ trait InvariantLaws
     public function invariantComposition(Kind $fa, Function1 $f1, Function1 $f2, Function1 $g1, Function1 $g2): bool
     {
         return $fa->imap($f1, $f2)->imap($g1, $g2)->eqv(
-            $fa->imap($g1->compose($f1), $f2->compose($g2)), Some(42));
+            $fa->imap($g1->compose($f1), $f2->compose($g2)),
+            Some(42)
+        );
     }
 }

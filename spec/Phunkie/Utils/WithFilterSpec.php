@@ -13,27 +13,43 @@ namespace spec\Phunkie\Utils;
 
 use Phunkie\Types\ImmList;
 use Phunkie\Utils\WithFilter;
-use PhpSpec\ObjectBehavior;
+use Md\Unit\TestCase;
 
-class WithFilterSpec extends ObjectBehavior
+class WithFilterSpec extends TestCase
 {
     private $filter;
-    /** @var  ImmList */
-    private $list;
-    function let()
+
+    public function setUp(): void
     {
-        $this->filter = function ($x) {
-            return $x % 2 == 0;
-        };
-        $this->list = ImmList(1, 2, 3);
-        $this->beConstructedWith($this->list, $this->filter);
-        $this->shouldHaveType(WithFilter::class);
+        $this->filter = new WithFilter(
+            ImmList(1, 2, 3),
+            function ($x) {
+                return $x % 2 == 0;
+            }
+        );
     }
 
-    function it_delegates_filter_to_monad()
+    /**
+     * @test
+     */
+    public function it_is_initializable()
     {
-        $this->map(function($x) { return $x; })->shouldBeLike(
-            $this->list->filter($this->filter)
+        $ref = new \ReflectionClass($this->filter);
+        $this->assertTrue($ref->isInstantiable());
+    }
+
+    /**
+     * @test
+     */
+    public function it_delegates_filter_to_monad()
+    {
+        $this->assertIsLike(
+            $this->filter->map(function ($x) {
+                return $x;
+            }),
+            ImmList(1, 2, 3)->filter(function ($x) {
+                return $x % 2 == 0;
+            })
         );
     }
 }

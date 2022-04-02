@@ -13,5 +13,4 @@ namespace Phunkie\Types;
 
 final class Cons extends ImmList
 {
-
 }
