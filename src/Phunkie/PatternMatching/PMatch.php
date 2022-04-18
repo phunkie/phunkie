@@ -25,7 +25,7 @@ use Phunkie\Types\Some;
 use Phunkie\Validation\Failure;
 use Phunkie\Validation\Success;
 
-class Match
+class PMatch
 {
     private $values;
 
@@ -39,9 +39,11 @@ class Match
         $conditions = $this->wildcardGuard($conditions);
         $this->guardNumberOfConditionsAndValuesNotEqual($conditions);
 
-        for ($position = 0; $position < count($conditions); $position++)
-            if (!conditionIsValid($conditions[$position], $this->values[$position]))
+        for ($position = 0; $position < count($conditions); $position++) {
+            if (!conditionIsValid($conditions[$position], $this->values[$position])) {
                 return false;
+            }
+        }
 
         return true;
     }
@@ -106,7 +108,7 @@ function matchSomeByReference($condition, $value)
         return true;
     }
     return false;
- }
+}
 
 function matchesNone($condition, $value)
 {
@@ -131,8 +133,9 @@ function matchesWildcardedSuccess($condition, $value)
 function matchesConsWildcardedHead($condition, $value)
 {
     if ($condition instanceof WildcardedCons && $condition->head == _ && $value instanceof ImmList) {
-        $match = new Match ($value->tail());
-        return $match($condition->tail);
+        $pmatch = new PMatch($value->tail());
+
+        return $pmatch($condition->tail);
     }
     return false;
 }
@@ -140,8 +143,8 @@ function matchesConsWildcardedHead($condition, $value)
 function matchesConsWildcardedTail($condition, $value)
 {
     if ($condition instanceof WildcardedCons && $condition->tail == _ && $value instanceof ImmList) {
-        $match = new Match ($value->head);
-        return $match($condition->head);
+        $pmatch = new PMatch($value->head);
+        return $pmatch($condition->head);
     }
     return false;
 }
@@ -186,22 +189,32 @@ function matchGenericByReference($condition, $object, $class)
     return false;
 }
 
-function matchListByReference($condition, $value) {
+function matchListByReference($condition, $value)
+{
     if ($condition instanceof ListWithTail && $value instanceof ImmList) {
-        if ($condition->head == null) $condition->head = $value->head;
-        elseif ($condition->head != $value->head) return false;
-        if ($condition->tail == null) $condition->tail = $value->tail;
-        elseif ($condition->tail != $value->tail) return false;
+        if ($condition->head == null) {
+            $condition->head = $value->head;
+        } elseif ($condition->head != $value->head) {
+            return false;
+        }
+        if ($condition->tail == null) {
+            $condition->tail = $value->tail;
+        } elseif ($condition->tail != $value->tail) {
+            return false;
+        }
         return true;
     }
 
     return false;
 }
 
-function matchListHeadByReference($condition, $value) {
+function matchListHeadByReference($condition, $value)
+{
     if ($condition instanceof ListNoTail && $value instanceof ImmList) {
         $condition->head = $value->head;
-        if ($value->tail != Nil()) return false;
+        if ($value->tail != Nil()) {
+            return false;
+        }
         return true;
     }
     return false;

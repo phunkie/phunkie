@@ -34,7 +34,9 @@ class OptionT
      */
     public function map($f): OptionT
     {
-        return OptionT($this->value->map(function(Option $o)  use ($f) { return $o->map($f); }));
+        return OptionT($this->value->map(function (Option $o) use ($f) {
+            return $o->map($f);
+        }));
     }
 
     /**
@@ -43,9 +45,9 @@ class OptionT
      */
     public function flatMap($f): OptionT
     {
-        return OptionT($this->value->flatMap(function(Option $o) use ($f) {
+        return OptionT($this->value->flatMap(function (Option $o) use ($f) {
             return $o->map(
-                function($a) use ($f) {
+                function ($a) use ($f) {
                     return $f($a)->value;
                 }
             )->getOrElse($this->value->pure(None()));
@@ -57,7 +59,9 @@ class OptionT
      */
     public function isDefined()
     {
-        return $this->value->map(function(Option $o) { return $o->isDefined(); });
+        return $this->value->map(function (Option $o) {
+            return $o->isDefined();
+        });
     }
 
     /**
@@ -65,7 +69,9 @@ class OptionT
      */
     public function isEmpty()
     {
-        return $this->value->map(function(Option $o) { return $o->isEmpty(); });
+        return $this->value->map(function (Option $o) {
+            return $o->isEmpty();
+        });
     }
 
     /**
@@ -74,6 +80,8 @@ class OptionT
      */
     public function getOrElse($default)
     {
-        return $this->value->map(function(Option $o) use ($default) { return $o->getOrElse($default); });
+        return $this->value->map(function (Option $o) use ($default) {
+            return $o->getOrElse($default);
+        });
     }
 }

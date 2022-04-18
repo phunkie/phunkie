@@ -9,164 +9,230 @@ use Eris\Generator\StringGenerator;
 use Md\PropertyTesting\TestTrait;
 use Phunkie\Laws\MonoidLaws;
 use Md\PropertyTesting\Generator\RandomKindGenerator;
-use PhpSpec\ObjectBehavior;
+use PHPUnit\Framework\TestCase;
 use Eris\Generator\ElementsGenerator as ElementsGen;
 
-class MonoidSpec extends ObjectBehavior
-{
-    use TestTrait, MonoidLaws, RandomKindGenerator;
+error_reporting(E_ALL & ~E_DEPRECATED);
 
-    function let()
+class MonoidSpec extends TestCase
+{
+    use TestTrait;
+    use MonoidLaws;
+    use RandomKindGenerator;
+
+    /*function let()
     {
         $this->beAnInstanceOf(AMonoid::class);
-    }
+    }*/
 
-    function it_obeys_the_law_of_combine_left_identity_with_integers()
+    /**
+     * @test
+     */
+    public function it_obeys_the_law_of_combine_left_identity_with_integers()
     {
         $this->forAll(
             new IntGen()
-        )->then(function($x) {
-            expect($this->combineLeftIdentity($x))->toBe(true);
+        )->then(function ($x) {
+            // $this->assertTrue($this->combineLeftIdentity($x));
+            $this->assertTrue($this->combineLeftIdentity($x));
         });
     }
 
-    function it_obeys_the_law_of_combine_right_identity_with_integers()
+    /**
+     * @test
+     */
+    public function it_obeys_the_law_of_combine_right_identity_with_integers()
     {
         $this->forAll(
             new IntGen()
-        )->then(function($x) {
-            expect($this->combineRightIdentity($x))->toBe(true);
+        )->then(function ($x) {
+            $this->assertTrue($this->combineRightIdentity($x));
+            // $this->assertTrue($this->combineRightIdentity($x));
         });
     }
 
-    function it_obeys_the_law_of_combine_left_identity_with_strings()
+    /**
+     * @test
+     */
+    public function it_obeys_the_law_of_combine_left_identity_with_strings()
     {
         $this->forAll(
             new StringGenerator()
-        )->then(function($x) {
-            expect($this->combineLeftIdentity($x))->toBe(true);
+        )->then(function ($x) {
+            $this->assertTrue($this->combineLeftIdentity($x));
+            // $this->assertTrue($this->combineLeftIdentity($x));
         });
     }
 
-    function it_obeys_the_law_of_combine_right_identity_with_strings()
+    /**
+     * @test
+     */
+    public function it_obeys_the_law_of_combine_right_identity_with_strings()
     {
         $this->forAll(
             new StringGenerator()
-        )->then(function($x) {
-            expect($this->combineRightIdentity($x))->toBe(true);
+        )->then(function ($x) {
+            $this->assertTrue($this->combineRightIdentity($x));
+            // $this->assertTrue($this->combineRightIdentity($x));
         });
     }
 
-    function it_obeys_the_law_of_combine_left_identity_with_arrays()
+    /**
+     * @test
+     */
+    public function it_obeys_the_law_of_combine_left_identity_with_arrays()
     {
         $this->forAll(
             new SequenceGenerator(new IntGen())
-        )->then(function($x) {
-            expect($this->combineLeftIdentity($x))->toBe(true);
+        )->then(function ($x) {
+            $this->assertTrue($this->combineLeftIdentity($x));
+            // $this->assertTrue($this->combineLeftIdentity($x));
         });
     }
 
-    function it_obeys_the_law_of_combine_right_identity_with_arrays()
+    /**
+     * @test
+     */
+    public function it_obeys_the_law_of_combine_right_identity_with_arrays()
     {
         $this->forAll(
             new SequenceGenerator(new IntGen())
-        )->then(function($x) {
-            expect($this->combineRightIdentity($x))->toBe(true);
+        )->then(function ($x) {
+            $this->assertTrue($this->combineRightIdentity($x));
         });
     }
 
-    function it_obeys_the_law_of_combine_left_identity_with_callables()
+    /**
+     * @test
+     */
+    public function it_obeys_the_law_of_combine_left_identity_with_callables()
     {
         $this->forAll(
-            ElementsGen::fromArray([function (int $x):string { return (string)$x; }])
-        )->then(function($x) {
-            expect($this->combineLeftIdentity($x))->toBe(true);
+            ElementsGen::fromArray([function (int $x): string {
+                return (string)$x;
+            }])
+        )->then(function ($x) {
+            $this->assertTrue($this->combineLeftIdentity($x));
         });
     }
 
-    function it_obeys_the_law_of_combine_right_identity_with_callables()
+    /**
+     * @test
+     */
+    public function it_obeys_the_law_of_combine_right_identity_with_callables()
     {
         $this->forAll(
-            ElementsGen::fromArray([function (int $x):string { return (string)$x; }])
-        )->then(function($x) {
-            expect($this->combineRightIdentity($x))->toBe(true);
+            ElementsGen::fromArray([function (int $x): string {
+                return (string)$x;
+            }])
+        )->then(function ($x) {
+            $this->assertTrue($this->combineRightIdentity($x));
         });
     }
 
-    function it_obeys_the_law_of_combine_left_identity_with_booleans()
+    /**
+     * @test
+     */
+    public function it_obeys_the_law_of_combine_left_identity_with_booleans()
     {
         $this->forAll(
             new BooleanGenerator()
-        )->then(function($x) {
-            expect($this->combineLeftIdentity($x))->toBe(true);
+        )->then(function ($x) {
+            $this->assertTrue($this->combineLeftIdentity($x));
         });
     }
 
-    function it_obeys_the_law_of_combine_right_identity_with_booleans()
+    /**
+     * @test
+     */
+    public function it_obeys_the_law_of_combine_right_identity_with_booleans()
     {
         $this->forAll(
             new BooleanGenerator()
-        )->then(function($x) {
-            expect($this->combineRightIdentity($x))->toBe(true);
+        )->then(function ($x) {
+            $this->assertTrue($this->combineRightIdentity($x));
         });
     }
 
-    function it_obeys_the_law_of_combine_left_identity_with_options()
+    /**
+     * @test
+     */
+    public function it_obeys_the_law_of_combine_left_identity_with_options()
     {
         $this->forAll(
             $this->genOption(new IntGen())
-        )->then(function($x) {
-            expect($this->combineLeftIdentity($x))->toBe(true);
+        )->then(function ($x) {
+            $this->assertTrue($this->combineLeftIdentity($x));
         });
     }
 
-    function it_obeys_the_law_of_combine_right_identity_with_options()
+    /**
+     * @test
+     */
+    public function it_obeys_the_law_of_combine_right_identity_with_options()
     {
         $this->forAll(
             $this->genOption(new IntGen())
-        )->then(function($x) {
-            expect($this->combineRightIdentity($x))->toBe(true);
+        )->then(function ($x) {
+            $this->assertTrue($this->combineRightIdentity($x));
         });
     }
 
-    function it_obeys_the_law_of_combine_left_identity_with_lists()
+    /**
+     * @test
+     */
+    public function it_obeys_the_law_of_combine_left_identity_with_lists()
     {
         $this->forAll(
             $this->genImmList(new IntGen())
-        )->then(function($x) {
-            expect($this->combineLeftIdentity($x))->toBe(true);
+        )->then(function ($x) {
+            $this->assertTrue($this->combineLeftIdentity($x));
         });
     }
 
-    function it_obeys_the_law_of_combine_right_identity_with_lists()
+    /**
+     * @test
+     */
+    public function it_obeys_the_law_of_combine_right_identity_with_lists()
     {
         $this->forAll(
             $this->genImmList(new IntGen())
-        )->then(function($x) {
-            expect($this->combineRightIdentity($x))->toBe(true);
+        )->then(function ($x) {
+            $this->assertTrue($this->combineRightIdentity($x));
         });
     }
 
-    function it_obeys_the_law_of_combine_left_identity_with_function1()
+    /**
+     * @test
+     */
+    public function it_obeys_the_law_of_combine_left_identity_with_function1()
     {
         $this->forAll(
             $this->genFunction1()
-        )->then(function($x) {
-            expect($this->combineLeftIdentity($x))->toBe(true);
+        )->then(function ($x) {
+            $this->assertTrue($this->combineLeftIdentity($x));
         });
     }
 
-    function it_obeys_the_law_of_combine_right_identity_with_function1()
+    /**
+     * @test
+     */
+    public function it_obeys_the_law_of_combine_right_identity_with_function1()
     {
         $this->forAll(
             $this->genFunction1()
-        )->then(function($x) {
-            expect($this->combineRightIdentity($x))->toBe(true);
+        )->then(function ($x) {
+            $this->assertTrue($this->combineRightIdentity($x));
         });
     }
 }
 
-class AMonoid implements \Phunkie\Algebra\Monoid {
-  public function zero() {}
-  public function combine($one, $another) {}
+class AMonoid implements \Phunkie\Algebra\Monoid
+{
+    public function zero()
+    {
+    }
+    public function combine($one, $another)
+    {
+    }
 }

@@ -56,7 +56,9 @@ namespace Phunkie\Functions\option {
     const fromJust = "\\Phunkie\\Functions\\option\\fromSome";
     function fromSome(Option $x)
     {
-        if (isNone($x)) throw new \Error("Can not get a value from None.");
+        if (isNone($x)) {
+            throw new \Error("Can not get a value from None.");
+        }
         return $x->get();
     }
 

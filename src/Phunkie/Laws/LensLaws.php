@@ -27,6 +27,6 @@ trait LensLaws
 
     public function doubleSetLaw(Lens $l, $a)
     {
-        return $l->set($l->get($a),$a) == $a;
+        return $l->set($l->get($a), $a) == $a;
     }
 }

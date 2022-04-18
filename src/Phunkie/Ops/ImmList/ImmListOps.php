@@ -13,23 +13,23 @@ namespace Phunkie\Ops\ImmList;
 
 use BadMethodCallException;
 use Error;
-use function Phunkie\Functions\assertion\assertSameTypeAsCollectionType;
-use function Phunkie\Functions\immlist\concat;
-use function Phunkie\Functions\show\showArrayType;
-use Phunkie\PatternMatching\Match;
+use Phunkie\PatternMatching\PMatch;
 use Phunkie\Types\ImmList;
 use Phunkie\Types\Option;
 use Phunkie\Types\Pair;
 use Exception;
+use Phunkie\Utils\Traversable;
+use Phunkie\Utils\WithFilter;
+use function Phunkie\Functions\assertion\assertSameTypeAsCollectionType;
 
+use function Phunkie\Functions\immlist\concat;
+use function Phunkie\Functions\show\showArrayType;
 use function Phunkie\Functions\show\showType;
 use function Phunkie\Functions\show\showValue;
 use function Phunkie\PatternMatching\Referenced\ListNoTail;
 use function Phunkie\PatternMatching\Referenced\ListWithTail;
-use function \Phunkie\PatternMatching\Referenced\Failure as Invalid;
-use function \Phunkie\PatternMatching\Referenced\Success as Valid;
-use Phunkie\Utils\Traversable;
-use Phunkie\Utils\WithFilter;
+use function Phunkie\PatternMatching\Referenced\Failure as Invalid;
+use function Phunkie\PatternMatching\Referenced\Success as Valid;
 
 /**
  * @mixin ImmList
@@ -40,7 +40,7 @@ trait ImmListOps
 
     public function __get($property)
     {
-        switch($property) {
+        switch ($property) {
             case 'length': return count($this->toArray());
             case 'head': return $this->head();
             case 'tail': return $this->tail();
@@ -52,7 +52,7 @@ trait ImmListOps
 
     public function __set($property, $unused)
     {
-        switch($property) {
+        switch ($property) {
             case 'length':
             case 'head':
             case 'tail':
@@ -70,12 +70,12 @@ trait ImmListOps
 
     public function tail(): ImmList
     {
-        return ImmList(...array_slice($this->toArray(),1));
+        return ImmList(...array_slice($this->toArray(), 1));
     }
 
     public function init(): ImmList
     {
-        return ImmList(...array_slice($this->toArray(),0,-1));
+        return ImmList(...array_slice($this->toArray(), 0, -1));
     }
 
     public function last()
@@ -104,14 +104,14 @@ trait ImmListOps
 
     public function withEach(callable $block)
     {
-        foreach($this->toArray() as $item) {
+        foreach ($this->toArray() as $item) {
             $block($item);
         }
     }
 
     public function reject(callable $condition): ImmList
     {
-        return ImmList(...array_filter($this->toArray(), function($x) use ($condition) {
+        return ImmList(...array_filter($this->toArray(), function ($x) use ($condition) {
             return !$condition($x);
         }));
     }
@@ -123,15 +123,16 @@ trait ImmListOps
         /** @var \Exception $e */
         $e = null;
 
-        $on = match($this); switch(true) {
+        $on = pmatch($this);
+        switch (true) {
             case $on(Nil): throw $this->cantReduceEmptyList();
             case $on(ListNoTail($x, Nil)): return $x;
             default: $on(ListWithTail($x, $xs));
                 $result = $f($x, $xs->reduce($f));
                 $when = $this->isSameTypeAsList($result);
-                switch(true) {
+                switch (true) {
                     case      $when(Invalid($e)): throw $e;
-                    default : $when(Valid($x)); return $x;
+                    default: $when(Valid($x)); return $x;
                 }
         }
     }
@@ -148,9 +149,10 @@ trait ImmListOps
 
     public function takeWhile(callable $f): ImmList
     {
-        $loop = function(ImmList $list, ImmList $acc) use (&$loop, $f): ImmList {
-            if (!$list->isEmpty() && $f($list->head()) === true)
+        $loop = function (ImmList $list, ImmList $acc) use (&$loop, $f): ImmList {
+            if (!$list->isEmpty() && $f($list->head()) === true) {
                 return $loop($list->tail(), concat($acc, $list->head()));
+            }
             return $acc;
         };
         return $loop($this, ImmList());
@@ -163,8 +165,10 @@ trait ImmListOps
 
     public function dropWhile(callable $f): ImmList
     {
-        $loop = function(ImmList $list) use (&$loop, $f): ImmList {
-            if ($list->isEmpty() || $f($list->head()) === false) return $list;
+        $loop = function (ImmList $list) use (&$loop, $f): ImmList {
+            if ($list->isEmpty() || $f($list->head()) === false) {
+                return $list;
+            }
             return $loop($list->tail());
         };
         return $loop($this);
@@ -177,7 +181,7 @@ trait ImmListOps
 
     public function mkString(): string
     {
-        switch(func_num_args()) {
+        switch (func_num_args()) {
             case 1: return $this->mkStringOneArgument(func_get_arg(0));
             case 3: return $this->mkStringThreeArguments(func_get_arg(0), func_get_arg(1), func_get_arg(2));
             default: throw new Error("wrong number of arguments for mkString, should be 1 or 3, " . func_num_args() . " given");
@@ -188,14 +192,18 @@ trait ImmListOps
     {
         $new = [];
         foreach ($this->head->toArray() as $i => $values) {
-            $new[] = $this->map(function(ImmList $list) use ($i) { return $list->nth($i)->get(); });
+            $new[] = $this->map(function (ImmList $list) use ($i) {
+                return $list->nth($i)->get();
+            });
         }
         return ImmList(...$new);
     }
 
     private function mkStringOneArgument($glue): string
     {
-        return implode($glue, array_map(function($e) { return is_string($e) ? $e : showValue($e); }, $this->toArray()));
+        return implode($glue, array_map(function ($e) {
+            return is_string($e) ? $e : showValue($e);
+        }, $this->toArray()));
     }
 
     private function mkStringThreeArguments($start, $glue, $end): string
@@ -212,7 +220,7 @@ trait ImmListOps
         if ($this->length <= $list->length) {
             $other = $list->toArray();
             reset($other);
-            return $this->map(function($x) use (&$other) {
+            return $this->map(function ($x) use (&$other) {
                 $pair = Pair($x, current($other));
                 next($other);
                 return $pair;
@@ -225,17 +233,22 @@ trait ImmListOps
      * @param int $index
      * @return Pair<ImmList<A>,ImmList<A>>
      */
-    public function splitAt(int $index): Pair { switch (true) {
+    public function splitAt(int $index): Pair
+    {
+        switch (true) {
         case $index == 0:                    return Pair(Nil(), clone $this);
         case $index >= count($this->toArray()): return Pair(clone $this, Nil());
-        default: return Pair(ImmList(...array_slice($this->toArray(), 0, $index)),
-            ImmList(...array_slice($this->toArray(), $index))); }
+        default: return Pair(
+            ImmList(...array_slice($this->toArray(), 0, $index)),
+            ImmList(...array_slice($this->toArray(), $index))
+        ); }
     }
 
     public function partition(callable $condition): Pair
     {
         $trues = $falses = [];
-        foreach ($this->toArray() as $value) { switch ($result = call_user_func($condition, $value)) {
+        foreach ($this->toArray() as $value) {
+            switch ($result = call_user_func($condition, $value)) {
             case true: $trues[] = $value; break;
             case false: $falses[] = $value; break;
             default: throw $this->callableMustReturnBoolean($result); }
@@ -256,10 +269,13 @@ trait ImmListOps
             ", and this is a list of " . showArrayType($this->toArray());
     }
 
-    private function isSameTypeAsList($result): Match
+    private function isSameTypeAsList($result): PMatch
     {
-        return match(assertSameTypeAsCollectionType($result, $this->toArray(),
-            $this->callableMustReturnSameType($result)));
+        return pmatch(assertSameTypeAsCollectionType(
+            $result,
+            $this->toArray(),
+            $this->callableMustReturnSameType($result)
+        ));
     }
 
     private function cantReduceEmptyList(): Error

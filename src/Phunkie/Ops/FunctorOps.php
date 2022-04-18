@@ -18,20 +18,40 @@ trait FunctorOps
     /**
      * (A => B) => (F<A> => F<B>)
      */
-    public function lift($f): callable { return function ($fa) use ($f) { return $fa->map($f); }; }
+    public function lift($f): callable
+    {
+        return function ($fa) use ($f) {
+            return $fa->map($f);
+        };
+    }
 
     /**
      * B => F<B>
      */
-    public function as($b): Kind { return $this->map(function($ignored) use ($b) { return $b; }); }
+    public function as($b): Kind
+    {
+        return $this->map(function ($ignored) use ($b) {
+            return $b;
+        });
+    }
 
     /**
      * () => F<Unit>
      */
-    public function void(): Kind { return $this->map(function($ignored) { return Unit(); }); }
+    public function void(): Kind
+    {
+        return $this->map(function ($ignored) {
+            return Unit();
+        });
+    }
 
     /**
      * (A => B) => F<Pair<A,B>>
      */
-    public function zipWith($f): Kind { return $this->map(function($a) use ($f) { return Pair($a, $f($a)); }); }
+    public function zipWith($f): Kind
+    {
+        return $this->map(function ($a) use ($f) {
+            return Pair($a, $f($a));
+        });
+    }
 }

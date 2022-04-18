@@ -17,11 +17,8 @@ function quote($x)
 
 function comprehension_examples()
 {
-    for_                           (__
-        ($l  ) ->_ (letter('x'))   ,__
-        ($u  ) ->_ (uppercase($l)) ,__
-        ($res) ->_ (quote($u))     )
-    -> yields ($res);
+    for_(__($l) ->_(letter('x')), __($u) ->_(uppercase($l)), __($res) ->_(quote($u)))
+    -> yields($res);
 
     printLn($res);
 }

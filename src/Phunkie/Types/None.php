@@ -14,15 +14,27 @@ namespace Phunkie\Types;
 final class None extends Option
 {
     private static $instance;
-    private function __clone() {}
-    public static function instance() {
+    private function __clone()
+    {
+    }
+    public static function instance()
+    {
         return self::$instance == null ? self::$instance = new None() : self::$instance;
     }
     public function getOrElse($t)
     {
         return $t;
     }
-    public function isDefined(): bool { return false; }
-    public function isEmpty():bool { return true; }
-    public function showType(): string { return "None"; }
+    public function isDefined(): bool
+    {
+        return false;
+    }
+    public function isEmpty(): bool
+    {
+        return true;
+    }
+    public function showType(): string
+    {
+        return "None";
+    }
 }

@@ -8,9 +8,10 @@ trait TestTrait
 {
     public function forAll(...$args)
     {
-        $test = new class() {
+        $test = new class () {
             use Test;
-            public function run(...$args) {
+            public function run(...$args)
+            {
                 return $this->withRand('rand')->forAll(...$args);
             }
         };

@@ -3,33 +3,50 @@
 namespace spec\Phunkie\Cats;
 
 use Phunkie\Cats\Id;
-use PhpSpec\ObjectBehavior;
+use Md\Unit\TestCase;
 
-class IdSpec extends ObjectBehavior
+class IdSpec extends TestCase
 {
-    function it_implements_map()
+    /**
+     * @test
+     */
+    public function it_implements_map()
     {
-        $this->beConstructedWith(42);
-        $increment = function($x) { return $x + 1; };
-        $this->map($increment)->shouldReturn(43);
+        $f = new Id(42);
+        $increment = function ($x) {
+            return $x + 1;
+        };
+        $this->assertEquals(43, $f->map($increment));
     }
 
-    function it_implements_flatMap()
+    /**
+     * @test
+     */
+    public function it_implements_flatMap()
     {
-        $this->beConstructedWith(42);
-        $increment = function($x) { return new Id($x + 1); };
-        $this->map($increment)->shouldBeLike(new Id(43));
+        $this->assertIsLike(
+            new Id(43),
+            (new Id(42))->map(function ($x) {
+                return new Id($x + 1);
+            })
+        );
     }
 
-    function it_implements_andThen()
+    /**
+     * @test
+     */
+    public function it_implements_andThen()
     {
-        $this->beConstructedWith("a");
-        $this->andThen("b")->shouldReturn("ab");
+        $f = new Id("a");
+        $this->assertEquals("ab", $f->andThen("b"));
     }
 
-    function it_implements_compose()
+    /**
+     * @test
+     */
+    public function it_implements_compose()
     {
-        $this->beConstructedWith("a");
-        $this->compose("b")->shouldReturn("ba");
+        $f = new Id("a");
+        $this->assertEquals("ba", $f->compose("b"));
     }
 }

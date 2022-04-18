@@ -19,14 +19,14 @@ trait OptionFoldableOps
 {
     public function foldLeft($initial)
     {
-        return applyPartially([$initial], func_get_args(), function(callable $f) use ($initial) {
+        return applyPartially([$initial], func_get_args(), function (callable $f) use ($initial) {
             return $f($initial, $this->getOrElse(zero($initial)));
         });
     }
 
     public function foldRight($initial)
     {
-        return applyPartially([$initial], func_get_args(), function(callable $f) use ($initial) {
+        return applyPartially([$initial], func_get_args(), function (callable $f) use ($initial) {
             return $f($this->getOrElse(zero($initial)), $initial);
         });
     }
@@ -34,15 +34,17 @@ trait OptionFoldableOps
     public function foldMap(callable $f)
     {
         $none = md5("None");
-        return $this->foldLeft(zero($this->getOrElse($none)), function($b, $a) use ($f, $none) {
-            if ($b == $none) $b = zero($a);
+        return $this->foldLeft(zero($this->getOrElse($none)), function ($b, $a) use ($f, $none) {
+            if ($b == $none) {
+                $b = zero($a);
+            }
             return combine($b, $f($a));
         });
     }
 
     public function fold($initial)
     {
-        return applyPartially([$initial], func_get_args(), function(callable $f) use ($initial) {
+        return applyPartially([$initial], func_get_args(), function (callable $f) use ($initial) {
             return $this->isDefined() ? $f($this->get()) : $initial;
         });
     }

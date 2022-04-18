@@ -20,8 +20,10 @@ use function Phunkie\Functions\type\normaliseType;
 
 final class Function1 implements Kind, Applicative
 {
-    use Function1ApplicativeOps, Function1EqOps, Show;
-    const kind = "Function1";
+    use Function1ApplicativeOps;
+    use Function1EqOps;
+    use Show;
+    public const kind = "Function1";
     private $reflection;
     private $f;
 
@@ -52,13 +54,15 @@ final class Function1 implements Kind, Applicative
     public function andThen(callable $g): Function1
     {
         $f = $this;
-        return Function1(function($x) use ($f, $g) { return $g($f->invokeFunctionOnArg($x)); });
+        return Function1(function ($x) use ($f, $g) {
+            return $g($f->invokeFunctionOnArg($x));
+        });
     }
 
     public function compose(callable $g): Function1
     {
         $f = $this;
-        return Function1(function($x) use ($f, $g) {
+        return Function1(function ($x) use ($f, $g) {
             return $f->invokeFunctionOnArg(
                 $g instanceof Function1 ? $g->invokeFunctionOnArg($x) : call_user_func($g, $x)
             );
@@ -67,7 +71,9 @@ final class Function1 implements Kind, Applicative
 
     public static function identity(): Function1
     {
-        return Function1(function($x) { return $x; });
+        return Function1(function ($x) {
+            return $x;
+        });
     }
 
     public function zero()
@@ -82,9 +88,11 @@ final class Function1 implements Kind, Applicative
 
     public function toString(): string
     {
-        return sprintf("Function1(%s=>%s)",
+        return sprintf(
+            "Function1(%s=>%s)",
             normaliseType($this->reflection->getParameters()[0]->getType()->getName()) ?: "?",
-            normaliseType($this->reflection->getReturnType()->getName()) ?: "?");
+            normaliseType($this->reflection->getReturnType()->getName()) ?: "?"
+        );
     }
 
     public function getTypeArity(): int

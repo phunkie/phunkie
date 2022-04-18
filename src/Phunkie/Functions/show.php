@@ -12,17 +12,21 @@
 namespace Phunkie\Functions\show {
 
     use Phunkie\Cats\Show;
-    use function Phunkie\Functions\type\normaliseType;
     use Phunkie\Types\Option;
+    use function Phunkie\Functions\type\normaliseType;
 
     const show = "\\Phunkie\\Functions\\show\\show";
     function show(...$values)
     {
-        array_map(function($x) { echo showValue($x); }, $values);
+        array_map(function ($x) {
+            echo showValue($x);
+        }, $values);
     }
 
     const showValue = "\\Phunkie\\Functions\\show\\showValue";
-    function showValue($value): string { switch (true) {
+    function showValue($value): string
+    {
+        switch (true) {
         case is_showable($value):
             return $value->show();
         case is_object($value) && method_exists($value, '__toString') && !(new \ReflectionClass($value))->isAnonymous():
@@ -50,7 +54,7 @@ namespace Phunkie\Functions\show {
     function showArrayValue(array $value): string
     {
         if (is_assoc($value)) {
-            return '[' . implode(", ", array_map(function($key, $value) {
+            return '[' . implode(", ", array_map(function ($key, $value) {
                 return (is_string($key) ? '"' . $key . '"' : $key) . " => " . showValue($value);
             }, array_keys($value), $value)) . ']';
         }
@@ -58,7 +62,9 @@ namespace Phunkie\Functions\show {
     }
 
     const showType = "\\Phunkie\\Functions\\show\\showType";
-    function showType($value) { switch (true) {
+    function showType($value)
+    {
+        switch (true) {
         case is_showable($value): return $value->showType();
         case is_integer($value): return "Int";
         case is_float($value):
@@ -75,9 +81,10 @@ namespace Phunkie\Functions\show {
     }
 
     const showArrayType = "\\Phunkie\\Functions\\show\\showArrayType";
-    function showArrayType($value): string {
-
-        $combineTypes = function (string $a, string $b): string { switch (true) {
+    function showArrayType($value): string
+    {
+        $combineTypes = function (string $a, string $b): string {
+            switch (true) {
             case $a === $b: return $a;
             case strpos($a, "Option") === 0 && $b === "None": return $a;
             case $a === "None" && strpos($b, "Option") === 0 : return $b;
@@ -100,7 +107,7 @@ namespace Phunkie\Functions\show {
         // };
         // return $showArrayType($value);
 
-        $showArrayTypeIterative = function($value) use ($combineTypes, &$showArrayTypeIterative) {
+        $showArrayTypeIterative = function ($value) use ($combineTypes, &$showArrayTypeIterative) {
             $arrayValues = array_values($value);
             $type = 'Nothing';
             switch (count($arrayValues)) {
@@ -109,8 +116,12 @@ namespace Phunkie\Functions\show {
                 default:
                     for ($i = 0; $i < count($arrayValues); isset($arrayValues[$i+2]) ? $i = $i + 2 : $i++) {
                         $type = $combineTypes($type, showType($arrayValues[$i]));
-                        if (isset($arrayValues[$i + 1])) $type = $combineTypes($type, showType($arrayValues[$i + 1]));
-                        if ($type == 'Mixed') return $type;
+                        if (isset($arrayValues[$i + 1])) {
+                            $type = $combineTypes($type, showType($arrayValues[$i + 1]));
+                        }
+                        if ($type == 'Mixed') {
+                            return $type;
+                        }
                     }
                     return $type;
             }
@@ -119,7 +130,9 @@ namespace Phunkie\Functions\show {
     }
 
     const showKind = "\\Phunkie\\Functions\\show\\showKind";
-    function showKind($type): Option { switch (normaliseType($type)) {
+    function showKind($type): Option
+    {
+        switch (normaliseType($type)) {
         case "Int":
         case "String":
         case "Boolean":
@@ -160,21 +173,29 @@ namespace Phunkie\Functions\show {
         case "OptionT":
             return Some("higher-order: " . normaliseType($type) . " :: (* -> *) -> * -> *");
         default:
-            if (class_exists($type))  return Some("proper: " . $type . " :: *");
-            else return None();
-    }}
+            if (class_exists($type)) {
+                return Some("proper: " . $type . " :: *");
+            } else {
+                return None();
+            }
+    }
+    }
 
     const usesTrait = "\\Phunkie\\Functions\\show\\usesTrait";
     function usesTrait($object, $trait): bool
     {
-        if (!is_object($object))  return false;
+        if (!is_object($object)) {
+            return false;
+        }
 
-        $usesTrait = function ($c) use ($trait) { return in_array($trait, class_uses($c)); };
+        $usesTrait = function ($c) use ($trait) {
+            return in_array($trait, class_uses($c));
+        };
 
         $classAndParents = array_merge([get_class($object)], class_parents($object));
 
         $allParentsAndTraits = $classAndParents;
-        array_map(function($x) use (&$allParentsAndTraits) {
+        array_map(function ($x) use (&$allParentsAndTraits) {
             $allParentsAndTraits = array_merge($allParentsAndTraits, class_uses($x));
         }, $classAndParents);
 

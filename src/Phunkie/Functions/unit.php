@@ -13,5 +13,5 @@ use Phunkie\Types\Unit;
 
 function Unit(): Unit
 {
-    return new Unit;
+    return new Unit();
 }

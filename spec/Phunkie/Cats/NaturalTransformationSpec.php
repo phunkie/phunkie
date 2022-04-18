@@ -2,33 +2,32 @@
 
 namespace spec\Phunkie\Cats;
 
-use PhpSpec\ObjectBehavior;
+use Md\Unit\TestCase;
 use Phunkie\Cats\Show;
-use const Phunkie\Functions\option\optionToList;
+use Phunkie\Cats\NaturalTransformation;
 use function Phunkie\Functions\show\usesTrait;
+use const Phunkie\Functions\option\optionToList;
 
-class NaturalTransformationSpec extends ObjectBehavior
+class NaturalTransformationSpec extends TestCase
 {
-    function let()
+    /**
+     * @test
+     */
+    public function it_applies_a_natural_transformation()
     {
-        $this->beConstructedWith(optionToList);
+        $nt = new NaturalTransformation(optionToList);
+
+        $this->assertIsLike($nt(Some(42)), ImmList(42));
     }
 
-    function it_applies_a_natural_transformation()
+    /**
+     * @test
+     */
+    public function it_is_showable()
     {
-        $this(Some(42))->shouldBeLike(Immlist(42));
-    }
+        $nt = new NaturalTransformation(optionToList);
 
-    function it_is_showable()
-    {
-        $this->shouldBeShowable();
-        $this->showType()->shouldReturn("~>[Option, ImmList]");
-    }
-
-    function getMatchers(): array
-    {
-        return ["beShowable" => function($sus){
-            return usesTrait($sus, Show::class);
-        }];
+        $this->assertTrue(usesTrait($nt, Show::class));
+        $this->assertEquals("~>[Option, ImmList]", $nt->showType());
     }
 }

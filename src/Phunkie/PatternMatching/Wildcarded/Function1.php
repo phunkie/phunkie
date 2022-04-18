@@ -13,5 +13,4 @@ namespace Phunkie\PatternMatching\Wildcarded;
 
 class Function1
 {
-
 }

@@ -18,7 +18,7 @@ final class Unit extends Tuple
 {
     use Show;
 
-    function toString(): string
+    public function toString(): string
     {
         return '()';
     }

@@ -2,50 +2,68 @@
 
 namespace spec\Phunkie\Functions;
 
+use PHPUnit\Framework\TestCase;
 use function Phunkie\Functions\numbers\even;
 use function Phunkie\Functions\numbers\negate;
 use function Phunkie\Functions\numbers\odd;
 use function Phunkie\Functions\numbers\increment;
 use function Phunkie\Functions\numbers\decrement;
-use PhpSpec\ObjectBehavior;
 use function Phunkie\Functions\numbers\signum;
 
-class NumbersSpec extends ObjectBehavior
+class NumbersSpec extends TestCase
 {
-    function it_implements_even()
+    /**
+     * @test
+     */
+    public function it_implements_even()
     {
-        expect(even(1))->toBe(false);
-        expect(even(2))->toBe(true);
+        $this->assertEquals(even(1), false);
+        $this->assertEquals(even(2), true);
     }
 
-    function it_implements_odd()
+    /**
+     * @test
+     */
+    public function it_implements_odd()
     {
-        expect(odd(1))->toBe(true);
-        expect(odd(2))->toBe(false);
+        $this->assertEquals(odd(1), true);
+        $this->assertEquals(odd(2), false);
     }
 
-    function it_implements_increment()
+    /**
+     * @test
+     */
+    public function it_implements_increment()
     {
-        expect(increment(1))->toBe(2);
-        expect(increment(2))->toBe(3);
+        $this->assertEquals(increment(1), 2);
+        $this->assertEquals(increment(2), 3);
     }
 
-    function it_implements_decrement()
+    /**
+     * @test
+     */
+    public function it_implements_decrement()
     {
-        expect(decrement(1))->toBe(0);
-        expect(decrement(2))->toBe(1);
+        $this->assertEquals(decrement(1), 0);
+        $this->assertEquals(decrement(2), 1);
     }
 
-    function it_implements_negate()
+    /**
+     * @test
+     */
+    public function it_implements_negate()
     {
-        expect(negate(1))->toBe(-1);
-        expect(negate(-1))->toBe(1);
+        $this->assertEquals(negate(1), -1);
+        $this->assertEquals(negate(-1), 1);
     }
 
-    function it_implements_signum()
+    /**
+     * @test
+     */
+    public function it_implements_signum()
     {
-        expect(signum(32))->toBe(1);
-        expect(signum(0))->toBe(0);
-        expect(signum(-32))->toBe(-1);
+        $this->assertEquals(signum(32), 1);
+        $this->assertEquals(signum(0), 0);
+        $this->assertEquals(signum(-32), -1);
     }
 }

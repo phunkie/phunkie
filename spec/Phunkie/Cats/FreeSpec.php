@@ -2,7 +2,7 @@
 
 namespace spec\Phunkie\Cats;
 
-use PhpSpec\ObjectBehavior;
+use Md\Unit\TestCase;
 
 use Phunkie\Cats\Free;
 use Phunkie\Cats\Free\Pure;
@@ -11,51 +11,73 @@ use Phunkie\Cats\Free\Bind;
 use Phunkie\Cats\NaturalTransformation;
 use const Phunkie\Functions\option\optionToList;
 
-class FreeSpec extends ObjectBehavior
+class FreeSpec extends TestCase
 {
-    function it_implements_pure()
+    /**
+     * @test
+     */
+    public function it_implements_pure()
     {
-        $this->beAnInstanceOf(Pure::class);
-        $this->beConstructedWith(42);
-        $this->shouldBeLike(Free::pure(42));
+        $this->assertIsLike(new Pure(42), Free::pure(42));
     }
 
-    function it_implements_liftM()
+    /**
+     * @test
+     */
+    public function it_implements_liftM()
     {
-        $this->beAnInstanceOf(Suspend::class);
-        $this->beConstructedWith(Some(42));
-        $this->shouldBeLike(Free::liftM(Some(42)));
+        $this->assertIsLike(new Suspend(Some(42)), Free::liftM(Some(42)));
     }
 
-    function it_implements_flatMap()
+    /**
+     * @test
+     */
+    public function it_implements_flatMap()
     {
-        $this->beAnInstanceOf(Suspend::class);
-        $this->beConstructedWith(Some(42));
-        $this->flatMap(function($x) {
-            return Free::liftM(Some($x + 1));
-        })->shouldHaveType(Bind::class);
+        $this->assertInstanceOf(
+            Bind::class,
+            (new Suspend(Some(42)))->flatMap(function ($x) {
+                return Free::liftM(Some($x + 1));
+            })
+        );
     }
 
-    function it_implements_foldMap_for_pure()
+    /**
+     * @test
+     */
+    public function it_implements_foldMap_for_pure()
     {
-        $this->beAnInstanceOf(Pure::class);
-        $this->beConstructedWith(42);
-        $this->foldMap(new NaturalTransformation(optionToList))->shouldBeLike(ImmList(42));
+        $this->assertIsLike(
+            ImmList(42),
+            (new Pure(42))->foldMap(new NaturalTransformation(optionToList))
+        );
     }
 
-    function it_implements_foldMap_for_suspend()
+    /**
+     * @test
+     */
+    public function it_implements_foldMap_for_suspend()
     {
-        $this->beAnInstanceOf(Suspend::class);
-        $this->beConstructedWith(Some(42));
-        $this->foldMap(new NaturalTransformation(optionToList))->shouldBeLike(ImmList(42));
+        $this->assertIsLike(
+            ImmList(42),
+            (new Suspend(Some(42)))
+                ->foldMap(new NaturalTransformation(optionToList))
+        );
     }
 
-    function it_implements_foldMap_for_bind()
+    /**
+     * @test
+     */
+    public function it_implements_foldMap_for_bind()
     {
-        $this->beAnInstanceOf(Bind::class);
-        $this->beConstructedWith(Free::pure(Some(42)), function($e) {
-            return Free::pure(42);
-        });
-        $this->foldMap(new NaturalTransformation(optionToList))->shouldBeLike(ImmList(42));
+        $this->assertIsLike(
+            ImmList(42),
+            (new Bind(
+                Free::pure(Some(42)),
+                function ($e) {
+                    return Free::pure(42);
+                }
+            ))->foldMap(new NaturalTransformation(optionToList))
+        );
     }
 }

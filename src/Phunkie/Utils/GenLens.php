@@ -37,7 +37,7 @@ final class GenLens
 
                 return $data->$getter();
             };
-            $s = function($newValue, Copiable $data) use ($field) {
+            $s = function ($newValue, Copiable $data) use ($field) {
                 return $data->copy([$field => $newValue]);
             };
             $this->addLens($field, new Lens($g, $s));

@@ -9,7 +9,9 @@
  * file that was distributed with this source code.
  */
 
-array_map (function($file) { require_once $file; }, glob(__DIR__ .'/*'));
+array_map(function ($file) {
+    require_once $file;
+}, glob(__DIR__ .'/*'));
 
 const Option = 'Option';
 const ImmList = 'ImmList';

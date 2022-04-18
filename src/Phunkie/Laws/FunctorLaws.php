@@ -11,10 +11,10 @@
 
 namespace Phunkie\Laws;
 
-use const Phunkie\Functions\function1\identity;
 use Phunkie\Types\Function1;
 use Phunkie\Types\Kind;
 use Phunkie\Types\Option;
+use const Phunkie\Functions\function1\identity;
 
 trait FunctorLaws
 {

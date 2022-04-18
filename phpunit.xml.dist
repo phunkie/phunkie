@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<phpunit
+    colors="true"
+    columns="max"
+    verbose="true"
+    bootstrap="vendor/autoload.php"
+>
+    <coverage>
+        <include>
+            <directory suffix=".php">src</directory>
+        </include>
+    </coverage>
+    <testsuites>
+        <testsuite name="phunkie testsuite">
+            <directory suffix="Spec.php">spec</directory>
+        </testsuite>
+    </testsuites>
+</phpunit>

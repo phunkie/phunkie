@@ -5,75 +5,94 @@ namespace spec\Phunkie\Cats;
 use Eris\TestTrait;
 use Phunkie\Laws\MonadLaws;
 use Phunkie\Types\Kind;
-use PhpSpec\ObjectBehavior;
+use PHPUnit\Framework\TestCase;
 
-class MonadSpec extends ObjectBehavior
+class MonadSpec extends TestCase
 {
-    use TestTrait, MonadLaws;
+    use TestTrait;
+    use MonadLaws;
+
     /**
-     * Kind<TA> $fa
-     * TA => Kind<TB> $f
-     * TB => Kind<TC> $g
+     * @test
      */
-    function it_obeys_the_law_of_flatmap_associativity()
+    public function it_obeys_the_law_of_flatmap_associativity()
     {
         // Option
         $fa = Some(42);
-        $f = function(int $x):Kind { return Some(gettype($x)); };
-        $g = function(string $x): Kind { return Some(strlen($x) % 2 == 0); };
-        expect($this->flapMapAssociativity($fa, $f, $g))->toBe(true);
+        $f = function (int $x): Kind {
+            return Some(gettype($x));
+        };
+        $g = function (string $x): Kind {
+            return Some(strlen($x) % 2 == 0);
+        };
+        $this->assertTrue($this->flapMapAssociativity($fa, $f, $g));
 
         // List
-        $fa = ImmList(1,2,3);
-        $f = function(int $x):Kind { return ImmList(gettype($x)); };
-        $g = function(string $x): Kind { return ImmList(strlen($x) % 2 == 0); };
-        expect($this->flapMapAssociativity($fa, $f, $g))->toBe(true);
+        $fa = ImmList(1, 2, 3);
+        $f = function (int $x): Kind {
+            return ImmList(gettype($x));
+        };
+        $g = function (string $x): Kind {
+            return ImmList(strlen($x) % 2 == 0);
+        };
+        $this->assertTrue($this->flapMapAssociativity($fa, $f, $g));
 
         // Set
-        $fa = ImmSet(1,2,3);
-        $f = function(int $x):Kind { return ImmSet(gettype($x)); };
-        $g = function(string $x): Kind { return ImmSet(strlen($x) % 2 == 0); };
-        expect($this->flapMapAssociativity($fa, $f, $g))->toBe(true);
+        $fa = ImmSet(1, 2, 3);
+        $f = function (int $x): Kind {
+            return ImmSet(gettype($x));
+        };
+        $g = function (string $x): Kind {
+            return ImmSet(strlen($x) % 2 == 0);
+        };
+        $this->assertTrue($this->flapMapAssociativity($fa, $f, $g));
     }
 
     /**
-     * Kind<TA> $fa
-     * TA $a
-     * TA => Kind<TB> $f
+     * @test
      */
-    function it_obeys_the_law_of_left_identity()
+    public function it_obeys_the_law_of_left_identity()
     {
         // Option
         $fa = Some(42);
         $a = 1;
-        $f = function(int $x): Kind { return Some(($x + 2) % 2 == 0); };
-        expect($this->leftIdentity($fa, $a, $f))->toBe(true);
+        $f = function (int $x): Kind {
+            return Some(($x + 2) % 2 == 0);
+        };
+        $this->assertTrue($this->leftIdentity($fa, $a, $f));
 
         // List
-        $fa = ImmList(1,2,3);
+        $fa = ImmList(1, 2, 3);
         $a = 1;
-        $f = function(int $x): Kind { return ImmList(($x + 2) % 2 == 0); };
-        expect($this->leftIdentity($fa, $a, $f))->toBe(true);
+        $f = function (int $x): Kind {
+            return ImmList(($x + 2) % 2 == 0);
+        };
+        $this->assertTrue($this->leftIdentity($fa, $a, $f));
 
         // Set
-        $fa = ImmSet(1,2,3);
+        $fa = ImmSet(1, 2, 3);
         $a = 1;
-        $f = function(int $x): Kind { return ImmSet(($x + 2) % 2 == 0); };
-        expect($this->leftIdentity($fa, $a, $f))->toBe(true);
+        $f = function (int $x): Kind {
+            return ImmSet(($x + 2) % 2 == 0);
+        };
+        $this->assertTrue($this->leftIdentity($fa, $a, $f));
     }
 
-    function it_obeys_the_law_of_right_identity()
+    /**
+     * @test
+     */
+    public function it_obeys_the_law_of_right_identity()
     {
         // Option
         $fa = Some(42);
-        expect($this->rightIdentity($fa))->toBe(true);
+        $this->assertTrue($this->rightIdentity($fa));
 
         // List
-        $fa = ImmList(1,2,3);
-        expect($this->rightIdentity($fa))->toBe(true);
+        $fa = ImmList(1, 2, 3);
+        $this->assertTrue($this->rightIdentity($fa));
 
         // Set
-        $fa = ImmSet(1,2,3);
-        expect($this->rightIdentity($fa))->toBe(true);
+        $fa = ImmSet(1, 2, 3);
+        $this->assertTrue($this->rightIdentity($fa));
     }
 }

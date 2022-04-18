@@ -2,23 +2,38 @@
 
 namespace spec\Phunkie\Cats;
 
-use PhpSpec\ObjectBehavior;
+use PHPUnit\Framework\TestCase;
+use Phunkie\Cats\Reader;
 use Prophecy\Argument;
 
-class ReaderSpec extends ObjectBehavior
+class ReaderSpec extends TestCase
 {
-    function it_wraps_a_function()
+    /**
+     * @test
+     */
+    public function it_wraps_a_function()
     {
-        $this->beConstructedWith(function(string $a) { return strrev($a); });
-        $this->run("hello")
-            ->shouldReturn("olleh");
+        $r = new Reader(function (string $a) {
+            return strrev($a);
+        });
+        $this->assertEquals("olleh", $r->run("hello"));
     }
 
-    function it_implements_map()
+    /**
+     * @test
+     */
+    public function it_implements_map()
     {
-        $this->beConstructedWith(function(string $a) { return strrev($a); });
-        $this->map(function(string $a) { return strtoupper($a); })
-            ->run("hello")
-            ->shouldReturn("OLLEH");
+        $r = new Reader(function (string $a) {
+            return strrev($a);
+        });
+        $this->assertEquals(
+            "OLLEH",
+            $r
+                ->map(function (string $a) {
+                    return strtoupper($a);
+                })
+                ->run("hello")
+        );
     }
 }

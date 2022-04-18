@@ -2,16 +2,19 @@
 
 namespace spec\Phunkie\Utils;
 
-use PhpSpec\ObjectBehavior;
+use PHPUnit\Framework\TestCase;
 use Phunkie\Utils\Trampoline\Done;
 use Phunkie\Utils\Trampoline\More;
 use Phunkie\Utils\Trampoline\Trampoline;
 
-class TrampolineSpec extends ObjectBehavior
+class TrampolineSpec extends TestCase
 {
-    function it_can_help_avoid_stack_overflow()
+    /**
+     * @test
+     */
+    public function it_can_help_avoid_stack_overflow()
     {
-        expect(odd(5)->run())->toBe(true);
+        $this->assertTrue(odd(5)->run());
 
         // uncomment to test locally <- test takes 4 seconds on my computer i7 intel core 2.8 GHz :-)
         // with trampoline this works
@@ -23,12 +26,18 @@ class TrampolineSpec extends ObjectBehavior
     }
 }
 
-function even($number): Trampoline {
-    return $number == 0 ? new Done(true) : new More(function() use ($number) { return odd($number - 1); });
+function even($number): Trampoline
+{
+    return $number == 0 ? new Done(true) : new More(function () use ($number) {
+        return odd($number - 1);
+    });
 }
 
-function odd($number): Trampoline {
-    return $number == 0 ? new Done(false) : new More(function() use ($number) { return even($number - 1); });
+function odd($number): Trampoline
+{
+    return $number == 0 ? new Done(false) : new More(function () use ($number) {
+        return even($number - 1);
+    });
 }
 
 //function even($number) {

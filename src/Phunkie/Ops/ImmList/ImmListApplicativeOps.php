@@ -25,19 +25,24 @@ trait ImmListApplicativeOps
 {
     use ImmListFunctorOps;
 
-    public function pure($a): Kind { return ImmList($a); }
+    public function pure($a): Kind
+    {
+        return ImmList($a);
+    }
 
     /**
      * @param List<callable<A,B>> $f
      * @return List<B>
      */
-    public function apply(Kind $f): Kind {
-
-        $apply = function() use ($f) {
+    public function apply(Kind $f): Kind
+    {
+        $apply = function () use ($f) {
             $result = [];
-            foreach($this->toArray() as $a) {
+            foreach ($this->toArray() as $a) {
                 foreach ($f->toArray() as $ff) {
-                    if (!is_callable($ff)) throw new TypeError(sprintf("`apply` takes List<callable>, List<%s> given", gettype($ff)));
+                    if (!is_callable($ff)) {
+                        throw new TypeError(sprintf("`apply` takes List<callable>, List<%s> given", gettype($ff)));
+                    }
                     $result[] = call_user_func($ff, $a);
                 }
             }
@@ -57,6 +62,10 @@ trait ImmListApplicativeOps
 
     public function map2(Kind $fb, callable $f): Kind
     {
-        return $this->apply($fb->map(function($b) use ($f) { return function($a) use ($f, $b) { return $f($a, $b);};}));
+        return $this->apply($fb->map(function ($b) use ($f) {
+            return function ($a) use ($f, $b) {
+                return $f($a, $b);
+            };
+        }));
     }
 }

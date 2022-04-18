@@ -12,14 +12,19 @@
 namespace Phunkie\Functions\function1 {
 
     use function Phunkie\Functions\semigroup\combine;
+
     const identity = "\\Phunkie\\Functions\\function1\\identity";
-    function identity($x) {
+    function identity($x)
+    {
         return $x;
     }
 
     const compose = "\\Phunkie\\Functions\\function1\\compose";
-    function compose(callable ...$fs) {
-        return combine(...array_map(function($f) {return Function1($f);}, array_reverse($fs)));
+    function compose(callable ...$fs)
+    {
+        return combine(...array_map(function ($f) {
+            return Function1($f);
+        }, array_reverse($fs)));
     }
 
 }

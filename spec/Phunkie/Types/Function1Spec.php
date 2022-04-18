@@ -3,45 +3,62 @@
 namespace spec\Phunkie\Types;
 
 use Phunkie\Cats\Show;
-use const Phunkie\Functions\function1\identity;
-use function Phunkie\Functions\show\showValue;
-use function Phunkie\Functions\show\usesTrait;
 use Phunkie\Ops\Function1\Function1ApplicativeOps;
 use Phunkie\Types\Function1;
-use PhpSpec\ObjectBehavior;
+use PHPUnit\Framework\TestCase;
+use function Phunkie\Functions\show\showValue;
+use function Phunkie\Functions\show\usesTrait;
+use const Phunkie\Functions\function1\identity;
 
 /**
  * @mixin Function1ApplicativeOps
  */
-class Function1Spec extends ObjectBehavior
+class Function1Spec extends TestCase
 {
-    function let()
+    private $f;
+
+    public function setUp(): void
     {
-        $this->beConstructedWith(function($x) { return $x + 1; });
+        $this->f = new Function1(function ($x): int {
+            return $x + 1;
+        });
     }
 
-    function it_is_showable()
+    /**
+     * @test
+     */
+    public function it_is_showable()
     {
-        $this->beConstructedWith(function(int $x):int { return $x + 1; });
-        $this->shouldBeShowable();
-        expect(showValue($this->getWrappedObject()))->toReturn("Function1(Int=>Int)");
+        $f = new Function1(function (int $x): int {
+            return $x + 1;
+        });
+        $this->assertTrue(usesTrait($f, Show::class));
+        $this->assertEquals(
+            showValue($f),
+            "Function1(Int=>Int)"
+        );
     }
 
-    function it_is_has_applicative_ops()
+    /**
+     * @test
+     */
+    public function it_is_has_applicative_ops()
     {
-        expect(usesTrait($this->getWrappedObject(), Function1ApplicativeOps::class))->toBe(true);
+        $this->assertTrue(
+            usesTrait($this->f, Function1ApplicativeOps::class)
+        );
     }
 
-    function it_returns_an_identity_when_identity_is_applied_to_itself()
+    /**
+     * @test
+     */
+    public function it_returns_an_identity_when_identity_is_applied_to_itself()
     {
-        $this->beConstructedWith(identity);
-        $this->apply(Function1(identity))->eqv(Function1::identity(), Some(42))->shouldBe(true);
-    }
-
-    function getMatchers(): array
-    {
-        return ["beShowable" => function($sus){
-            return usesTrait($sus, Show::class);
-        }];
+        $f = new Function1(identity);
+        $this->assertTrue(
+            $f
+                ->apply(Function1(identity))
+                ->eqv(Function1::identity(), Some(42))
+        );
     }
 }

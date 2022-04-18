@@ -3,17 +3,22 @@
 namespace spec\Phunkie\Types;
 
 use Phunkie\Utils\Copiable;
-use PhpSpec\ObjectBehavior;
+use Md\Unit\TestCase;
 
-class PairSpec extends ObjectBehavior
+class PairSpec extends TestCase
 {
-    function let()
+    private $pair;
+
+    public function setUp(): void
     {
-        $this->beConstructedWith("a", 1);
+        $this->pair = Pair("a", 1);
     }
 
-    function it_is_copiable()
+    /**
+     * @test
+     */
+    public function it_is_copiable()
     {
-        $this->shouldHaveType(Copiable::class);
+        $this->assertInstanceOf(Copiable::class, $this->pair);
     }
 }

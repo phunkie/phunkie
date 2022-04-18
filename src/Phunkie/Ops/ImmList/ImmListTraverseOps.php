@@ -1,12 +1,11 @@
 <?php
 
-
 namespace Phunkie\Ops\ImmList;
 
+use Phunkie\Types\Kind;
+use function Phunkie\Functions\show\showArrayType;
 use const Phunkie\Functions\option\fromSome;
 use const Phunkie\Functions\option\isDefined;
-use function Phunkie\Functions\show\showArrayType;
-use Phunkie\Types\Kind;
 
 /**
  * @mixin \Phunkie\Types\ImmList

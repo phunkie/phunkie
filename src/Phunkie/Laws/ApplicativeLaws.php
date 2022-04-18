@@ -11,8 +11,8 @@
 
 namespace Phunkie\Laws;
 
-use const Phunkie\Functions\function1\identity;
 use Phunkie\Types\Kind;
+use const Phunkie\Functions\function1\identity;
 
 trait ApplicativeLaws
 {
@@ -30,12 +30,15 @@ trait ApplicativeLaws
     {
         return $fa->pure($a)
                   ->apply($fab)->eqv(
-
-               $fab->apply(
+                      $fab->apply(
                    $fa->pure(
-                       function($f) use($a) { return $f($a); }
+                       function ($f) use ($a) {
+                           return $f($a);
+                       }
                    )
-               ), Some(42));
+               ),
+                      Some(42)
+                  );
     }
 
     public function applicativeMap(Kind $fa, callable $f): bool

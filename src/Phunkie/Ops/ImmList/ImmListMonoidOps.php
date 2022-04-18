@@ -11,8 +11,8 @@
 
 namespace Phunkie\Ops\ImmList;
 
-use function Phunkie\Functions\immlist\concat;
 use Phunkie\Types\ImmList;
+use function Phunkie\Functions\immlist\concat;
 
 trait ImmListMonoidOps
 {

@@ -12,142 +12,221 @@
 namespace spec\Phunkie\Types;
 
 use Phunkie\Cats\Show;
+use Phunkie\Types\None;
+use Phunkie\Types\Some;
+use Md\Unit\TestCase;
+use Phunkie\Ops\Option\OptionApplicativeOps;
+use Md\PropertyTesting\TestTrait;
+use Eris\Generator\IntegerGenerator as IntGen;
+use Phunkie\Utils\WithFilter;
 use function Phunkie\Functions\show\showValue;
 use function Phunkie\Functions\show\usesTrait;
 use function Phunkie\Functions\applicative\ap;
 use function Phunkie\Functions\applicative\pure;
+
 use function Phunkie\Functions\applicative\map2;
+
 use function Phunkie\Functions\monad\bind;
 use function Phunkie\Functions\monad\flatten;
 use function Phunkie\Functions\monad\mcompose;
-use Phunkie\Types\None;
-use Phunkie\Types\Some;
-use PhpSpec\ObjectBehavior;
 
-use Phunkie\Ops\Option\OptionApplicativeOps;
-
-use Md\PropertyTesting\TestTrait;
-use Eris\Generator\IntegerGenerator as IntGen;
-use Phunkie\Utils\WithFilter;
-
-/**
- * @mixin OptionApplicativeOps
- */
-class OptionSpec extends ObjectBehavior
+class OptionSpec extends TestCase
 {
     use TestTrait;
 
-    function let()
+    private $option;
+
+    public function setUp(): void
     {
-        $this->beAnInstanceOf(Some::class);
-        $this->beConstructedThrough('instance', [1]);
+        $this->option = Option(1);
     }
 
-    function it_is_showable()
+    /**
+     * @test
+     */
+    public function let()
     {
-        $this->shouldBeShowable();
-        expect(showValue(Option(2)))->toReturn("Some(2)");
-        expect(showValue(None()))->toReturn("None");
+        $this->assertInstanceOf(Some::class, Option(1));
     }
 
-    function it_is_a_functor()
+    /**
+     * @test
+     */
+    public function it_is_showable()
+    {
+        $this->assertTrue(usesTrait(Option(2), Show::class));
+        $this->assertEquals(showValue(Option(2)), "Some(2)");
+        $this->assertEquals(showValue(None()), "None");
+    }
+
+    /**
+     * @test
+     */
+    public function it_is_a_functor()
     {
         $spec = $this;
         $this->forAll(
             new IntGen()
-        )->then(function($a) use ($spec) {
-            expect(Option($a)->map(function ($x) {
-                return $x + 1;
-            }))->toBeLike(Some($a + 1));
+        )->then(function ($a) use ($spec) {
+            $this->assertIsLike(
+                Option($a)->map(function ($x) {
+                    return $x + 1;
+                }),
+                Some($a + 1)
+            );
         });
     }
 
-    function it_has_filter()
+    /**
+     * @test
+     */
+    public function it_has_filter()
     {
-        $this->filter(function($x){return $x == 1;})
-            ->shouldBeLike(Some(1));
+        $this->assertIsLike(
+            $this->option->filter(function ($x) {
+                return $x == 1;
+            }),
+            Some(1)
+        );
     }
 
-    function it_has_withFilter()
+    /**
+     * @test
+     */
+    public function it_has_withFilter()
     {
-        $this->withFilter(function($x){return $x == 1;})
-            ->shouldBeAnInstanceOf(WithFilter::class);
+        $this->assertInstanceOf(
+            WithFilter::class,
+            $this->option->withFilter(function ($x) {
+                return $x == 1;
+            })
+        );
     }
 
-    function its_withFilter_plus_map_to_identity_is_equivalent_to_filter()
+    /**
+     * @test
+     */
+    public function its_withFilter_plus_map_to_identity_is_equivalent_to_filter()
     {
-        $this->withFilter(function($x){return $x == 1;})->map(function($x) { return $x;})
-            ->shouldBeLike($this->filter(function($x){return $x == 1;}));
+        $this->assertIsLike(
+            $this
+                ->option
+                ->withFilter(function ($x) {
+                    return $x == 1;
+                })
+                ->map(function ($x) {
+                    return $x;
+                }),
+            $this->option->filter(function ($x) {
+                return $x == 1;
+            })
+        );
     }
 
-    function it_is_an_applicative()
+    /**
+     * @test
+     */
+    public function it_is_an_applicative()
     {
-        $x = (ap (Option(function($a) { return $a +1; }))) (Option(1));
-        expect($x)->toBeLike(Option(2));
+        $x = (ap(Option(function ($a) {
+            return $a +1;
+        })))(Option(1));
+        $this->assertIsLike($x, Option(2));
 
-        $x = (pure (Option)) (42);
-        expect($x)->toBeLike(Option(42));
+        $x = (pure(Option))(42);
+        $this->assertIsLike($x, Option(42));
 
-        $x = ((map2 (function($x, $y) { return $x + $y; })) (Option(1))) (Option(2));
-        expect($x)->toBeLike(Option(3));
+        $x = ((map2(function ($x, $y) {
+            return $x + $y;
+        }))(Option(1)))(Option(2));
+        $this->assertIsLike($x, Option(3));
     }
 
-    function it_is_a_monad()
+    /**
+     * @test
+     */
+    public function it_is_a_monad()
     {
-        $xs = (bind (function($a) { return Option($a +1); })) (Option(1));
-        expect($xs)->toBeLike(Option(2));
+        $xs = (bind(function ($a) {
+            return Option($a +1);
+        }))(Option(1));
+        $this->assertIsLike($xs, Option(2));
 
-        $xs = flatten (Option(Option(1)));
-        expect($xs)->toBeLike(Option(1));
+        $xs = flatten(Option(Option(1)));
+        $this->assertIsLike($xs, Option(1));
 
         $xs = Option("h");
-        $f = function(string $s) { return Option($s . "e"); };
-        $g = function(string $s) { return Option($s . "l"); };
-        $h = function(string $s) { return Option($s . "o"); };
+        $f = function (string $s) {
+            return Option($s . "e");
+        };
+        $g = function (string $s) {
+            return Option($s . "l");
+        };
+        $h = function (string $s) {
+            return Option($s . "o");
+        };
         $hello = mcompose($f, $g, $g, $h);
-        expect($hello($xs))->toBeLike(Option("hello"));
+        $this->assertIsLike($hello($xs), Option("hello"));
     }
 
-    function it_returns_none_when_none_is_mapped()
+    /**
+     * @test
+     */
+    public function it_returns_none_when_none_is_mapped()
     {
-        $this->beAnInstanceOf(None::class);
-        $this->beConstructedThrough('instance', []);
+        $option = Option(null);
+        $this->assertInstanceOf(None::class, $option);
 
-        $this->map(function($x) { return $x + 1; })->shouldBeLike(None());
+        $this->assertIsLike(
+            $option->map(function ($x) {
+                return $x + 1;
+            }),
+            None()
+        );
     }
 
-    function it_has_applicative_ops()
+    /**
+     * @test
+     */
+    public function it_has_applicative_ops()
     {
-        $this->shouldBeUsing(OptionApplicativeOps::class);
+        $ref = new \ReflectionClass($this->option);
+        $this->assertTrue($ref->hasMethod('apply'));
+        $this->assertTrue($ref->hasMethod('pure'));
+        $this->assertTrue($ref->hasMethod('map2'));
+        $this->assertTrue(usesTrait($this->option, OptionApplicativeOps::class));
     }
 
-    function it_returns_none_when_none_is_applied()
+    /**
+     * @test
+     */
+    public function it_returns_none_when_none_is_applied()
     {
-        $this->beAnInstanceOf(None::class);
-        $this->beConstructedThrough('instance', []);
-        $this->apply(Option(function($x) { return $x + 1; }))->shouldBeLike(None());
+        $option = Option(null);
+        $this->assertInstanceOf(None::class, $option);
+        $this->assertIsLike(
+            $option->apply(Option(function ($x) {
+                return $x + 1;
+            })),
+            None()
+        );
     }
 
-    function it_applies_the_result_of_the_function_to_a_List()
+    /**
+     * @test
+     */
+    public function it_applies_the_result_of_the_function_to_a_List()
     {
         $spec = $this;
         $this->forAll(
             new IntGen()
-        )->then(function($a) use ($spec) {
-            expect(Option($a)->apply(Option(function($x) { return $x + 1; })))
-                ->toBeLike(Some($a + 1));
+        )->then(function ($a) use ($spec) {
+            $this->assertIsLike(
+                Option($a)->apply(Option(function ($x) {
+                    return $x + 1;
+                })),
+                Some($a + 1)
+            );
         });
-    }
-
-    function getMatchers(): array
-    {
-        return [
-            "beUsing" => function($sus, $trait){
-                return usesTrait($sus, $trait);
-            },
-            "beShowable" => function($sus){
-                return usesTrait($sus, Show::class);
-            }
-        ];
     }
 }
