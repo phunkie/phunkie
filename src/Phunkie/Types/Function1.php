@@ -24,15 +24,20 @@ final class Function1 implements Kind, Applicative
     use Function1EqOps;
     use Show;
     public const kind = "Function1";
-    private $reflection;
+    private \ReflectionFunction|\ReflectionMethod $reflection;
     private $f;
 
     public function __construct(callable $f)
     {
         $this->f = $f;
-        $this->reflection = method_exists($f, '__invoke') ?
-                            new \ReflectionMethod($f, '__invoke') :
-                            new \ReflectionFunction($f);
+        try {
+            $this->reflection = method_exists($f, '__invoke') ?
+                new \ReflectionMethod($f, '__invoke') :
+                new \ReflectionFunction($f);
+        } catch (\ReflectionException $e) {
+            throw new \TypeError("Not a valid function");
+        }
+
         $this->guardCallableNumberOfParameters();
     }
 
