@@ -23,9 +23,7 @@ class WithFilterSpec extends TestCase
     {
         $this->filter = new WithFilter(
             ImmList(1, 2, 3),
-            function ($x) {
-                return $x % 2 == 0;
-            }
+            fn ($x) => $x % 2 == 0
         );
     }
 
@@ -44,12 +42,8 @@ class WithFilterSpec extends TestCase
     public function it_delegates_filter_to_monad()
     {
         $this->assertIsLike(
-            $this->filter->map(function ($x) {
-                return $x;
-            }),
-            ImmList(1, 2, 3)->filter(function ($x) {
-                return $x % 2 == 0;
-            })
+            $this->filter->map(fn ($x) => $x),
+            ImmList(1, 2, 3)->filter(fn ($x) => $x % 2 == 0)
         );
     }
 }

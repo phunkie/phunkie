@@ -34,37 +34,25 @@ class ApplicativeSpec extends TestCase
         // Option
         $fa = Some(42);
         $a = 42;
-        $f = function ($x) {
-            return $x + 1;
-        };
+        $f = fn ($x) => $x + 1;
         $this->assertTrue($this->applicativeHomomorphism($fa, $a, $f));
 
         // List
         $fa = ImmList(42);
         $a = 42;
-        $f = function ($x) {
-            return $x + 1;
-        };
+        $f = fn ($x) => $x + 1;
         $this->assertTrue($this->applicativeHomomorphism($fa, $a, $f));
 
         // Function1
-        $fa = Function1(function ($x) {
-            return $x;
-        });
-        $a = function ($x) {
-            return $x + 42;
-        };
-        $f = function ($x) {
-            return $x;
-        };
+        $fa = Function1(fn ($x) => $x);
+        $a = fn ($x) => $x + 42;
+        $f = fn ($x) => $x;
         $this->assertTrue($this->applicativeHomomorphism($fa, $a, $f));
 
         // Set
         $fa = ImmSet(42);
         $a = 42;
-        $f = function ($x) {
-            return $x + 1;
-        };
+        $f = fn ($x) => $x + 1;
         $this->assertTrue($this->applicativeHomomorphism($fa, $a, $f));
     }
 
@@ -76,9 +64,7 @@ class ApplicativeSpec extends TestCase
         // Option
         $fa = None();
         $a = 42;
-        $f = function ($x): string {
-            return gettype($x);
-        };
+        $f = fn ($x): string => gettype($x);
         $this->assertTrue($this->applicativeInterchange($fa, $a, Some($f)));
 
         // List
@@ -87,20 +73,14 @@ class ApplicativeSpec extends TestCase
 
         // Function1
         $fa = Function1($f);
-        $fab = Function1(function (string $s) {
-            return function ($x) {
-                return $x;
-            };
-        });
+        $fab = Function1(fn (string $s) => fn ($x) => $x);
         // @TODO Function1 applicative does not yet obey the interchange law
         // $this->assertTrue($this->applicativeInterchange($fa, $f, $fab));
 
         // Set
         $fa = ImmSet();
         $a = 42;
-        $f = function ($x): string {
-            return gettype($x);
-        };
+        $f = fn ($x): string => gettype($x);
         $this->assertTrue($this->applicativeInterchange($fa, $a, ImmSet($f)));
     }
 
@@ -111,32 +91,22 @@ class ApplicativeSpec extends TestCase
     {
         // Option
         $fa = Some(42);
-        $f = function ($x) {
-            return $x + 1;
-        };
+        $f = fn ($x) => $x + 1;
         $this->assertTrue($this->applicativeMap($fa, $f));
 
         // List
         $fa = ImmList(42);
-        $f = function ($x) {
-            return $x + 1;
-        };
+        $f = fn ($x) => $x + 1;
         $this->assertTrue($this->applicativeMap($fa, $f));
 
         // Function1
-        $fa = Function1(function ($x) {
-            return $x;
-        });
-        $f = function ($x) {
-            return $x + 1;
-        };
+        $fa = Function1(fn ($x) => $x);
+        $f = fn ($x) => $x + 1;
         $this->assertTrue($this->applicativeMap($fa, $f));
 
         // Set
         $fa = ImmSet(42);
-        $f = function ($x) {
-            return $x + 1;
-        };
+        $f = fn ($x) => $x + 1;
         $this->assertTrue($this->applicativeMap($fa, $f));
     }
 }

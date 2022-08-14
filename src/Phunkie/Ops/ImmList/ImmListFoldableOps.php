@@ -26,9 +26,7 @@ trait ImmListFoldableOps
         return applyPartially([$initial], func_get_args(), function (callable $f) use ($initial) {
             $acc = function (ImmList $xs, $initial) use (&$acc, $f): Trampoline {
                 return $xs->isEmpty() ? new Done($initial) :
-                    new More(function () use ($acc, $f, $xs, $initial) {
-                        return $acc($xs->tail(), $f($initial, $xs->head()));
-                    });
+                    new More(fn () => $acc($xs->tail(), $f($initial, $xs->head())));
             };
             return $acc($this, $initial)->run();
         });
@@ -39,9 +37,7 @@ trait ImmListFoldableOps
         return applyPartially([$initial], func_get_args(), function (callable $f) use ($initial) {
             $acc = function (ImmList $xs, $initial) use (&$acc, $f): Trampoline {
                 return $xs->isEmpty() ? new Done($initial) :
-                    new More(function () use ($acc, $f, $xs, $initial) {
-                        return $acc($xs->init(), $f($xs->last(), $initial));
-                    });
+                    new More(fn () => $acc($xs->init(), $f($xs->last(), $initial)));
             };
             return $acc($this, $initial)->run();
         });
@@ -49,15 +45,11 @@ trait ImmListFoldableOps
 
     public function foldMap(callable $f)
     {
-        return $this->foldLeft(zero($this->head()), function ($b, $a) use ($f) {
-            return combine($b, $f($a));
-        });
+        return $this->foldLeft(zero($this->head()), fn ($b, $a) => combine($b, $f($a)));
     }
 
     public function fold($initial)
     {
-        return applyPartially([$initial], func_get_args(), function (callable $f) use ($initial) {
-            return (!$this->isEmpty()) ? $this->foldLeft($initial, $f) : $initial;
-        });
+        return applyPartially([$initial], func_get_args(), fn (callable $f) => (!$this->isEmpty()) ? $this->foldLeft($initial, $f) : $initial);
     }
 }

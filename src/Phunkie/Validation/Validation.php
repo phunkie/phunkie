@@ -96,8 +96,6 @@ abstract class Validation implements Applicative, Monad, Kind, Foldable
 
     public function foldMap(callable $f)
     {
-        return ($this->foldLeft(zero($this->getOrElse(null))))(function ($b, $a) use ($f) {
-            return combine($b, $f($a));
-        });
+        return ($this->foldLeft(zero($this->getOrElse(null))))(fn ($b, $a) => combine($b, $f($a)));
     }
 }

@@ -59,9 +59,7 @@ class ValidationSpec extends TestCase
     public function it_can_be_constructed_with_Attempt()
     {
         $this->assertIsLike(
-            Attempt(function () {
-                return 42;
-            }),
+            Attempt(fn () => 42),
             Success(42)
         );
 
@@ -70,9 +68,7 @@ class ValidationSpec extends TestCase
         });
         $this->assertEquals(
             'Failure(Exception("nay"))',
-            ($failure->fold(function (\Exception $e) {
-                return 'Failure(' . get_class($e) . '("' . $e->getMessage() . '")' . ')';
-            }))(identity)
+            ($failure->fold(fn (\Exception $e) => 'Failure(' . get_class($e) . '("' . $e->getMessage() . '")' . ')'))(identity)
         );
     }
 
@@ -109,15 +105,11 @@ class ValidationSpec extends TestCase
         $this->assertInstanceOf(Monad::class, $m);
 
         $this->assertIsLike(
-            $m->flatMap(function ($x) {
-                return Success($x + 2);
-            }),
+            $m->flatMap(fn ($x) => Success($x + 2)),
             Success(3)
         );
         $this->assertIsLike(
-            (bind(function ($x) {
-                return Success($x + 2);
-            }))(Failure("nay")),
+            (bind(fn ($x) => Success($x + 2)))(Failure("nay")),
             Failure("nay")
         );
 
@@ -133,19 +125,13 @@ class ValidationSpec extends TestCase
         $ap = new Success(1);
         $this->assertInstanceOf(Applicative::class, $ap);
 
-        $xs = (ap(Success(function ($a) {
-            return $a +1;
-        })))(Success(1));
+        $xs = (ap(Success(fn ($a) => $a +1)))(Success(1));
         $this->assertIsLike($xs, Success(2));
 
-        $xs = (ap(Success(function ($a) {
-            return $a +1;
-        })))(Failure("nay"));
+        $xs = (ap(Success(fn ($a) => $a +1)))(Failure("nay"));
         $this->assertIsLike($xs, Failure("nay"));
 
-        $xs = (ap(Failure(function ($a) {
-            return $a . "!";
-        })))(Failure("nay"));
+        $xs = (ap(Failure(fn ($a) => $a . "!")))(Failure("nay"));
         $this->assertIsLike($xs, Failure("nay!"));
 
         $xs = (pure("Success"))(42);
@@ -153,19 +139,13 @@ class ValidationSpec extends TestCase
         $this->assertIsLike((pure("Failure"))("nay"), Failure("nay"));
         $this->assertIsLike(Failure("")->pure("nay"), Failure("nay"));
 
-        $xs = ((map2(function ($x, $y) {
-            return $x + $y;
-        }))(Success(1)))(Success(2));
+        $xs = ((map2(fn ($x, $y) => $x + $y))(Success(1)))(Success(2));
         $this->assertIsLike($xs, Success(3));
 
-        $xs = ((map2(function ($x, $y) {
-            return $x + $y;
-        }))(Success(1)))(Failure("nay"));
+        $xs = ((map2(fn ($x, $y) => $x + $y))(Success(1)))(Failure("nay"));
         $this->assertIsLike($xs, Failure("nay"));
 
-        $xs = ((map2(function ($x, $y) {
-            return $x + $y;
-        }))(Failure("nay")))(Success(1));
+        $xs = ((map2(fn ($x, $y) => $x + $y))(Failure("nay")))(Success(1));
         $this->assertIsLike($xs, Failure("nay"));
     }
 

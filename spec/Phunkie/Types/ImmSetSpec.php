@@ -162,15 +162,11 @@ class ImmSetSpec extends TestCase
         );
 
         $this->assertIsLike(
-            $set->zipWith(function ($x) {
-                return 2 * $x;
-            }),
+            $set->zipWith(fn ($x) => 2 * $x),
             ImmSet(Pair(1, 2), Pair(2, 4), Pair(3, 6))
         );
         $this->assertIsLike(
-            zipWith(function ($x) {
-                return 2 * $x;
-            }, ImmSet(1, 2, 3)),
+            zipWith(fn ($x) => 2 * $x, ImmSet(1, 2, 3)),
             ImmSet(Pair(1, 2), Pair(2, 4), Pair(3, 6))
         );
     }
@@ -180,17 +176,13 @@ class ImmSetSpec extends TestCase
      */
     public function it_is_an_applicative()
     {
-        $xs = (ap(ImmSet(function ($a) {
-            return $a +1;
-        })))(ImmSet(1));
+        $xs = (ap(ImmSet(fn ($a) => $a +1)))(ImmSet(1));
         $this->assertIsLike($xs, ImmSet(2));
 
         $xs = (pure(ImmSet))(42);
         $this->assertIsLike($xs, ImmSet(42));
 
-        $xs = ((map2(function ($x, $y) {
-            return $x + $y;
-        }))(ImmSet(1)))(ImmSet(2));
+        $xs = ((map2(fn ($x, $y) => $x + $y))(ImmSet(1)))(ImmSet(2));
         $this->assertIsLike($xs, ImmSet(3));
     }
 
@@ -199,9 +191,7 @@ class ImmSetSpec extends TestCase
      */
     public function it_is_a_monad()
     {
-        $xs = (bind(function ($a) {
-            return ImmSet($a +1);
-        }))(ImmSet(1));
+        $xs = (bind(fn ($a) => ImmSet($a +1)))(ImmSet(1));
         $this->assertIsLike($xs, ImmSet(2));
 
         $xs = flatten(ImmSet(ImmSet(1)));
@@ -211,15 +201,9 @@ class ImmSetSpec extends TestCase
         $this->assertIsLike($xs, ImmSet(1, 2));
 
         $xs = ImmSet("h");
-        $f = function (string $s) {
-            return ImmSet($s . "e");
-        };
-        $g = function (string $s) {
-            return ImmSet($s . "l");
-        };
-        $h = function (string $s) {
-            return ImmSet($s . "o");
-        };
+        $f = fn (string $s) => ImmSet($s . "e");
+        $g = fn (string $s) => ImmSet($s . "l");
+        $h = fn (string $s) => ImmSet($s . "o");
         $hello = mcompose($f, $g, $g, $h);
         $this->assertIsLike($hello($xs), ImmSet("hello"));
     }
@@ -232,9 +216,7 @@ class ImmSetSpec extends TestCase
         $set = ImmSet();
         $this->assertPropertyCount(
             0,
-            $set->apply(ImmSet(function ($x) {
-                return $x + 1;
-            }))
+            $set->apply(ImmSet(fn ($x) => $x + 1))
         );
     }
 
@@ -248,12 +230,8 @@ class ImmSetSpec extends TestCase
         )->then(function ($list) {
             $this->assertIsLike(
                 ImmSet(...$list)
-                    ->apply(ImmSet(function ($x) {
-                        return $x + 1;
-                    })),
-                ImmSet(...array_map(function ($x) {
-                    return $x + 1;
-                }, $list))
+                    ->apply(ImmSet(fn ($x) => $x + 1)),
+                ImmSet(...array_map(fn ($x) => $x + 1, $list))
             );
         });
     }

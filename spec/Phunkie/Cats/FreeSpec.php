@@ -36,9 +36,7 @@ class FreeSpec extends TestCase
     {
         $this->assertInstanceOf(
             Bind::class,
-            (new Suspend(Some(42)))->flatMap(function ($x) {
-                return Free::liftM(Some($x + 1));
-            })
+            (new Suspend(Some(42)))->flatMap(fn ($x) => Free::liftM(Some($x + 1)))
         );
     }
 
@@ -74,9 +72,7 @@ class FreeSpec extends TestCase
             ImmList(42),
             (new Bind(
                 Free::pure(Some(42)),
-                function ($e) {
-                    return Free::pure(42);
-                }
+                fn ($e) => Free::pure(42)
             ))->foldMap(new NaturalTransformation(optionToList))
         );
     }

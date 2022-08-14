@@ -11,9 +11,7 @@ use const Phunkie\Functions\function1\identity;
 const bind = "\\Phunkie\\Functions\\monad\\bind";
 function bind($f)
 {
-    return applyPartially([$f], func_get_args(), function (FlatMap $monad) use ($f) {
-        return $monad->flatMap($f);
-    });
+    return applyPartially([$f], func_get_args(), fn (FlatMap $monad) => $monad->flatMap($f));
 }
 
 const flatten = "\\Phunkie\\Functions\\monad\\flatten";

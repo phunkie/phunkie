@@ -141,11 +141,7 @@ namespace Phunkie\Functions\immlist {
             }
             return ImmList(...$result);
         };
-        $concatStrings = function (...$s) {
-            return array_reduce($s, function ($a, $b) {
-                return $a . $b;
-            }, "");
-        };
+        $concatStrings = fn (...$s) => array_reduce($s, fn ($a, $b) => $a . $b, "");
         if ($items[0] instanceof ImmList || is_array($items[0])) {
             return $concatLists(...$items);
         }

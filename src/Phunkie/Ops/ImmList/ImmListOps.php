@@ -111,9 +111,7 @@ trait ImmListOps
 
     public function reject(callable $condition): ImmList
     {
-        return ImmList(...array_filter($this->toArray(), function ($x) use ($condition) {
-            return !$condition($x);
-        }));
+        return ImmList(...array_filter($this->toArray(), fn ($x) => !$condition($x)));
     }
 
     public function reduce(callable $f)
@@ -192,18 +190,14 @@ trait ImmListOps
     {
         $new = [];
         foreach ($this->head->toArray() as $i => $values) {
-            $new[] = $this->map(function (ImmList $list) use ($i) {
-                return $list->nth($i)->get();
-            });
+            $new[] = $this->map(fn (ImmList $list) => $list->nth($i)->get());
         }
         return ImmList(...$new);
     }
 
     private function mkStringOneArgument($glue): string
     {
-        return implode($glue, array_map(function ($e) {
-            return is_string($e) ? $e : showValue($e);
-        }, $this->toArray()));
+        return implode($glue, array_map(fn ($e) => is_string($e) ? $e : showValue($e), $this->toArray()));
     }
 
     private function mkStringThreeArguments($start, $glue, $end): string

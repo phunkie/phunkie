@@ -11,6 +11,7 @@
 
 namespace Phunkie\Ops\Function1;
 
+use Phunkie\Cats\Applicative;
 use Phunkie\Types\Function1;
 use Phunkie\Types\Kind;
 
@@ -18,7 +19,7 @@ trait Function1ApplicativeOps
 {
     use Function1FunctorOps;
 
-    public function pure($a): Kind
+    public function pure($a): Applicative
     {
         return Function1($a);
     }
@@ -33,19 +34,13 @@ trait Function1ApplicativeOps
     {
         switch ($f) {
             case $f == None(): return None();
-            case $f instanceof Function1: return Function1(function ($x) use ($f) {
-                return $f->invokeFunctionOnArg($this->invokeFunctionOnArg($x));
-            });
+            case $f instanceof Function1: return Function1(fn ($x) => $f->invokeFunctionOnArg($this->invokeFunctionOnArg($x)));
             default: throw new \BadMethodCallException();
         }
     }
 
     public function map2(Kind $fb, callable $f): Kind
     {
-        return $this->apply($fb->map(function ($b) use ($f) {
-            return function ($a) use ($f, $b) {
-                return $f($a, $b);
-            };
-        }));
+        return $this->apply($fb->map(fn ($b) => fn ($a) => $f($a, $b)));
     }
 }

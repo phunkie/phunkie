@@ -19,5 +19,5 @@ interface Applicative extends Apply
      * @param T $a
      * @return Kind<T>
      */
-    public function pure($a): Kind;
+    public function pure($a): Applicative;
 }

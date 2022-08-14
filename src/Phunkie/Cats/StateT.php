@@ -34,15 +34,11 @@ class StateT
      */
     public function map($f)
     {
-        return new StateT($this->initial->map(function ($s) use ($f) {
-            return $f($this->run($s));
-        }));
+        return new StateT($this->initial->map(fn ($s) => $f($this->run($s))));
     }
 
     public function run($initial)
     {
-        return $this->initial->flatMap(function ($f) use ($initial) {
-            return $f($initial);
-        });
+        return $this->initial->flatMap(fn ($f) => $f($initial));
     }
 }

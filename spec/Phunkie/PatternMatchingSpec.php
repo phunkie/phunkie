@@ -112,9 +112,7 @@ class PatternMatchingSpec extends TestCase
      */
     public function it_supports_wildcard_for_failure()
     {
-        $boom = function () {
-            return Failure(Nel(new \Exception("Boom!")));
-        };
+        $boom = fn () => Failure(Nel(new \Exception("Boom!")));
         $result = null;
         $on = pmatch($boom());
         switch (true) {
@@ -130,9 +128,7 @@ class PatternMatchingSpec extends TestCase
      */
     public function it_supports_wildcard_for_success()
     {
-        $yay = function () {
-            return Success("yay!");
-        };
+        $yay = fn () => Success("yay!");
         $result = null;
         $on = pmatch($yay());
         switch (true) {
@@ -270,9 +266,7 @@ class PatternMatchingSpec extends TestCase
      */
     public function it_accepts_reference_when_comparing_successes()
     {
-        $yay = function () {
-            return Success("yay!");
-        };
+        $yay = fn () => Success("yay!");
         $result = null;
         $on = pmatch($yay());
         switch (true) {
@@ -287,9 +281,7 @@ class PatternMatchingSpec extends TestCase
      */
     public function it_accepts_reference_when_comparing_failures()
     {
-        $boom = function () {
-            return Failure("boom!");
-        };
+        $boom = fn () => Failure("boom!");
         $result = null;
         $on = pmatch($boom());
         switch (true) {

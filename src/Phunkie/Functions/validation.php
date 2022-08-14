@@ -70,9 +70,7 @@ namespace Phunkie\Functions\validation {
     {
         return call_user_func(
             ImmList(...$validations)->foldLeft(Unit()),
-            function ($x, $y) {
-                return combine($x, $y);
-            }
+            fn ($x, $y) => combine($x, $y)
         );
     }
 

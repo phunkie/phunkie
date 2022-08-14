@@ -28,9 +28,7 @@ class FunctorCompositeSpec extends TestCase
     {
         $this->assertIsLike(
             Some(2),
-            $this->functor->map(Option(1), function ($x) {
-                return $x + 1;
-            })
+            $this->functor->map(Option(1), fn ($x) => $x + 1)
         );
     }
 
@@ -70,9 +68,7 @@ class FunctorCompositeSpec extends TestCase
         $fa = $functor->compose(Option::kind);
         $xs = ImmList(Some(1), None(), Some(2));
         $this->assertIsLike(
-            $fa->map($xs, function ($x) {
-                return $x + 1;
-            }),
+            $fa->map($xs, fn ($x) => $x + 1),
             ImmList(Some(2), None(), Some(3))
         );
     }

@@ -22,9 +22,7 @@ namespace Phunkie\Functions\function1 {
     const compose = "\\Phunkie\\Functions\\function1\\compose";
     function compose(callable ...$fs)
     {
-        return combine(...array_map(function ($f) {
-            return Function1($f);
-        }, array_reverse($fs)));
+        return combine(...array_map(fn ($f) => Function1($f), array_reverse($fs)));
     }
 
 }

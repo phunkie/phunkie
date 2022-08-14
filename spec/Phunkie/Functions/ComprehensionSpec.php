@@ -16,9 +16,7 @@ class ComprehensionSpec extends TestCase
             for_(
                 __($x)->_(Some('x'))
             )->yields($x),
-            Some('x')->map(function ($x) {
-                return $x;
-            })
+            Some('x')->map(fn ($x) => $x)
         );
     }
 
@@ -32,11 +30,7 @@ class ComprehensionSpec extends TestCase
                 __($x) ->_(Some('x')),
                 __($X) ->_(Some(strtoupper($x)))
             ) -> yields($X),
-            Some('x')->flatMap(function ($x) {
-                return Some(strtoupper($x))->map(function ($X) {
-                    return $X;
-                });
-            })
+            Some('x')->flatMap(fn ($x) => Some(strtoupper($x))->map(fn ($X) => $X))
         );
     }
 
@@ -51,13 +45,7 @@ class ComprehensionSpec extends TestCase
                 __($X)      ->_(Some(strtoupper($x))),
                 __($quoted) ->_(Some("'$X'"))
             ) -> yields($quoted),
-            Some('x')->flatMap(function ($x) {
-                return Some(strtoupper($x))->flatMap(function ($X) {
-                    return Some("'$X'")->map(function ($quoted) {
-                        return $quoted;
-                    });
-                });
-            })
+            Some('x')->flatMap(fn ($x) => Some(strtoupper($x))->flatMap(fn ($X) => Some("'$X'")->map(fn ($quoted) => $quoted)))
         );
     }
 
@@ -71,11 +59,7 @@ class ComprehensionSpec extends TestCase
                 __($x)      ->_(Some('x')),
                 __($y)      ->_(Some('y'))
             ) -> yields($x, $y),
-            Some('x')->flatMap(function ($x) {
-                return Some('y')->map(function ($y) use ($x) {
-                    return Pair($x, $y);
-                });
-            })
+            Some('x')->flatMap(fn ($x) => Some('y')->map(fn ($y) => Pair($x, $y)))
         );
     }
 
@@ -106,11 +90,7 @@ class ComprehensionSpec extends TestCase
                 __($x)      ->_(Some('x')),
                 __($y)      ->_(Some('y'))
             ) -> call(combine, $x, $y),
-            Some('x')->flatMap(function ($x) {
-                return Some('y')->map(function ($y) use ($x) {
-                    return call_user_func_array(combine, [$x, $y]);
-                });
-            })
+            Some('x')->flatMap(fn ($x) => Some('y')->map(fn ($y) => call_user_func_array(combine, [$x, $y])))
         );
     }
 }

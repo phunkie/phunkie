@@ -45,9 +45,7 @@ function combine(...$parts)
                     return $a->combine($b);
                 }
                 if (is_callable($a)) {
-                    return function () use ($a, $b) {
-                        return $a($b(...func_get_args()));
-                    };
+                    return fn () => $a($b(...func_get_args()));
                 }
                 foreach (array_intersect($getParentClasses($a), $getParentClasses($b)) as $parent) {
                     if (method_exists($parent, 'combine')) {
@@ -83,9 +81,7 @@ function zero($a)
             return $a->zero();
         }
         if (is_callable($a)) {
-            return function ($x) {
-                return $x;
-            };
+            return fn ($x) => $x;
         }
         break; }
     throw new TypeError("zero is not defined for type " . gettype($a));

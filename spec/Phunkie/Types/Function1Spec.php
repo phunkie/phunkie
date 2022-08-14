@@ -19,9 +19,7 @@ class Function1Spec extends TestCase
 
     public function setUp(): void
     {
-        $this->f = new Function1(function ($x): int {
-            return $x + 1;
-        });
+        $this->f = new Function1(fn ($x): int => $x + 1);
     }
 
     /**
@@ -29,9 +27,7 @@ class Function1Spec extends TestCase
      */
     public function it_is_showable()
     {
-        $f = new Function1(function (int $x): int {
-            return $x + 1;
-        });
+        $f = new Function1(fn (int $x): int => $x + 1);
         $this->assertTrue(usesTrait($f, Show::class));
         $this->assertEquals(
             showValue($f),

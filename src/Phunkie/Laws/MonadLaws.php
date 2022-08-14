@@ -25,9 +25,7 @@ trait MonadLaws
     {
         return $fa->flatMap($f)->flatMap($g) == $fa->flatMap(function ($a) use ($f, $g) {
             return $f($a)->flatMap(
-                function ($b) use ($g) {
-                return $g($b);
-            }
+                fn ($b) => $g($b)
             ) ;
         });
     }
@@ -39,8 +37,6 @@ trait MonadLaws
 
     public function rightIdentity(Kind $fa): bool
     {
-        return $fa->flatMap(function ($a) use ($fa) {
-            return $fa->pure($a);
-        }) == $fa;
+        return $fa->flatMap(fn ($a) => $fa->pure($a)) == $fa;
     }
 }

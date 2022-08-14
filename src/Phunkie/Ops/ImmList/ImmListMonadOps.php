@@ -37,8 +37,6 @@ trait ImmListMonadOps
 
     public function flatten(): Kind
     {
-        return $this->flatMap(function ($x) {
-            return $x;
-        });
+        return $this->flatMap(fn ($x) => $x);
     }
 }

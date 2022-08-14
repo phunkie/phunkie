@@ -54,9 +54,7 @@ namespace Phunkie\Functions\show {
     function showArrayValue(array $value): string
     {
         if (is_assoc($value)) {
-            return '[' . implode(", ", array_map(function ($key, $value) {
-                return (is_string($key) ? '"' . $key . '"' : $key) . " => " . showValue($value);
-            }, array_keys($value), $value)) . ']';
+            return '[' . implode(", ", array_map(fn ($key, $value) => (is_string($key) ? '"' . $key . '"' : $key) . " => " . showValue($value), array_keys($value), $value)) . ']';
         }
         return "[" . implode(", ", array_map(showValue, $value)) . "]";
     }
@@ -188,9 +186,7 @@ namespace Phunkie\Functions\show {
             return false;
         }
 
-        $usesTrait = function ($c) use ($trait) {
-            return in_array($trait, class_uses($c));
-        };
+        $usesTrait = fn ($c) => in_array($trait, class_uses($c));
 
         $classAndParents = array_merge([get_class($object)], class_parents($object));
 
@@ -213,6 +209,6 @@ namespace Phunkie\Functions\show {
     const is_assoc = "\\Phunkie\\Functions\\show\\is_assoc";
     function is_assoc(array $value): bool
     {
-        return array() !== array_diff_key($value, array_keys(array_keys($value)));
+        return [] !== array_diff_key($value, array_keys(array_keys($value)));
     }
 }

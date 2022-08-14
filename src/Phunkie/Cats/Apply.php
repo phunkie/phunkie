@@ -16,10 +16,10 @@ use Phunkie\Types\Kind;
 interface Apply extends Functor
 {
     /**
-     * @param Kind<callable<A,B>> $f
+     * @param Kind<callable<A,B>> $ff
      * @return Kind<B>
      */
-    public function apply(Kind $f): Kind;
+    public function apply(Kind $ff): Kind;
 
     /**
      * @param Kind<B> $fb

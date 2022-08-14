@@ -12,9 +12,11 @@
 namespace Phunkie\Ops\Option;
 
 use BadMethodCallException;
+use Phunkie\Cats\Applicative;
 use Phunkie\Types\Kind;
 use Phunkie\Types\Option;
 use Phunkie\Types\None;
+use Phunkie\Types\Some;
 
 /**
  * @mixin Option
@@ -22,26 +24,24 @@ use Phunkie\Types\None;
 trait OptionApplicativeOps
 {
     use OptionFunctorOps;
-    public function pure($a): Kind
+    public function pure($a): Applicative
     {
         return Option($a);
     }
-    public function apply(Kind $f): Kind
-    {
-        switch (true) {
-            case !$this instanceof Option: throw new BadMethodCallException();
-            case $this->isEmpty(): return None();
-            case $f instanceof None: return None();
-            case $f instanceof Option && is_callable($f->get()): return $this->map($f->get());
-        }
+    /**
+     * @param Option<Closure<A, B>> $ff
+     * @return Option<B>
+     * @throws BadMethodCallException
+     */
+    public function apply(Kind $ff): Kind { return match (true) {
+        $this->isEmpty() => None(),
+        $ff instanceof None => None(),
+        $ff instanceof Some && is_callable($ff->get()) => $this->map($ff->get()),
+        default => throw new BadMethodCallException()};
     }
 
     public function map2(Kind $fb, callable $f): Kind
     {
-        return $this->apply($fb->map(function ($b) use ($f) {
-            return function ($a) use ($f, $b) {
-                return $f($a, $b);
-            };
-        }));
+        return $this->apply($fb->map(fn ($b) => fn ($a) => $f($a, $b)));
     }
 }

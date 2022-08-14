@@ -62,9 +62,7 @@ trait AssertIsLike
             function ($acc, $val) {
                 $acc[] = is_array($val) ?
                     $this->mapDeep(
-                        function ($x) {
-                            return \is_object($x) ? $this->getProps($x) : $x;
-                        },
+                        fn ($x) => \is_object($x) ? $this->getProps($x) : $x,
                         $val
                     ) :
                     (\is_object($val) ? $this->getPropsDeep($val) : $val);

@@ -18,9 +18,7 @@ class OptionTSpec extends TestCase
     {
         $m = OptionT(ImmList(Some(1), None(), Some(2)));
         $this->assertIsLike(
-            $m->map(function ($x) {
-                return $x + 1;
-            }),
+            $m->map(fn ($x) => $x + 1),
             OptionT(ImmList(Some(2), None(), Some(3)))
         );
     }
@@ -32,9 +30,7 @@ class OptionTSpec extends TestCase
     {
         $m = OptionT(ImmList(Some(1), None(), Some(2)));
         $this->assertIsLike(
-            $m->flatMap(function ($x) {
-                return OptionT(ImmList(Some($x + 1)));
-            }),
+            $m->flatMap(fn ($x) => OptionT(ImmList(Some($x + 1)))),
             OptionT(ImmList(Some(2), None(), Some(3)))
         );
     }

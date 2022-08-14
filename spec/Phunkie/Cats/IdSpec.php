@@ -13,9 +13,7 @@ class IdSpec extends TestCase
     public function it_implements_map()
     {
         $f = new Id(42);
-        $increment = function ($x) {
-            return $x + 1;
-        };
+        $increment = fn ($x) => $x + 1;
         $this->assertEquals(43, $f->map($increment));
     }
 
@@ -26,9 +24,7 @@ class IdSpec extends TestCase
     {
         $this->assertIsLike(
             new Id(43),
-            (new Id(42))->map(function ($x) {
-                return new Id($x + 1);
-            })
+            (new Id(42))->map(fn ($x) => new Id($x + 1))
         );
     }
 

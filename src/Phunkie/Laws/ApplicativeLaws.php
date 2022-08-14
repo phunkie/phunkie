@@ -11,37 +11,36 @@
 
 namespace Phunkie\Laws;
 
-use Phunkie\Types\Kind;
+use Phunkie\Cats\Applicative;
+use Phunkie\Algebra\Eq;
 use const Phunkie\Functions\function1\identity;
 
 trait ApplicativeLaws
 {
-    public function applicativeIdentity(Kind $fa): bool
+    public function applicativeIdentity(Eq|Applicative  $fa): bool
     {
         return $fa->apply($fa->pure(identity))->eqv($fa, Some(42));
     }
 
-    public function applicativeHomomorphism(Kind $fa, $a, callable $f): bool
+    public function applicativeHomomorphism(Eq|Applicative $fa, $a, \Closure $f): bool
     {
         return $fa->pure($a)->apply($fa->pure($f))->eqv($fa->pure($f($a)), Some(42));
     }
 
-    public function applicativeInterchange(Kind $fa, $a, Kind $fab): bool
+    public function applicativeInterchange(Eq|Applicative $fa, $a, Eq|Applicative $fab): bool
     {
         return $fa->pure($a)
-                  ->apply($fab)->eqv(
-                      $fab->apply(
-                   $fa->pure(
-                       function ($f) use ($a) {
-                           return $f($a);
-                       }
-                   )
-               ),
-                      Some(42)
-                  );
+                    ->apply($fab)->eqv(
+                        $fab->apply(
+                            $fa->pure(
+                                fn ($f) => $f($a)
+                            )
+                        ),
+                        Some(42)
+                    );
     }
 
-    public function applicativeMap(Kind $fa, callable $f): bool
+    public function applicativeMap(Eq|Applicative $fa, \Closure $f): bool
     {
         return $fa->map($f)->eqv($fa->apply($fa->pure($f)), Some(42));
     }
