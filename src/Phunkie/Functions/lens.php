@@ -70,12 +70,9 @@ namespace Phunkie\Functions\lens {
     {
         return Lens(
             fn (ImmSet $s) => $s->contains($element),
-            function (ImmSet $s, bool $plusOrMinus) use ($element) {
-                switch ($plusOrMinus) {
-                case true: return $s->plus($element);
-                case false: return $s->minus($element);
-                }
-            }
+            fn (ImmSet $s, bool $plusOrMinus) => match ($plusOrMinus) {
+                true => $s->plus($element),
+                false => $s->minus($element) }
         );
     }
 
@@ -84,11 +81,9 @@ namespace Phunkie\Functions\lens {
     {
         return Lens(
             fn (ImmMap $m) => $m->get($k),
-            function (ImmMap $m, Option $v) use ($k) {
-                $on = pmatch($v);
-                switch (true) {
-                case $on(None): return $m->minus($k);
-                case $on(Maybe($v)): return $m->minus($k)->plus($k, $v);}
+            function (ImmMap $m, Option $v) use ($k) { $on = pmatch($v); return match (true) {
+                $on(None) => $m->minus($k),
+                $on(Maybe($v)) => $m->minus($k)->plus($k, $v)};
             }
         );
     }

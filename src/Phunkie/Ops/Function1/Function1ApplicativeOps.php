@@ -12,8 +12,10 @@
 namespace Phunkie\Ops\Function1;
 
 use Phunkie\Cats\Applicative;
+use Phunkie\Cats\Functor;
 use Phunkie\Types\Function1;
 use Phunkie\Types\Kind;
+use TypeError;
 
 trait Function1ApplicativeOps
 {
@@ -27,20 +29,20 @@ trait Function1ApplicativeOps
     /**
      * Function1<A,B> $this
      *
-     * @param Function1<A, Function1<B,C>> $f
+     * @param Function1<A, Callable<B,C>> $f
      * @return Function1<A,C>
      */
-    public function apply(Kind $f): Kind
-    {
-        switch ($f) {
-            case $f == None(): return None();
-            case $f instanceof Function1: return Function1(fn ($x) => $f->invokeFunctionOnArg($this->invokeFunctionOnArg($x)));
-            default: throw new \BadMethodCallException();
-        }
+    public function apply(Kind $f): Kind { return match (true) {
+        $f == None() => None(),
+        $f instanceof Function1 => Function1(fn ($x) => $f->invokeFunctionOnArg($this->invokeFunctionOnArg($x))),
+        default => throw new \BadMethodCallException()};
     }
 
     public function map2(Kind $fb, callable $f): Kind
     {
+        if (!$fb instanceof Functor) {
+            throw new \TypeError("Type error: map2 first argument must be a Functor");
+        }
         return $this->apply($fb->map(fn ($b) => fn ($a) => $f($a, $b)));
     }
 }

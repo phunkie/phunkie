@@ -30,20 +30,16 @@ abstract class Validation implements Applicative, Monad, Kind, Foldable
     use Show;
     use FunctorOps;
     public const kind = "Validation";
-    public function isRight(): bool
-    {
-        switch (true) {
-        case $this instanceof Failure: return false;
-        case $this instanceof Success: return true;
-        default: throw new TypeError("Validation cannot be extended outside namespace"); }
+    public function isRight(): bool { return match (true) {
+        $this instanceof Failure => false,
+        $this instanceof Success => true,
+        default => throw new TypeError("Validation cannot be extended outside namespace") };
     }
 
-    public function isLeft(): bool
-    {
-        switch (true) {
-        case $this instanceof Success: return false;
-        case $this instanceof Failure: return true;
-        default: throw new TypeError("Validation cannot be extended outside namespace"); }
+    public function isLeft(): bool { return match (true) {
+        $this instanceof Success => false,
+        $this instanceof Failure => true,
+        default => throw new TypeError("Validation cannot be extended outside namespace") };
     }
 
     public function getTypeArity(): int
@@ -51,30 +47,21 @@ abstract class Validation implements Applicative, Monad, Kind, Foldable
         return 2;
     }
 
-    public function getTypeVariables(): array
-    {
-        $on = pmatch($this);
-        switch (true) {
-        case $on(Valid($a)): return ['E', showType($a)];
-        case $on(Invalid($e)): return [showType($e), 'A'];}
+    public function getTypeVariables(): array { $on = pmatch($this); return match (true) {
+        $on(Valid($a)) => ['E', showType($a)],
+        $on(Invalid($e)) => [showType($e), 'A']};
     }
 
-    public function combine(Validation $that): Validation
-    {
-        $on = pmatch($this, $that);
-        switch (true) {
-        case $on(Valid($a), Valid($b)): return Success(combine($a, $b));
-        case $on(Invalid($x), Invalid($y)): return Failure(combine($x, $y));
-        case $on(Failure(_), _): return $this;
-        case $on(_): return $that;}
+    public function combine(Validation $that): Validation { $on = pmatch($this, $that); return match (true) {
+        $on(Valid($a), Valid($b)) => Success(combine($a, $b)),
+        $on(Invalid($x), Invalid($y)) => Failure(combine($x, $y)),
+        $on(Failure(_), _) => $this,
+        $on(_) => $that };
     }
 
-    public function toOption(): Option
-    {
-        $on = pmatch($this);
-        switch (true) {
-        case $on(Valid($a)): return Some($a);
-        case $on(Failure(_)): return None(); }
+    public function toOption(): Option { $on = pmatch($this); return match (true) {
+        $on(Valid($a)) => Some($a),
+        $on(Failure(_)) => None() };
     }
 
     abstract public function getOrElse($default);

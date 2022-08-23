@@ -60,12 +60,11 @@ final class Success extends Validation
         return $f($this->valid);
     }
 
-    public function apply(Kind $f): Kind
-    {
-        switch (true) {
-            case $f instanceof Success && is_callable($f->valid): return Success(($f->valid)($this->valid));
-            case $f instanceof Failure && !is_callable(($f->fold(identity))(_)): return $f;
-        }
+    public function apply(Kind $f): Kind { return match (true) {
+        $f instanceof Success && is_callable($f->valid)
+            => Success(($f->valid)($this->valid)),
+        $f instanceof Failure && !is_callable(($f->fold(identity))(_))
+            => $f };
     }
 
     public function pure($a): Applicative

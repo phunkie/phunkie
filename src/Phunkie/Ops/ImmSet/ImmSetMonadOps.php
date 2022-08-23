@@ -32,21 +32,11 @@ trait ImmSetMonadOps
      */
     private function createNewImmSetArray(mixed $f, $tmp, array $b): array
     {
-        switch (true) {
-            case $f instanceof None:
-            case $tmp instanceof None:
-                break;
-            case $tmp instanceof ImmSet:
-                foreach ($tmp->toArray() as $value) {
-                    $b[] = $value;
-                }
-                break;
-            case $tmp instanceof Option:
-                $b[] = $tmp->get();
-                break;
-            default:
-                throw new \BadMethodCallException('Type mismatch');
-        }
-        return $b;
+        return match (true) {
+            $f instanceof None, $tmp instanceof None => $b,
+            $tmp instanceof ImmSet => array_merge($b, $tmp->toArray()),
+            $tmp instanceof Option => array_merge($b, $tmp->get()),
+            default => throw new \BadMethodCallException('Type mismatch')
+        };
     }
 }

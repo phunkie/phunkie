@@ -42,14 +42,12 @@ class ImmList implements Kind, Applicative, Monad, Traverse, Foldable, Traversab
 
     public const kind = ImmList;
     private $values;
-    final public function __construct()
-    {
-        switch (get_class($this)) {
-        case NonEmptyList::class: $this->constructNonEmptyList(func_num_args(), func_get_args()); break;
-        case Cons::class: $this->constructCons(func_num_args(), func_get_args()); break;
-        case Nil::class: $this->constructNil(func_num_args()); break;
-        case ImmList::class: $this->values = func_get_args(); break;
-        default: throw $this->listIsSealed(); }
+    final public function __construct() { match (get_class($this)) {
+        NonEmptyList::class => $this->constructNonEmptyList(func_num_args(), func_get_args()),
+        Cons::class => $this->constructCons(func_num_args(), func_get_args()),
+        Nil::class => $this->constructNil(func_num_args()),
+        ImmList::class => $this->values = func_get_args(),
+        default => throw $this->listIsSealed()};
     }
 
     public function toString(): string

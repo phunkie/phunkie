@@ -26,14 +26,13 @@ trait ImmSetApplicativeOps
             return ImmSet(...$result);
         };
 
-        switch (true) {
-            case $f == None(): return None();
-            case !$this instanceof ImmSet: throw new BadMethodCallException();
-            case $f instanceof ImmSet: return $apply();
-            case $f instanceof Function1 && is_callable($f->get()):
-                return $this->map($f->get());
-            default: throw new BadMethodCallException();
-        }
+        return match (true) {
+            $f == None() => None(),
+            !$this instanceof ImmSet => throw new BadMethodCallException(),
+            $f instanceof ImmSet => $apply(),
+            $f instanceof Function1 && is_callable($f->get()) => $this->map($f->get()),
+            default => throw new BadMethodCallException()
+        };
     }
 
     public function map2(Kind $fb, callable $f): Kind

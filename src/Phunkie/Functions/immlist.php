@@ -15,11 +15,9 @@ namespace {
     use Phunkie\Types\Nil;
     use Phunkie\Types\NonEmptyList;
 
-    function ImmList(...$values): ImmList
-    {
-        switch (count($values)) {
-        case 0: return Nil();
-        default: return new ImmList(...$values); }
+    function ImmList(...$values): ImmList { return match(count($values)) {
+        0 => Nil(),
+        default => new ImmList(...$values) };
     }
 
     function Nil(): ImmList

@@ -252,40 +252,25 @@ namespace Phunkie\Functions\comprehension {
                 }
             }
 
-            $loop = function ($binds) use (&$loop, $result, $f) {
-                switch (count($binds)) {
-                    case 0:
-                        throw new \Error("for comprehension requires at least one binding");
-                        break;
-                    case 1:
+            $loop = fn ($loop, $binds) => match(count($binds)) {
+                0 => throw new \Error("for comprehension requires at least one binding"),
+                1 => ($f = function() use (&$last, $result, $f, $binds) {
                         $last = $binds[0];
                         return $last->monad->map(function ($x) use ($last, $result, $f) {
                             $last->bind->to($x);
-                            switch (count($result)) {
-                                case 0:
-                                    return Unit();
-                                case 1:
-                                    if ($result[0] === _) {
-                                        return Unit();
-                                    }
-                                    return $f($result[0]);
-                                case 2:
-                                    return $f === identity ? Pair($result[0], $result[1]) : $f($result[0], $result[1]);
-                                default:
-                                    return $f === identity ? Tuple(...$result) : $f(...$result);
-                            }
+                            return match (count($result)) {
+                                0 => Unit(),
+                                1 => $result[0] === _ ? Unit() : $f($result[0]),
+                                2 => $f === identity ? Pair($result[0], $result[1]) : $f($result[0], $result[1]),
+                                default => $f === identity ? Tuple(...$result) : $f(...$result)
+                            };
                         });
-                        break;
-                    default:
-                        $current = $binds[0];
-                        return $current->monad->flatMap(function ($x) use ($binds, $current, $loop) {
-                            $current->bind->to($x);
-                            return $loop(array_slice($binds, 1));
-                        });
-                        break;
-                }
-            };
-            return $loop($this->binds);
+                    })(),
+                default => $binds[0]->monad->flatMap(function ($x) use ($binds, &$loop) {
+                        $binds[0]->bind->to($x);
+                        return $loop($loop, array_slice($binds, 1));
+                    })};
+            return $loop($loop, $this->binds);
         }
     }
 }

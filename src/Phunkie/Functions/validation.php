@@ -75,11 +75,8 @@ namespace Phunkie\Functions\validation {
     }
 
     const toOption = "\\Phunkie\\Functions\\validation\\toOption";
-    function toOption(Validation $v): Option
-    {
-        $on = pmatch($v);
-        switch (true) {
-        case $on(Valid($a)): return Some($a);
-        case $on(Invalid(_)): return None(); }
+    function toOption(Validation $v): Option { $on = pmatch($v); return match (true) {
+        $on(Valid($a)) => Some($a),
+        $on(Invalid(_)) => None() };
     }
 }

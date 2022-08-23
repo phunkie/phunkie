@@ -21,10 +21,8 @@ function flatten(Flatten $monad)
 }
 
 const mcompose = "\\Phunkie\\Functions\\monad\\mcompose";
-function mcompose(...$fs)
-{
-    switch (count($fs)) {
-    case 0: return identity;
-    case 1: return bind($fs[0]);
-    default: return compose(bind($fs[0]), mcompose(...array_slice($fs, 1))); }
+function mcompose(...$fs) { return match (count($fs)) {
+    0 => identity,
+    1 => bind($fs[0]),
+    default => compose(bind($fs[0]), mcompose(...array_slice($fs, 1))) };
 }
