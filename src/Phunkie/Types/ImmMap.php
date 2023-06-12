@@ -30,18 +30,14 @@ final class ImmMap implements ArrayAccess, Copiable, Functor, Kind
     use ImmMapFunctorOps;
     private $values;
 
-    public function __construct(...$values)
-    {
-        $this->values = new SplObjectStorage();
-        switch (true) {
-            case $this->noArguments($values): break;
-            case $this->isArrayAndOneArgument($values): $this->createFromArray($values); break;
-            case $this->oddNumberOfArguments($values): throw new \Error("not enough arguments for constructor ImmMap");
-            default: $this->createFromVariadic($values);
-        }
+    public function __construct(...$values) { $this->values = new SplObjectStorage(); match (true) {
+        $this->noArguments($values) => _,
+        $this->isArrayAndOneArgument($values) => $this->createFromArray($values),
+        $this->oddNumberOfArguments($values) => throw new \Error("not enough arguments for constructor ImmMap"),
+        default => $this->createFromVariadic($values) };
     }
 
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         foreach ($this->values as $k) {
             if ($k == promote($offset)) {
@@ -61,12 +57,12 @@ final class ImmMap implements ArrayAccess, Copiable, Functor, Kind
         return None();
     }
 
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
         throw new \TypeError("ImmMaps are immutable");
     }
 
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
         throw new \TypeError("ImmMaps are immutable");
     }

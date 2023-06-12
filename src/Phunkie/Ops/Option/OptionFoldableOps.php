@@ -19,16 +19,12 @@ trait OptionFoldableOps
 {
     public function foldLeft($initial)
     {
-        return applyPartially([$initial], func_get_args(), function (callable $f) use ($initial) {
-            return $f($initial, $this->getOrElse(zero($initial)));
-        });
+        return applyPartially([$initial], func_get_args(), fn (callable $f) => $f($initial, $this->getOrElse(zero($initial))));
     }
 
     public function foldRight($initial)
     {
-        return applyPartially([$initial], func_get_args(), function (callable $f) use ($initial) {
-            return $f($this->getOrElse(zero($initial)), $initial);
-        });
+        return applyPartially([$initial], func_get_args(), fn (callable $f) => $f($this->getOrElse(zero($initial)), $initial));
     }
 
     public function foldMap(callable $f)
@@ -44,8 +40,6 @@ trait OptionFoldableOps
 
     public function fold($initial)
     {
-        return applyPartially([$initial], func_get_args(), function (callable $f) use ($initial) {
-            return $this->isDefined() ? $f($this->get()) : $initial;
-        });
+        return applyPartially([$initial], func_get_args(), fn (callable $f) => $this->isDefined() ? $f($this->get()) : $initial);
     }
 }

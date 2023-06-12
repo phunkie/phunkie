@@ -18,13 +18,9 @@ final class Pair extends Tuple
 {
     use Show;
 
-    public function __get($i)
-    {
-        switch ($i) {
-            case "_1": return parent::__get("_1"); break;
-            case "_2": return parent::__get("_2"); break;
-        }
-        throw new \InvalidArgumentException("Invalid index $i for pair");
+    public function __get($i) { return match ($i) {
+        "_1", "_2" => parent::__get($i),
+        default => throw new \InvalidArgumentException("Invalid index $i for pair")};
     }
 
     public function __set($i, $value)

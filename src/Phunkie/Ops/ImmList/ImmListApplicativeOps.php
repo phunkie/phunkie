@@ -12,7 +12,8 @@
 namespace Phunkie\Ops\ImmList;
 
 use BadMethodCallException;
-use Phunkie\Types\Function1;
+use Phunkie\Cats\Applicative;
+use Phunkie\Cats\Functor;
 use Phunkie\Types\ImmList;
 use Phunkie\Types\Kind;
 use Phunkie\Types\Option;
@@ -25,47 +26,24 @@ trait ImmListApplicativeOps
 {
     use ImmListFunctorOps;
 
-    public function pure($a): Kind
+    public function pure($a): Applicative
     {
         return ImmList($a);
     }
 
-    /**
-     * @param List<callable<A,B>> $f
-     * @return List<B>
-     */
-    public function apply(Kind $f): Kind
-    {
-        $apply = function () use ($f) {
-            $result = [];
-            foreach ($this->toArray() as $a) {
-                foreach ($f->toArray() as $ff) {
-                    if (!is_callable($ff)) {
-                        throw new TypeError(sprintf("`apply` takes List<callable>, List<%s> given", gettype($ff)));
-                    }
-                    $result[] = call_user_func($ff, $a);
-                }
-            }
-            return ImmList(...$result);
-        };
-
-        switch (true) {
-            case $f == None(): return None();
-            case $f instanceof Option: throw new TypeError(sprintf("`apply` takes List<callable>, Option<%s> given", gettype($f->get())));
-            case !$this instanceof ImmList: throw new BadMethodCallException();
-            case $this == Nil(): return Nil();
-            case $f instanceof ImmList: return $apply();
-            case $f instanceof Function1 && is_callable($f->get()): case $f instanceof Option && is_callable($f->get()):
-                return $this->map($f->get());
-        }
+    public function apply(Kind $f): Kind { return match(true) {
+        $f == None()          => None(),
+        $f instanceof Option  => throw new TypeError(sprintf("`apply` takes List<callable>, Option<%s> given", gettype($f->get()))),
+        $this == Nil()        => Nil(),
+        $f instanceof ImmList => $this->map(fn($a) => $f->map(fn($ff) => $ff($a))->toArray()[0]),
+        default               => throw new BadMethodCallException() };
     }
 
     public function map2(Kind $fb, callable $f): Kind
     {
-        return $this->apply($fb->map(function ($b) use ($f) {
-            return function ($a) use ($f, $b) {
-                return $f($a, $b);
-            };
-        }));
+        if (!$fb instanceof Functor) {
+            throw new TypeError("Argument must be a functor");
+        }
+        return $this->apply($fb->map(fn ($b) => fn ($a) => $f($a, $b)));
     }
 }

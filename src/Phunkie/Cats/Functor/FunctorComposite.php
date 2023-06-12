@@ -22,13 +22,14 @@ class FunctorComposite
 {
     use Show;
     use FunctorOps;
-    protected $kinds = [];
+    protected array $kinds = [];
 
     public function __construct(string $kind)
     {
-        switch ($kind) {
-        case ImmList::kind: case Option::kind: case Function1::kind: $this->kinds[] = $kind; break;
-        default: throw new \RuntimeException("Composing functor of kind $kind is not supported"); }
+        $this->kinds[] = match ($kind) {
+            ImmList::kind, Option::kind, Function1::kind => $kind,
+            default => throw new \RuntimeException("Composing functor of kind $kind is not supported")
+        };
     }
 
     public function map(Kind $fa, callable $f)
@@ -54,9 +55,7 @@ class FunctorComposite
             }
             public function map(Kind $fga, callable $f)
             {
-                return $this->fa->map($fga, function ($ga) use ($f) {
-                    return $ga->map($f);
-                });
+                return $this->fa->map($fga, fn ($ga) => $ga->map($f));
             }
         };
         $functor->kinds = array_merge($this->kinds, $functor->kinds);
@@ -65,9 +64,7 @@ class FunctorComposite
 
     public function toString(): string
     {
-        $covertImmListToList = function ($kind) {
-            return $kind == ImmList::kind ? 'List' : $kind;
-        };
+        $covertImmListToList = fn ($kind) => $kind == ImmList::kind ? 'List' : $kind;
         $kinds = array_map($covertImmListToList, $this->kinds);
         return "Functor(" . implode("(", $kinds) . str_repeat(")", count($kinds));
     }

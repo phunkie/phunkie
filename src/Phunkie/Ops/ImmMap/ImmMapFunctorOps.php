@@ -34,24 +34,18 @@ trait ImmMapFunctorOps
     public function as($b): Kind
     {
         if ($b->_1 === _) {
-            return $this->map(function (Pair $keyValue) use ($b) {
-                return Pair($keyValue->_1, $b->_2);
-            });
+            return $this->map(fn (Pair $keyValue) => Pair($keyValue->_1, $b->_2));
         }
         return ImmMap($b->_1, $b->_2);
     }
 
     public function void(): Kind
     {
-        return $this->map(function (Pair $keyValue) {
-            return Pair($keyValue->_1, Unit());
-        });
+        return $this->map(fn (Pair $keyValue) => Pair($keyValue->_1, Unit()));
     }
 
     public function zipWith($f): Kind
     {
-        return $this->map(function (Pair $keyValue) use ($f) {
-            return Pair($keyValue->_1, Pair($keyValue->_2, $f($keyValue->_2)));
-        });
+        return $this->map(fn (Pair $keyValue) => Pair($keyValue->_1, Pair($keyValue->_2, $f($keyValue->_2))));
     }
 }

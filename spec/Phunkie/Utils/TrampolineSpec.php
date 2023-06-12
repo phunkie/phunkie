@@ -28,16 +28,12 @@ class TrampolineSpec extends TestCase
 
 function even($number): Trampoline
 {
-    return $number == 0 ? new Done(true) : new More(function () use ($number) {
-        return odd($number - 1);
-    });
+    return $number == 0 ? new Done(true) : new More(fn () => odd($number - 1));
 }
 
 function odd($number): Trampoline
 {
-    return $number == 0 ? new Done(false) : new More(function () use ($number) {
-        return even($number - 1);
-    });
+    return $number == 0 ? new Done(false) : new More(fn () => even($number - 1));
 }
 
 //function even($number) {

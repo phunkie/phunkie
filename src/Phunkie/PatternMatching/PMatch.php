@@ -64,25 +64,22 @@ class PMatch
     }
 }
 
-function conditionIsValid($condition, $value)
-{
-    switch (true) {
-        case $condition === _:
-        case matchSomeByReference($condition, $value):
-        case matchByReference($condition, $value):
-        case matchesNone($condition, $value):
-        case matchesNil($condition, $value):
-        case matchesWildcardedNel($condition, $value):
-        case matchesConsWildcardedHead($condition, $value):
-        case matchesConsWildcardedTail($condition, $value):
-        case matchesWildcardedFunction1($condition, $value):
-        case matchesWildcardedSome($condition, $value):
-        case matchesWildcardedFailure($condition, $value):
-        case matchesWildcardedSuccess($condition, $value):
-        case sameTypeSameValue($condition, $value):
-            return true;
-        default: return false;
-    }
+function conditionIsValid($condition, $value) { return match (true) {
+    $condition === _,
+    matchSomeByReference($condition, $value),
+    matchByReference($condition, $value),
+    matchesNone($condition, $value),
+    matchesNil($condition, $value),
+    matchesWildcardedNel($condition, $value),
+    matchesConsWildcardedHead($condition, $value),
+    matchesConsWildcardedTail($condition, $value),
+    matchesWildcardedFunction1($condition, $value),
+    matchesWildcardedSome($condition, $value),
+    matchesWildcardedFailure($condition, $value),
+    matchesWildcardedSuccess($condition, $value),
+    sameTypeSameValue($condition, $value) =>
+        true,
+    default => false };
 }
 
 function matchesWildcardedSome($condition, $value)
@@ -160,12 +157,12 @@ function matchByReference($condition, $value)
     if ($condition instanceof GenericReferenced) {
         return matchGenericByReference($condition, $value, $condition->class);
     }
-    switch (true) {
-        case matchListByReference($condition, $value):
-        case matchListHeadByReference($condition, $value):
-            return true;
-        default: return false;
-    }
+    return match (true) {
+        matchListByReference($condition, $value),
+        matchListHeadByReference($condition, $value) =>
+            true,
+        default => false
+    };
 }
 
 function matchGenericByReference($condition, $object, $class)

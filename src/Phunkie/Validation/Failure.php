@@ -11,6 +11,7 @@
 
 namespace Phunkie\Validation;
 
+use Phunkie\Cats\Applicative;
 use Phunkie\Types\Kind;
 use function Phunkie\Functions\show\showValue;
 
@@ -45,9 +46,7 @@ final class Failure extends Validation
 
     public function fold($fe)
     {
-        return function ($fa) use ($fe) {
-            return $fe($this->invalid);
-        };
+        return fn ($fa) => $fe($this->invalid);
     }
 
     public function flatten(): Kind
@@ -68,7 +67,7 @@ final class Failure extends Validation
         return $this;
     }
 
-    public function pure($e): Kind
+    public function pure($e): Applicative
     {
         return Failure($e);
     }

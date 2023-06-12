@@ -38,29 +38,19 @@ trait ImmListOps
 {
     abstract public function toArray(): array;
 
-    public function __get($property)
-    {
-        switch ($property) {
-            case 'length': return count($this->toArray());
-            case 'head': return $this->head();
-            case 'tail': return $this->tail();
-            case 'init': return $this->init();
-            case 'last': return $this->last();
-        }
-        throw new Error("value $property is not a member of ImmList");
+    public function __get($property) { return match ($property) {
+        'length' => count($this->toArray()),
+        'head' => $this->head(),
+        'tail' => $this->tail(),
+        'init' => $this->init(),
+        'last' => $this->last(),
+        default => throw new Error("value $property is not a member of ImmList") };
     }
 
-    public function __set($property, $unused)
-    {
-        switch ($property) {
-            case 'length':
-            case 'head':
-            case 'tail':
-            case 'init':
-            case 'last':
-                throw new Error("Can't change the value of members of a ImmList");
-        }
-        throw new Error("value $property is not a member of ImmList");
+    public function __set($property, $unused) { return match ($property) {
+            'length', 'head', 'tail', 'init', 'last'
+                => throw new Error("Can't change the value of members of a ImmList"),
+             default => throw new Error("value $property is not a member of ImmList") };
     }
 
     public function head()
@@ -111,9 +101,7 @@ trait ImmListOps
 
     public function reject(callable $condition): ImmList
     {
-        return ImmList(...array_filter($this->toArray(), function ($x) use ($condition) {
-            return !$condition($x);
-        }));
+        return ImmList(...array_filter($this->toArray(), fn ($x) => !$condition($x)));
     }
 
     public function reduce(callable $f)
@@ -123,18 +111,21 @@ trait ImmListOps
         /** @var \Exception $e */
         $e = null;
 
+        $reduceListWithTail = function($f, $x, $xs) {
+            $result = $f($x, $xs->reduce($f));
+            $when = $this->isSameTypeAsList($result);
+            return match (true) {
+                $when(Invalid($e)) => throw $e,
+                $when(Valid($x)) => $x
+            };
+        };
+
         $on = pmatch($this);
-        switch (true) {
-            case $on(Nil): throw $this->cantReduceEmptyList();
-            case $on(ListNoTail($x, Nil)): return $x;
-            default: $on(ListWithTail($x, $xs));
-                $result = $f($x, $xs->reduce($f));
-                $when = $this->isSameTypeAsList($result);
-                switch (true) {
-                    case      $when(Invalid($e)): throw $e;
-                    default: $when(Valid($x)); return $x;
-                }
-        }
+        return match (true) {
+            $on(Nil) => throw $this->cantReduceEmptyList(),
+            $on(ListNoTail($x, Nil)) => $x,
+            $on(ListWithTail($x, $xs)) => $reduceListWithTail($f, $x, $xs)
+        };
     }
 
     public function nth(int $nth): Option
@@ -179,31 +170,24 @@ trait ImmListOps
         return ImmList(...array_reverse($this->toArray()));
     }
 
-    public function mkString(): string
-    {
-        switch (func_num_args()) {
-            case 1: return $this->mkStringOneArgument(func_get_arg(0));
-            case 3: return $this->mkStringThreeArguments(func_get_arg(0), func_get_arg(1), func_get_arg(2));
-            default: throw new Error("wrong number of arguments for mkString, should be 1 or 3, " . func_num_args() . " given");
-        }
+    public function mkString(): string { return match (func_num_args()) {
+        1 => $this->mkStringOneArgument(func_get_arg(0)),
+        3 => $this->mkStringThreeArguments(func_get_arg(0), func_get_arg(1), func_get_arg(2)),
+        default => throw new Error("wrong number of arguments for mkString, should be 1 or 3, " . func_num_args() . " given") };
     }
 
     public function transpose()
     {
         $new = [];
         foreach ($this->head->toArray() as $i => $values) {
-            $new[] = $this->map(function (ImmList $list) use ($i) {
-                return $list->nth($i)->get();
-            });
+            $new[] = $this->map(fn (ImmList $list) => $list->nth($i)->get());
         }
         return ImmList(...$new);
     }
 
     private function mkStringOneArgument($glue): string
     {
-        return implode($glue, array_map(function ($e) {
-            return is_string($e) ? $e : showValue($e);
-        }, $this->toArray()));
+        return implode($glue, array_map(fn ($e) => is_string($e) ? $e : showValue($e), $this->toArray()));
     }
 
     private function mkStringThreeArguments($start, $glue, $end): string
@@ -233,27 +217,25 @@ trait ImmListOps
      * @param int $index
      * @return Pair<ImmList<A>,ImmList<A>>
      */
-    public function splitAt(int $index): Pair
-    {
-        switch (true) {
-        case $index == 0:                    return Pair(Nil(), clone $this);
-        case $index >= count($this->toArray()): return Pair(clone $this, Nil());
-        default: return Pair(
+    public function splitAt(int $index): Pair { return match (true) {
+        $index == 0 => Pair(Nil(), clone $this),
+        $index >= count($this->toArray()) => Pair(clone $this, Nil()),
+        default => Pair(
             ImmList(...array_slice($this->toArray(), 0, $index)),
             ImmList(...array_slice($this->toArray(), $index))
-        ); }
+        ) };
     }
 
     public function partition(callable $condition): Pair
     {
-        $trues = $falses = [];
+        $truesAndFalses = Pair([], []);
         foreach ($this->toArray() as $value) {
-            switch ($result = call_user_func($condition, $value)) {
-            case true: $trues[] = $value; break;
-            case false: $falses[] = $value; break;
-            default: throw $this->callableMustReturnBoolean($result); }
+            $truesAndFalses = match ($result = call_user_func($condition, $value)) {
+                true => $truesAndFalses(array_merge($truesAndFalses->_1, $value), $truesAndFalses->_2),
+                false => $truesAndFalses($truesAndFalses->_1, array_merge($truesAndFalses->_2, $value)),
+                default => throw $this->callableMustReturnBoolean($result) };
         }
-        return Pair(ImmList(...$trues), ImmList(...$falses));
+        return Pair(ImmList(...$truesAndFalses->_1), ImmList(...$truesAndFalses->_2));
     }
 
     private function callableMustReturnBoolean($result): Exception

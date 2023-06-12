@@ -48,9 +48,7 @@ class Reader
      */
     public function flatMap($f)
     {
-        return Reader(function ($a) use ($f) {
-            return $f($this->run($a))->run($a);
-        });
+        return Reader(fn ($a) => $f($this->run($a))->run($a));
     }
 
     /**

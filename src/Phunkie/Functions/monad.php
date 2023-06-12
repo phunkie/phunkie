@@ -11,9 +11,7 @@ use const Phunkie\Functions\function1\identity;
 const bind = "\\Phunkie\\Functions\\monad\\bind";
 function bind($f)
 {
-    return applyPartially([$f], func_get_args(), function (FlatMap $monad) use ($f) {
-        return $monad->flatMap($f);
-    });
+    return applyPartially([$f], func_get_args(), fn (FlatMap $monad) => $monad->flatMap($f));
 }
 
 const flatten = "\\Phunkie\\Functions\\monad\\flatten";
@@ -23,10 +21,8 @@ function flatten(Flatten $monad)
 }
 
 const mcompose = "\\Phunkie\\Functions\\monad\\mcompose";
-function mcompose(...$fs)
-{
-    switch (count($fs)) {
-    case 0: return identity;
-    case 1: return bind($fs[0]);
-    default: return compose(bind($fs[0]), mcompose(...array_slice($fs, 1))); }
+function mcompose(...$fs) { return match (count($fs)) {
+    0 => identity,
+    1 => bind($fs[0]),
+    default => compose(bind($fs[0]), mcompose(...array_slice($fs, 1))) };
 }

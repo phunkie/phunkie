@@ -23,13 +23,12 @@ trait ImmListMonadOps
         $b = [];
         foreach ($this->toArray() as $a) {
             $tmp = $f($a);
-            switch (true) {
-                case $f instanceof None: case $tmp instanceof None: break;
-                case $tmp instanceof ImmList: foreach ($tmp->toArray() as $value) {
-                    $b[] = $value;
-                } break;
-                case $tmp instanceof Option: $b[] = $tmp->get(); break;
-                default: throw new \BadMethodCallException("Type mismatch");
+            if (!$f instanceof None && !$tmp instanceof None) {
+                $b = match (true) {
+                    $tmp instanceof ImmList => array_merge($b, $tmp->toArray()),
+                    $tmp instanceof Option => array_merge($b, [$tmp->get()]),
+                    default => throw new \BadMethodCallException("Type mismatch")
+                };
             }
         }
         return \ImmList(...$b);
@@ -37,8 +36,6 @@ trait ImmListMonadOps
 
     public function flatten(): Kind
     {
-        return $this->flatMap(function ($x) {
-            return $x;
-        });
+        return $this->flatMap(fn ($x) => $x);
     }
 }

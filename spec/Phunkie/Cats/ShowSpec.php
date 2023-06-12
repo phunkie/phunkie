@@ -34,9 +34,7 @@ class ShowSpec extends TestCase
         $this->assertEquals(showType(Nil()), "List<Nothing>");
         $this->assertEquals(showType(ImmList(1, 2, "f")), "List<Mixed>");
         $this->assertEquals(showType(ImmList(Some(32), Some(56), None())), "List<Option<Int>>");
-        $this->assertEquals(showType(Function1(function (int $x): bool {
-            return $x == 42;
-        })), "Function1");
+        $this->assertEquals(showType(Function1(fn (int $x): bool => $x == 42)), "Function1");
 
         $this->assertEquals(showType(Pair(42, "42")), "(Int, String)");
 
@@ -59,19 +57,13 @@ class ShowSpec extends TestCase
         $this->assertEquals(showValue(true), "true");
         $this->assertEquals(showValue(null), "null");
         $this->assertEquals(showValue([1,2,3]), "[1, 2, 3]");
-        $this->assertEquals(showValue(function (int $x): bool {
-            return $x == 42;
-        }), "<function>");
+        $this->assertEquals(showValue(fn (int $x): bool => $x == 42), "<function>");
 
         $this->assertEquals(showValue(Some(42)), Some(42)->show());
         $this->assertEquals(showValue(ImmList(42)), ImmList(42)->show());
         $this->assertEquals(
-            showValue(Function1(function (int $x): bool {
-                return $x == 42;
-            })),
-            Function1(function (int $x): bool {
-                return $x == 42;
-            })->show()
+            showValue(Function1(fn (int $x): bool => $x == 42)),
+            Function1(fn (int $x): bool => $x == 42)->show()
         );
         $this->assertEquals(showValue(Success(42)), Success(42)->show());
         $this->assertEquals(showValue(Failure(42)), Failure(42)->show());

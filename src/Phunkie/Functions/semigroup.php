@@ -29,34 +29,33 @@ function combine(...$parts)
         return $parents;
     };
 
-    $combine = function ($a, $b) use ($getParentClasses) {
-        switch (true) {
-        case $a instanceof Unit: return $b;
-        case $b instanceof Unit: return $a;
-        case gettype($a) != gettype($b) && is_object($a): throw new TypeError("cannot combine values of different types. using " . get_class($a));
-        case gettype($a) != gettype($b): throw new TypeError("combine is not defined for type " . gettype($a));
-        case gettype($a) == gettype($b): switch (gettype($a)) {
-            case "int": case "integer": case "double": case "float": return $a + $b;
-            case "string": return $a . $b;
-            case "bool": case "boolean": return $a && $b;
-            case "array": return array_merge($a, $b);
-            case "object":
-                if (method_exists($a, 'combine')) {
-                    return $a->combine($b);
-                }
-                if (is_callable($a)) {
-                    return function () use ($a, $b) {
-                        return $a($b(...func_get_args()));
-                    };
-                }
-                foreach (array_intersect($getParentClasses($a), $getParentClasses($b)) as $parent) {
-                    if (method_exists($parent, 'combine')) {
-                        return $a->combine($b);
-                    }
-                }
-                break; } }
-        throw new TypeError("combining members of different semigroups");
+    $combineObjects = function ($a, $b) use ($getParentClasses) {
+        if (method_exists($a, 'combine')) {
+            return $a->combine($b);
+        }
+        if (is_callable($a)) {
+            return fn () => $a($b(...func_get_args()));
+        }
+        foreach (array_intersect($getParentClasses($a), $getParentClasses($b)) as $parent) {
+            if (method_exists($parent, 'combine')) {
+                return $a->combine($b);
+            }
+        }
     };
+
+    $combine = fn ($a, $b) => match (true) {
+        $a instanceof Unit => $b,
+        $b instanceof Unit => $a,
+        gettype($a) != gettype($b) && is_object($a) => throw new TypeError("cannot combine values of different types. using " . get_class($a)),
+        gettype($a) != gettype($b) => throw new TypeError("combine is not defined for type " . gettype($a)),
+        gettype($a) == gettype($b) => match (gettype($a)) {
+            "int", "integer", "double", "float" => $a + $b,
+            "string" => $a . $b,
+            "bool", "boolean" => $a && $b,
+            "array" => array_merge($a, $b),
+            "object" => $combineObjects($a, $b) },
+        default => throw new TypeError("combining members of different semigroups") }
+    ;
 
     if (func_num_args() == 0) {
         return Unit();
@@ -70,23 +69,13 @@ function combine(...$parts)
 }
 
 const zero = "\\Phunkie\\Functions\\semigroup\\zero";
-function zero($a)
-{
-    switch (gettype($a)) {
-    case "int": case "integer": return 0;
-    case "double": case "float": return 0.0;
-    case "string": return "";
-    case "bool": case "boolean": return true;
-    case "array": return [];
-    case "object":
-        if (method_exists($a, "zero")) {
-            return $a->zero();
-        }
-        if (is_callable($a)) {
-            return function ($x) {
-                return $x;
-            };
-        }
-        break; }
-    throw new TypeError("zero is not defined for type " . gettype($a));
+function zero($a) { return match (gettype($a)) {
+    "int", "integer"=> 0,
+    "double", "float"=> 0.0,
+    "string"=> "",
+    "bool", "boolean"=> true,
+    "array"=> [],
+    "object" =>
+        method_exists($a, "zero") ? $a->zero() : (is_callable($a) ? fn ($x) => $x : throw new TypeError("zero is not defined for " . get_class($a))), 
+    default => throw new TypeError("zero is not defined for type " . gettype($a)) };
 }

@@ -3,6 +3,7 @@
 namespace Phunkie\Ops\ImmSet;
 
 use BadMethodCallException;
+use Phunkie\Cats\Applicative;
 use Phunkie\Types\Function1;
 use Phunkie\Types\ImmSet;
 use Phunkie\Types\Kind;
@@ -25,26 +26,21 @@ trait ImmSetApplicativeOps
             return ImmSet(...$result);
         };
 
-        switch (true) {
-            case $f == None(): return None();
-            case !$this instanceof ImmSet: throw new BadMethodCallException();
-            case $f instanceof ImmSet: return $apply();
-            case $f instanceof Function1 && is_callable($f->get()):
-                return $this->map($f->get());
-            default: throw new BadMethodCallException();
-        }
+        return match (true) {
+            $f == None() => None(),
+            !$this instanceof ImmSet => throw new BadMethodCallException(),
+            $f instanceof ImmSet => $apply(),
+            $f instanceof Function1 && is_callable($f->get()) => $this->map($f->get()),
+            default => throw new BadMethodCallException()
+        };
     }
 
     public function map2(Kind $fb, callable $f): Kind
     {
-        return $this->apply($fb->map(function ($b) use ($f) {
-            return function ($a) use ($f, $b) {
-                return $f($a, $b);
-            };
-        }));
+        return $this->apply($fb->map(fn ($b) => fn ($a) => $f($a, $b)));
     }
 
-    public function pure($a): Kind
+    public function pure($a): Applicative
     {
         return ImmSet($a);
     }

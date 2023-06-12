@@ -33,12 +33,8 @@ namespace Phunkie\Functions\lens {
     function trivial()
     {
         return Lens(
-            function ($a) {
-                return Unit();
-            },
-            function ($ignore, $a) {
-                return $a;
-            }
+            fn ($a) => Unit(),
+            fn ($ignore, $a) => $a
         );
     }
 
@@ -47,9 +43,7 @@ namespace Phunkie\Functions\lens {
     {
         return Lens(
             identity,
-            function ($a, $ignore) {
-                return $a;
-            }
+            fn ($a, $ignore) => $a
         );
     }
 
@@ -57,12 +51,8 @@ namespace Phunkie\Functions\lens {
     function fst()
     {
         return Lens(
-            function (Pair $p) {
-                return $p->_1;
-            },
-            function ($a, Pair $p) {
-                return $p->copy(["_1" => $a]);
-            }
+            fn (Pair $p) => $p->_1,
+            fn ($a, Pair $p) => $p->copy(["_1" => $a])
         );
     }
 
@@ -70,12 +60,8 @@ namespace Phunkie\Functions\lens {
     function snd()
     {
         return Lens(
-            function (Pair $p) {
-                return $p->_2;
-            },
-            function ($b, Pair $p) {
-                return $p->copy(["_2" => $b]);
-            }
+            fn (Pair $p) => $p->_2,
+            fn ($b, Pair $p) => $p->copy(["_2" => $b])
         );
     }
 
@@ -83,15 +69,10 @@ namespace Phunkie\Functions\lens {
     function contains($element)
     {
         return Lens(
-            function (ImmSet $s) use ($element) {
-                return $s->contains($element);
-            },
-            function (ImmSet $s, bool $plusOrMinus) use ($element) {
-                switch ($plusOrMinus) {
-                case true: return $s->plus($element);
-                case false: return $s->minus($element);
-                }
-            }
+            fn (ImmSet $s) => $s->contains($element),
+            fn (ImmSet $s, bool $plusOrMinus) => match ($plusOrMinus) {
+                true => $s->plus($element),
+                false => $s->minus($element) }
         );
     }
 
@@ -99,14 +80,10 @@ namespace Phunkie\Functions\lens {
     function member($k)
     {
         return Lens(
-            function (ImmMap $m) use ($k) {
-                return $m->get($k);
-            },
-            function (ImmMap $m, Option $v) use ($k) {
-                $on = pmatch($v);
-                switch (true) {
-                case $on(None): return $m->minus($k);
-                case $on(Maybe($v)): return $m->minus($k)->plus($k, $v);}
+            fn (ImmMap $m) => $m->get($k),
+            function (ImmMap $m, Option $v) use ($k) { $on = pmatch($v); return match (true) {
+                $on(None) => $m->minus($k),
+                $on(Maybe($v)) => $m->minus($k)->plus($k, $v)};
             }
         );
     }

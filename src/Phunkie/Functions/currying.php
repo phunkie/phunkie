@@ -14,19 +14,13 @@ namespace Phunkie\Functions\currying;
 const curry = "\\Phunkie\\Functions\\currying\\curry";
 function curry($f)
 {
-    return function ($a) use ($f) {
-        return function ($b) use ($a, $f) {
-            return $f($a, $b);
-        };
-    };
+    return fn ($a) => fn ($b) => $f($a, $b);
 }
 
 const uncurry = "\\Phunkie\\Functions\\currying\\uncurry";
 function uncurry($f)
 {
-    return function ($a, $b) use ($f) {
-        return ($f($a))($b);
-    };
+    return fn ($a, $b) => ($f($a))($b);
 }
 
 function applyPartially($declaredArgs, $passedArgs, $f)
@@ -35,9 +29,7 @@ function applyPartially($declaredArgs, $passedArgs, $f)
     $countOfDeclaredArgs = count($declaredArgs);
 
     if ($countOfDeclaredArgs == $countOfPassedArgs) {
-        return function ($x) use ($f) {
-            return $x === _ ? $f : $f($x);
-        };
+        return fn ($x) => $x === _ ? $f : $f($x);
     }
 
     if ($countOfDeclaredArgs == $countOfPassedArgs - 1) {

@@ -16,33 +16,25 @@ namespace Phunkie\Functions\state {
     const get = "\\Phunkie\\Functions\\state\\get";
     function get()
     {
-        return new State(function ($s) {
-            return Pair($s, $s);
-        });
+        return new State(fn ($s) => Pair($s, $s));
     }
 
     const gets = "\\Phunkie\\Functions\\state\\gets";
     function gets(callable $f): State
     {
-        return new State(function ($s) use ($f) {
-            return Pair($s, $f($s));
-        });
+        return new State(fn ($s) => Pair($s, $f($s)));
     }
 
     const put = "\\Phunkie\\Functions\\state\\put";
     function put($s): State
     {
-        return new State(function ($ignore) use ($s) {
-            return Pair($s, Unit());
-        });
+        return new State(fn ($ignore) => Pair($s, Unit()));
     }
 
     const modify = "\\Phunkie\\Functions\\state\\modify";
     function modify(callable $f)
     {
-        return new State(function ($s) use ($f) {
-            return Pair($f($s), Unit());
-        });
+        return new State(fn ($s) => Pair($f($s), Unit()));
     }
 }
 
@@ -52,9 +44,7 @@ namespace {
 
     function State($a)
     {
-        return new State(function ($s) use ($a) {
-            return Pair($s, $a);
-        });
+        return new State(fn ($s) => Pair($s, $a));
     }
 
 }

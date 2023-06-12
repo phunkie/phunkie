@@ -24,15 +24,20 @@ final class Function1 implements Kind, Applicative
     use Function1EqOps;
     use Show;
     public const kind = "Function1";
-    private $reflection;
+    private \ReflectionFunction|\ReflectionMethod $reflection;
     private $f;
 
     public function __construct(callable $f)
     {
         $this->f = $f;
-        $this->reflection = method_exists($f, '__invoke') ?
-                            new \ReflectionMethod($f, '__invoke') :
-                            new \ReflectionFunction($f);
+        try {
+            $this->reflection = method_exists($f, '__invoke') ?
+                new \ReflectionMethod($f, '__invoke') :
+                new \ReflectionFunction($f);
+        } catch (\ReflectionException $e) {
+            throw new \TypeError("Not a valid function");
+        }
+
         $this->guardCallableNumberOfParameters();
     }
 
@@ -54,9 +59,7 @@ final class Function1 implements Kind, Applicative
     public function andThen(callable $g): Function1
     {
         $f = $this;
-        return Function1(function ($x) use ($f, $g) {
-            return $g($f->invokeFunctionOnArg($x));
-        });
+        return Function1(fn ($x) => $g($f->invokeFunctionOnArg($x)));
     }
 
     public function compose(callable $g): Function1
@@ -71,9 +74,7 @@ final class Function1 implements Kind, Applicative
 
     public static function identity(): Function1
     {
-        return Function1(function ($x) {
-            return $x;
-        });
+        return Function1(fn ($x) => $x);
     }
 
     public function zero()
@@ -113,7 +114,7 @@ final class Function1 implements Kind, Applicative
         return "Function1";
     }
 
-    private function invokeFunctionOnArg($arg)
+    protected function invokeFunctionOnArg($arg)
     {
         return call_user_func($this->f, $arg);
     }

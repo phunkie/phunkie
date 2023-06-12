@@ -32,13 +32,10 @@ class NaturalTransformation
         return "~>[$this->from, $this->to]";
     }
 
-    public function __get($member)
-    {
-        switch ($member) {
-            case "from": return $this->from;
-            case "to": return $this->to;
-        }
-        throw new \Error("$member is not a member of Natural Transformation");
+    public function __get($member) { return match ($member) {
+        "from" => $this->from,
+        "to" => $this->to,
+        default => throw new \Error("$member is not a member of Natural Transformation") };
     }
 
     public function __set($member, $value)

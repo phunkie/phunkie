@@ -16,24 +16,18 @@ use Phunkie\Utils\Traversable;
 
 final class Nil extends ImmList
 {
-    public function __get($property)
-    {
-        switch ($property) {
-            case 'length': return 0;
-            case 'head': return $this->head();
-            case 'tail': return $this->tail();
-            case 'init': return $this->init();
-            case 'last': return $this->last();
-        }
-        throw new \Error("value $property is not a member of ImmList");
+    public function __get($property) { return match ($property) {
+        'length' => 0,
+        'head' => $this->head(),
+        'tail' => $this->tail(),
+        'init' => $this->init(),
+        'last' => $this->last(),
+        'default' => throw new \Error("value $property is not a member of ImmList")};
     }
 
-    public function __set($property, $unused)
-    {
-        switch ($property) {
-            case 'length': throw new \BadMethodCallException("Can't change the value of members of a ImmList");
-        }
-        throw new \Error("value $property is not a member of ImmList");
+    public function __set($property, $unused) { return match ($property) {
+        'length' => throw new \BadMethodCallException("Can't change the value of members of a ImmList"),
+        default => throw new \Error("value $property is not a member of ImmList")};
     }
 
     public function isEmpty(): bool

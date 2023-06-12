@@ -13,9 +13,7 @@ class ReaderSpec extends TestCase
      */
     public function it_wraps_a_function()
     {
-        $r = new Reader(function (string $a) {
-            return strrev($a);
-        });
+        $r = new Reader(fn (string $a) => strrev($a));
         $this->assertEquals("olleh", $r->run("hello"));
     }
 
@@ -24,15 +22,11 @@ class ReaderSpec extends TestCase
      */
     public function it_implements_map()
     {
-        $r = new Reader(function (string $a) {
-            return strrev($a);
-        });
+        $r = new Reader(fn (string $a) => strrev($a));
         $this->assertEquals(
             "OLLEH",
             $r
-                ->map(function (string $a) {
-                    return strtoupper($a);
-                })
+                ->map(fn (string $a) => strtoupper($a))
                 ->run("hello")
         );
     }

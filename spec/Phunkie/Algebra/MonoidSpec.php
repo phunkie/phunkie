@@ -108,9 +108,7 @@ class MonoidSpec extends TestCase
     public function it_obeys_the_law_of_combine_left_identity_with_callables()
     {
         $this->forAll(
-            ElementsGen::fromArray([function (int $x): string {
-                return (string)$x;
-            }])
+            ElementsGen::fromArray([fn (int $x): string => (string)$x])
         )->then(function ($x) {
             $this->assertTrue($this->combineLeftIdentity($x));
         });
@@ -122,9 +120,7 @@ class MonoidSpec extends TestCase
     public function it_obeys_the_law_of_combine_right_identity_with_callables()
     {
         $this->forAll(
-            ElementsGen::fromArray([function (int $x): string {
-                return (string)$x;
-            }])
+            ElementsGen::fromArray([fn (int $x): string => (string)$x])
         )->then(function ($x) {
             $this->assertTrue($this->combineRightIdentity($x));
         });

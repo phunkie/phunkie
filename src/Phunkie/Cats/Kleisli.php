@@ -35,9 +35,7 @@ class Kleisli
      */
     public function andThen(Kleisli $f): Kleisli
     {
-        return k(function ($a) use ($f) {
-            return $this->run($a)->flatMap($f->run);
-        });
+        return k(fn ($a) => $this->run($a)->flatMap($f->run));
     }
 
     public function run($a)

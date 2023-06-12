@@ -154,9 +154,7 @@ class LensSpec extends TestCase
 
         $lenses = makeLenses("name");
         $this->assertIsLike(
-            $lenses->name->mod(function (Name $name) {
-                return new Name(strtoupper($name->getName()));
-            }, $user),
+            $lenses->name->mod(fn (Name $name) => new Name(strtoupper($name->getName())), $user),
             new User(new Name("JACK BAUER"))
         );
     }
@@ -196,9 +194,7 @@ class LensSpec extends TestCase
         $user = ImmMap(["name" => new Name("Jack Bauer")]);
 
         $lenses = makeLenses("name");
-        $userCopy = $lenses->name->mod(function (Option $name) {
-            return new Name(strtoupper($name->get()->getName()));
-        }, $user);
+        $userCopy = $lenses->name->mod(fn (Option $name) => new Name(strtoupper($name->get()->getName())), $user);
         $this->assertTrue($userCopy->eqv(ImmMap(["name" => new Name("JACK BAUER")])));
     }
 
@@ -273,12 +269,8 @@ class LensSpec extends TestCase
     private function userNameLens()
     {
         return new class (
-            function (User $user) {
-            return $user->getName();
-        },
-            function (Name $name, User $user) {
-                return $user->copy(["name" => $name]);
-            }
+            fn (User $user) => $user->getName(),
+            fn (Name $name, User $user) => $user->copy(["name" => $name])
         ) extends Lens {};
     }
 }

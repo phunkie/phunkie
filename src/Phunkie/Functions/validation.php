@@ -70,18 +70,13 @@ namespace Phunkie\Functions\validation {
     {
         return call_user_func(
             ImmList(...$validations)->foldLeft(Unit()),
-            function ($x, $y) {
-                return combine($x, $y);
-            }
+            fn ($x, $y) => combine($x, $y)
         );
     }
 
     const toOption = "\\Phunkie\\Functions\\validation\\toOption";
-    function toOption(Validation $v): Option
-    {
-        $on = pmatch($v);
-        switch (true) {
-        case $on(Valid($a)): return Some($a);
-        case $on(Invalid(_)): return None(); }
+    function toOption(Validation $v): Option { $on = pmatch($v); return match (true) {
+        $on(Valid($a)) => Some($a),
+        $on(Invalid(_)) => None() };
     }
 }

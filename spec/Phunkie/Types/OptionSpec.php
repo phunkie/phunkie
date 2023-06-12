@@ -69,9 +69,7 @@ class OptionSpec extends TestCase
             new IntGen()
         )->then(function ($a) use ($spec) {
             $this->assertIsLike(
-                Option($a)->map(function ($x) {
-                    return $x + 1;
-                }),
+                Option($a)->map(fn ($x) => $x + 1),
                 Some($a + 1)
             );
         });
@@ -83,9 +81,7 @@ class OptionSpec extends TestCase
     public function it_has_filter()
     {
         $this->assertIsLike(
-            $this->option->filter(function ($x) {
-                return $x == 1;
-            }),
+            $this->option->filter(fn ($x) => $x == 1),
             Some(1)
         );
     }
@@ -97,9 +93,7 @@ class OptionSpec extends TestCase
     {
         $this->assertInstanceOf(
             WithFilter::class,
-            $this->option->withFilter(function ($x) {
-                return $x == 1;
-            })
+            $this->option->withFilter(fn ($x) => $x == 1)
         );
     }
 
@@ -111,15 +105,9 @@ class OptionSpec extends TestCase
         $this->assertIsLike(
             $this
                 ->option
-                ->withFilter(function ($x) {
-                    return $x == 1;
-                })
-                ->map(function ($x) {
-                    return $x;
-                }),
-            $this->option->filter(function ($x) {
-                return $x == 1;
-            })
+                ->withFilter(fn ($x) => $x == 1)
+                ->map(fn ($x) => $x),
+            $this->option->filter(fn ($x) => $x == 1)
         );
     }
 
@@ -128,17 +116,13 @@ class OptionSpec extends TestCase
      */
     public function it_is_an_applicative()
     {
-        $x = (ap(Option(function ($a) {
-            return $a +1;
-        })))(Option(1));
+        $x = (ap(Option(fn ($a) => $a +1)))(Option(1));
         $this->assertIsLike($x, Option(2));
 
         $x = (pure(Option))(42);
         $this->assertIsLike($x, Option(42));
 
-        $x = ((map2(function ($x, $y) {
-            return $x + $y;
-        }))(Option(1)))(Option(2));
+        $x = ((map2(fn ($x, $y) => $x + $y))(Option(1)))(Option(2));
         $this->assertIsLike($x, Option(3));
     }
 
@@ -147,24 +131,16 @@ class OptionSpec extends TestCase
      */
     public function it_is_a_monad()
     {
-        $xs = (bind(function ($a) {
-            return Option($a +1);
-        }))(Option(1));
+        $xs = (bind(fn ($a) => Option($a +1)))(Option(1));
         $this->assertIsLike($xs, Option(2));
 
         $xs = flatten(Option(Option(1)));
         $this->assertIsLike($xs, Option(1));
 
         $xs = Option("h");
-        $f = function (string $s) {
-            return Option($s . "e");
-        };
-        $g = function (string $s) {
-            return Option($s . "l");
-        };
-        $h = function (string $s) {
-            return Option($s . "o");
-        };
+        $f = fn (string $s) => Option($s . "e");
+        $g = fn (string $s) => Option($s . "l");
+        $h = fn (string $s) => Option($s . "o");
         $hello = mcompose($f, $g, $g, $h);
         $this->assertIsLike($hello($xs), Option("hello"));
     }
@@ -178,9 +154,7 @@ class OptionSpec extends TestCase
         $this->assertInstanceOf(None::class, $option);
 
         $this->assertIsLike(
-            $option->map(function ($x) {
-                return $x + 1;
-            }),
+            $option->map(fn ($x) => $x + 1),
             None()
         );
     }
@@ -205,9 +179,7 @@ class OptionSpec extends TestCase
         $option = Option(null);
         $this->assertInstanceOf(None::class, $option);
         $this->assertIsLike(
-            $option->apply(Option(function ($x) {
-                return $x + 1;
-            })),
+            $option->apply(Option(fn ($x) => $x + 1)),
             None()
         );
     }
@@ -222,9 +194,7 @@ class OptionSpec extends TestCase
             new IntGen()
         )->then(function ($a) use ($spec) {
             $this->assertIsLike(
-                Option($a)->apply(Option(function ($x) {
-                    return $x + 1;
-                })),
+                Option($a)->apply(Option(fn ($x) => $x + 1)),
                 Some($a + 1)
             );
         });

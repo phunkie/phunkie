@@ -15,15 +15,10 @@ use Phunkie\Types\ImmInteger;
 use Phunkie\Types\ImmString;
 
 const promote = "Md\\Phunkie\\Functions\\type\\promote";
-function promote($value)
-{
-    switch (gettype($value)) {
-        case "int":
-        case "integer":
-            return new ImmInteger($value);
-        case "string": return new ImmString($value);
-        default: return $value;
-    }
+function promote($value) { return match (gettype($value)) {
+    "int", "integer" => new ImmInteger($value),
+    "string" => new ImmString($value),
+    default => $value };
 }
 
 const normaliseType = "Md\\Phunkie\\Functions\\type\\normaliseType";

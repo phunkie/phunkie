@@ -20,9 +20,7 @@ trait FunctorOps
      */
     public function lift($f): callable
     {
-        return function ($fa) use ($f) {
-            return $fa->map($f);
-        };
+        return fn ($fa) => $fa->map($f);
     }
 
     /**
@@ -30,9 +28,7 @@ trait FunctorOps
      */
     public function as($b): Kind
     {
-        return $this->map(function ($ignored) use ($b) {
-            return $b;
-        });
+        return $this->map(fn ($ignored) => $b);
     }
 
     /**
@@ -40,9 +36,7 @@ trait FunctorOps
      */
     public function void(): Kind
     {
-        return $this->map(function ($ignored) {
-            return Unit();
-        });
+        return $this->map(fn ($ignored) => Unit());
     }
 
     /**
@@ -50,8 +44,6 @@ trait FunctorOps
      */
     public function zipWith($f): Kind
     {
-        return $this->map(function ($a) use ($f) {
-            return Pair($a, $f($a));
-        });
+        return $this->map(fn ($a) => Pair($a, $f($a)));
     }
 }

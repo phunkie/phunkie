@@ -13,9 +13,7 @@ use function Phunkie\Functions\currying\applyPartially;
 const ap = "\\Phunkie\\Functions\\applicative\\ap";
 function ap(Kind $f)
 {
-    return applyPartially([$f], func_get_args(), function (Applicative $applicative) use ($f) {
-        return $applicative->apply($f);
-    });
+    return applyPartially([$f], func_get_args(), fn (Applicative $applicative) => $applicative->apply($f));
 }
 
 const pure = "\\Phunkie\\Functions\\applicative\\pure";
@@ -32,9 +30,5 @@ function pure($context)
 const map2 = "\\Phunkie\\Functions\\applicative\\map2";
 function map2(callable $f)
 {
-    return applyPartially([$f], func_get_args(), function (Apply $fa) use ($f) {
-        return function (Apply $fb) use ($fa, $f) {
-            return $fa->map2($fb, $f);
-        };
-    });
+    return applyPartially([$f], func_get_args(), fn (Apply $fa) => fn (Apply $fb) => $fa->map2($fb, $f));
 }

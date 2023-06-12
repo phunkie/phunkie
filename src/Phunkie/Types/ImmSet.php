@@ -79,9 +79,7 @@ class ImmSet implements Kind, Applicative, Monad
 
     public function toString(): string
     {
-        return "Set(" . implode(", ", array_map(function ($e) {
-            return showValue($e);
-        }, $this->elements)) . ")";
+        return "Set(" . implode(", ", array_map(fn ($e) => showValue($e), $this->elements)) . ")";
     }
 
     public function getTypeArity(): int

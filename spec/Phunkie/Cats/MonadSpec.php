@@ -19,32 +19,20 @@ class MonadSpec extends TestCase
     {
         // Option
         $fa = Some(42);
-        $f = function (int $x): Kind {
-            return Some(gettype($x));
-        };
-        $g = function (string $x): Kind {
-            return Some(strlen($x) % 2 == 0);
-        };
+        $f = fn (int $x): Kind => Some(gettype($x));
+        $g = fn (string $x): Kind => Some(strlen($x) % 2 == 0);
         $this->assertTrue($this->flapMapAssociativity($fa, $f, $g));
 
         // List
         $fa = ImmList(1, 2, 3);
-        $f = function (int $x): Kind {
-            return ImmList(gettype($x));
-        };
-        $g = function (string $x): Kind {
-            return ImmList(strlen($x) % 2 == 0);
-        };
+        $f = fn (int $x): Kind => ImmList(gettype($x));
+        $g = fn (string $x): Kind => ImmList(strlen($x) % 2 == 0);
         $this->assertTrue($this->flapMapAssociativity($fa, $f, $g));
 
         // Set
         $fa = ImmSet(1, 2, 3);
-        $f = function (int $x): Kind {
-            return ImmSet(gettype($x));
-        };
-        $g = function (string $x): Kind {
-            return ImmSet(strlen($x) % 2 == 0);
-        };
+        $f = fn (int $x): Kind => ImmSet(gettype($x));
+        $g = fn (string $x): Kind => ImmSet(strlen($x) % 2 == 0);
         $this->assertTrue($this->flapMapAssociativity($fa, $f, $g));
     }
 
@@ -56,25 +44,19 @@ class MonadSpec extends TestCase
         // Option
         $fa = Some(42);
         $a = 1;
-        $f = function (int $x): Kind {
-            return Some(($x + 2) % 2 == 0);
-        };
+        $f = fn (int $x): Kind => Some(($x + 2) % 2 == 0);
         $this->assertTrue($this->leftIdentity($fa, $a, $f));
 
         // List
         $fa = ImmList(1, 2, 3);
         $a = 1;
-        $f = function (int $x): Kind {
-            return ImmList(($x + 2) % 2 == 0);
-        };
+        $f = fn (int $x): Kind => ImmList(($x + 2) % 2 == 0);
         $this->assertTrue($this->leftIdentity($fa, $a, $f));
 
         // Set
         $fa = ImmSet(1, 2, 3);
         $a = 1;
-        $f = function (int $x): Kind {
-            return ImmSet(($x + 2) % 2 == 0);
-        };
+        $f = fn (int $x): Kind => ImmSet(($x + 2) % 2 == 0);
         $this->assertTrue($this->leftIdentity($fa, $a, $f));
     }
 

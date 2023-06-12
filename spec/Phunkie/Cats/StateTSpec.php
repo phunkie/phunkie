@@ -12,9 +12,7 @@ class StateTSpec extends TestCase
      */
     public function it_runs_function_under_a_context()
     {
-        $s = new StateT(Some(function ($n) {
-            return Some(Pair($n + 1, $n));
-        }));
+        $s = new StateT(Some(fn ($n) => Some(Pair($n + 1, $n))));
         $this->assertIsLike($s->run(1), (Some(Pair(2, 1))));
     }
 }

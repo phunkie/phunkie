@@ -15,11 +15,9 @@ namespace {
     use Phunkie\Types\Nil;
     use Phunkie\Types\NonEmptyList;
 
-    function ImmList(...$values): ImmList
-    {
-        switch (count($values)) {
-        case 0: return Nil();
-        default: return new ImmList(...$values); }
+    function ImmList(...$values): ImmList { return match(count($values)) {
+        0 => Nil(),
+        default => new ImmList(...$values) };
     }
 
     function Nil(): ImmList
@@ -141,11 +139,7 @@ namespace Phunkie\Functions\immlist {
             }
             return ImmList(...$result);
         };
-        $concatStrings = function (...$s) {
-            return array_reduce($s, function ($a, $b) {
-                return $a . $b;
-            }, "");
-        };
+        $concatStrings = fn (...$s) => array_reduce($s, fn ($a, $b) => $a . $b, "");
         if ($items[0] instanceof ImmList || is_array($items[0])) {
             return $concatLists(...$items);
         }

@@ -57,12 +57,8 @@ class ImmListSpec extends TestCase
             new SeqGen(new IntGen())
         )->then(function ($list) use ($spec) {
             $this->assertIsLike(
-                ImmList(...$list)->map(function ($x) {
-                    return $x + 1;
-                }),
-                ImmList(...array_map(function ($x) {
-                    return $x + 1;
-                }, $list))
+                ImmList(...$list)->map(fn ($x) => $x + 1),
+                ImmList(...array_map(fn ($x) => $x + 1, $list))
             );
         });
     }
@@ -74,9 +70,7 @@ class ImmListSpec extends TestCase
     {
         $list = ImmList();
         $this->assertInstanceOf(Nil::class, $list);
-        $this->assertPropertyCount(0, $list->map(function ($x) {
-            return $x + 1;
-        }));
+        $this->assertPropertyCount(0, $list->map(fn ($x) => $x + 1));
     }
 
     /**
@@ -95,9 +89,7 @@ class ImmListSpec extends TestCase
         $list = ImmList();
         $this->assertInstanceOf(Nil::class, $list);
         $this->assertPropertyCount(0, $list->apply(
-            ImmList(function ($x) {
-                return $x + 1;
-            })
+            ImmList(fn ($x) => $x + 1)
         ));
     }
 
@@ -111,12 +103,8 @@ class ImmListSpec extends TestCase
             new SeqGen(new IntGen())
         )->then(function ($list) use ($spec) {
             $this->assertIsLike(
-                ImmList(...$list)->apply(ImmList(function ($x) {
-                    return $x + 1;
-                })),
-                ImmList(...array_map(function ($x) {
-                    return $x + 1;
-                }, $list))
+                ImmList(...$list)->apply(ImmList(fn ($x) => $x + 1)),
+                ImmList(...array_map(fn ($x) => $x + 1, $list))
             );
         });
     }
@@ -136,9 +124,7 @@ class ImmListSpec extends TestCase
     {
         $this->assertIsLike(
             ImmList(2),
-            ImmList(1, 2, 3)->filter(function ($x) {
-                return $x === 2;
-            })
+            ImmList(1, 2, 3)->filter(fn ($x) => $x === 2)
         );
     }
 
@@ -149,9 +135,7 @@ class ImmListSpec extends TestCase
     {
         $this->assertInstanceOf(
             WithFilter::class,
-            ImmList(1, 2, 3)->withFilter(function ($x) {
-                return $x === 2;
-            })
+            ImmList(1, 2, 3)->withFilter(fn ($x) => $x === 2)
         );
     }
 
@@ -163,15 +147,9 @@ class ImmListSpec extends TestCase
         $list = ImmList(1, 2, 3);
         $this->assertIsLike(
             $list
-                ->withFilter(function ($x) {
-                    return $x === 2;
-                })
-                ->map(function ($x) {
-                    return $x;
-                }),
-            $list->filter(function ($x) {
-                return $x === 2;
-            })
+                ->withFilter(fn ($x) => $x === 2)
+                ->map(fn ($x) => $x),
+            $list->filter(fn ($x) => $x === 2)
         );
     }
 
@@ -182,9 +160,7 @@ class ImmListSpec extends TestCase
     {
         $this->assertIsLike(
             ImmList(1, 3),
-            ImmList(1, 2, 3)->reject(function ($x) {
-                return $x === 2;
-            })
+            ImmList(1, 2, 3)->reject(fn ($x) => $x === 2)
         );
     }
 
@@ -193,9 +169,7 @@ class ImmListSpec extends TestCase
      */
     public function it_implements_reduce()
     {
-        $this->assertEquals(6, ImmList(1, 2, 3)->reduce(function ($x, $y) {
-            return $x + $y;
-        }));
+        $this->assertEquals(6, ImmList(1, 2, 3)->reduce(fn ($x, $y) => $x + $y));
     }
 
     /**
@@ -203,9 +177,7 @@ class ImmListSpec extends TestCase
      */
     public function it_implements_reduce_string_example()
     {
-        $this->assertEquals("abc", ImmList("a", "b", "c")->reduce(function ($x, $y) {
-            return $x . $y;
-        }));
+        $this->assertEquals("abc", ImmList("a", "b", "c")->reduce(fn ($x, $y) => $x . $y));
     }
 
     /**
@@ -215,9 +187,7 @@ class ImmListSpec extends TestCase
     {
         $this->expectError();
 
-        ImmList(1, 2, 3)->reduce(function ($x, $y) {
-            return "Oh no! a string!";
-        });
+        ImmList(1, 2, 3)->reduce(fn ($x, $y) => "Oh no! a string!");
     }
 
     /**
@@ -270,23 +240,17 @@ class ImmListSpec extends TestCase
     {
         $list = ImmList(1, 2, 3, 4, 5, 6);
         $this->assertIsLike(
-            $list->takeWhile(function ($el) {
-                return $el < 4;
-            }),
+            $list->takeWhile(fn ($el) => $el < 4),
             ImmList(1, 2, 3)
         );
 
         $this->assertIsLike(
-            $list->takeWhile(function ($el) {
-                return $el < 9;
-            }),
+            $list->takeWhile(fn ($el) => $el < 9),
             ImmList(1, 2, 3, 4, 5, 6)
         );
 
         $this->assertIsLike(
-            $list->takeWhile(function ($el) {
-                return $el < 0;
-            }),
+            $list->takeWhile(fn ($el) => $el < 0),
             ImmList()
         );
     }
@@ -298,23 +262,17 @@ class ImmListSpec extends TestCase
     {
         $list = ImmList(1, 2, 3, 4, 5, 6);
         $this->assertIsLike(
-            $list->dropWhile(function ($el) {
-                return $el < 4;
-            }),
+            $list->dropWhile(fn ($el) => $el < 4),
             ImmList(4, 5, 6)
         );
 
         $this->assertIsLike(
-            $list->dropWhile(function ($el) {
-                return $el < 9;
-            }),
+            $list->dropWhile(fn ($el) => $el < 9),
             ImmList()
         );
 
         $this->assertIsLike(
-            $list->dropWhile(function ($el) {
-                return $el < 0;
-            }),
+            $list->dropWhile(fn ($el) => $el < 0),
             ImmList(1, 2, 3, 4, 5, 6)
         );
     }
@@ -377,17 +335,13 @@ class ImmListSpec extends TestCase
      */
     public function it_is_an_applicative()
     {
-        $xs = (ap(ImmList(function ($a) {
-            return $a +1;
-        })))(ImmList(1));
+        $xs = (ap(ImmList(fn ($a) => $a +1)))(ImmList(1));
         $this->assertIsLike($xs, ImmList(2));
 
         $xs = (pure(ImmList))(42);
         $this->assertIsLike($xs, ImmList(42));
 
-        $xs = ((map2(function ($x, $y) {
-            return $x + $y;
-        }))(ImmList(1)))(ImmList(2));
+        $xs = ((map2(fn ($x, $y) => $x + $y))(ImmList(1)))(ImmList(2));
         $this->assertIsLike($xs, ImmList(3));
     }
 
@@ -396,9 +350,7 @@ class ImmListSpec extends TestCase
      */
     public function it_is_a_monad()
     {
-        $xs = (bind(function ($a) {
-            return ImmList($a +1);
-        }))(ImmList(1));
+        $xs = (bind(fn ($a) => ImmList($a +1)))(ImmList(1));
         $this->assertIsLike($xs, ImmList(2));
 
         $xs = flatten(ImmList(ImmList(1)));
@@ -408,15 +360,9 @@ class ImmListSpec extends TestCase
         $this->assertIsLike($xs, ImmList(1, 2));
 
         $xs = ImmList("h");
-        $f = function (string $s) {
-            return ImmList($s . "e");
-        };
-        $g = function (string $s) {
-            return ImmList($s . "l");
-        };
-        $h = function (string $s) {
-            return ImmList($s . "o");
-        };
+        $f = fn (string $s) => ImmList($s . "e");
+        $g = fn (string $s) => ImmList($s . "l");
+        $h = fn (string $s) => ImmList($s . "o");
         $hello = mcompose($f, $g, $g, $h);
         $this->assertIsLike($hello($xs), ImmList("hello"));
     }
@@ -430,16 +376,12 @@ class ImmListSpec extends TestCase
         $this->assertInstanceOf(Traverse::class, $list);
 
         $this->assertIsLike(
-            $list->traverse(function ($x) {
-                return Option($x);
-            }),
+            $list->traverse(fn ($x) => Option($x)),
             Some(ImmList(1, 2, 3))
         );
 
         $this->assertIsLike(
-            $list->traverse(function ($x) {
-                return $x > 2 ? None() : Some($x);
-            }),
+            $list->traverse(fn ($x) => $x > 2 ? None() : Some($x)),
             None()
         );
     }

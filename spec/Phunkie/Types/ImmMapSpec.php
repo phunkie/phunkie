@@ -160,9 +160,7 @@ class ImmMapSpec extends TestCase
     public function it_is_a_functor()
     {
         $f = ImmMap(["a" => 1, "b" => 2, "c" => 3]);
-        $increment = function (Pair $keyValue) {
-            return Pair($keyValue->_1, $keyValue->_2 + 1);
-        };
+        $increment = fn (Pair $keyValue) => Pair($keyValue->_1, $keyValue->_2 + 1);
 
         $this->assertTrue(
             $f->map($increment)->eqv(ImmMap(["a" => 2, "b" => 3, "c" => 4]))
@@ -205,9 +203,7 @@ class ImmMapSpec extends TestCase
 
         $this->assertTrue(
             $f
-                ->zipWith(function ($x) {
-                    return 2 * $x;
-                })
+                ->zipWith(fn ($x) => 2 * $x)
                 ->eqv(
                     ImmMap(
                         [
@@ -220,9 +216,7 @@ class ImmMapSpec extends TestCase
         );
         $this->assertTrue(
             zipWith(
-                function ($x) {
-                    return 2 * $x;
-                },
+                fn ($x) => 2 * $x,
                 ImmMap(["a" => 1, "b" => 2, "c" => 3])
             )->eqv(
                 ImmMap(

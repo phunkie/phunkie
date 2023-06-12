@@ -62,12 +62,6 @@ $transactions = [
     new Transaction('a2', 200)
 ];
 
-$updateBalance = function (ImmList $txns) use ($balancesMonoid) {
-    return modify(function ($b) use ($txns, $balancesMonoid) {
-        return $txns->foldLeft($b, function ($a, $txn) use ($balancesMonoid) {
-            return $balancesMonoid->combine($a, [$txn->accountNo => new Balance($txn->amount)]);
-        });
-    });
-};
+$updateBalance = fn (ImmList $txns) => modify(fn ($b) => $txns->foldLeft($b, fn ($a, $txn) => $balancesMonoid->combine($a, [$txn->accountNo => new Balance($txn->amount)])));
 
 show($updateBalance(ImmList(...$transactions))->run($balances));

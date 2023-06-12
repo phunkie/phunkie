@@ -15,16 +15,10 @@ namespace {
     use Phunkie\Types\Tuple;
     use Phunkie\Types\Unit;
 
-    function Tuple(...$values)
-    {
-        switch (count($values)) {
-            case 0:
-                return new Unit();
-            case 2:
-                return new Pair($values[0], $values[1]);
-            default:
-                return new Tuple(...$values);
-        }
+    function Tuple(...$values) { return match(count($values)) {
+        0 => new Unit(),
+        2 => new Pair($values[0], $values[1]),
+        default => new Tuple(...$values) };
     }
 
 }

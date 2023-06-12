@@ -94,9 +94,7 @@ class StringSpec extends TestCase
      */
     public function it_has_takeWhile()
     {
-        $this->assertEquals((takeWhile(function ($char) {
-            return $char != 'l';
-        }))("hello"), "he");
+        $this->assertEquals((takeWhile(fn ($char) => $char != 'l'))("hello"), "he");
     }
 
     /**
@@ -112,9 +110,7 @@ class StringSpec extends TestCase
      */
     public function it_has_dropWhile()
     {
-        $this->assertEquals((dropWhile(function ($char) {
-            return $char != 'l';
-        }))("hello"), "llo");
+        $this->assertEquals((dropWhile(fn ($char) => $char != 'l'))("hello"), "llo");
     }
 
     /**
@@ -131,9 +127,7 @@ class StringSpec extends TestCase
      */
     public function it_has_filter()
     {
-        $this->assertEquals((filter(function ($c) {
-            return $c == 'l';
-        }))('hello'), 'll');
+        $this->assertEquals((filter(fn ($c) => $c == 'l'))('hello'), 'll');
     }
 
     /**
@@ -141,9 +135,7 @@ class StringSpec extends TestCase
      */
     public function it_has_reject()
     {
-        $this->assertEquals((reject(function ($c) {
-            return $c == 'l';
-        }))('hello'), 'heo');
+        $this->assertEquals((reject(fn ($c) => $c == 'l'))('hello'), 'heo');
     }
 
     /**
@@ -151,9 +143,7 @@ class StringSpec extends TestCase
      */
     public function it_has_reduce()
     {
-        $this->assertEquals((reduce(function ($a, $b) {
-            return $a < $b ? $a : $b;
-        }))('hello'), 'e');
+        $this->assertEquals((reduce(fn ($a, $b) => $a < $b ? $a : $b))('hello'), 'e');
     }
 
     /**

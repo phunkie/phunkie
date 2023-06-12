@@ -26,9 +26,7 @@ abstract class IO
     }
     public function map($f)
     {
-        return io(function () use ($f) {
-            return $f($this->run());
-        });
+        return io(fn () => $f($this->run()));
     }
 
     public function flatMap($f)

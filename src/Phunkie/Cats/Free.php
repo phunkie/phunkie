@@ -27,19 +27,12 @@ abstract class Free
         return new Free\Bind($this, $f);
     }
 
-    public function foldMap(NaturalTransformation $nt)
-    {
-        $on = pmatch($this);
-        switch (true) {
-        case $on(Pure($a)): return (point($nt->to))($a);
-        case $on(Suspend($fa)): return $nt($fa);
-        case $on(Bind($target, $f)):
-            return flatMap(
-                function ($e) use ($f, $nt) {
-                return $f($e)->foldMap($nt);
-            },
-                $target->foldMap($nt)
-            );
-        }
+    public function foldMap(NaturalTransformation $nt) { $on = pmatch($this); return match (true) {
+        $on(Pure($a)) => (point($nt->to))($a),
+        $on(Suspend($fa)) => $nt($fa),
+        $on(Bind($target, $f)) => flatMap(
+            fn ($e) => $f($e)->foldMap($nt),
+            $target->foldMap($nt)
+        )};
     }
 }

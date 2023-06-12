@@ -49,15 +49,11 @@ class TupleSpec extends TestCase
         $this->assertIsLike(asVoid(Tuple(1, 2, 3)), Tuple(Unit(), Unit(), Unit()));
 
         $this->assertIsLike(
-            $tuple->zipWith(function ($x) {
-                return 2 * $x;
-            }),
+            $tuple->zipWith(fn ($x) => 2 * $x),
             Tuple(Pair(1, 2), Pair(2, 4), Pair(3, 6))
         );
         $this->assertIsLike(
-            zipWith(function ($x) {
-            return 2 * $x;
-        }, Tuple(1, 2, 3)),
+            zipWith(fn ($x) => 2 * $x, Tuple(1, 2, 3)),
             Tuple(Pair(1, 2), Pair(2, 4), Pair(3, 6))
         );
     }

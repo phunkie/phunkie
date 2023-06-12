@@ -51,14 +51,8 @@ class Lens
     public function andThen(Lens $l): Lens
     {
         return new Lens(
-            function ($a) use ($l) {
-                return $l->get($this->get($a));
-            },
-            function ($c, $a) use ($l) {
-                return $this->mod(function ($b) use ($l, $c) {
-                    return $l->set($c, $b);
-                }, $a);
-            }
+            fn ($a) => $l->get($this->get($a)),
+            fn ($c, $a) => $this->mod(fn ($b) => $l->set($c, $b), $a)
         );
     }
 
