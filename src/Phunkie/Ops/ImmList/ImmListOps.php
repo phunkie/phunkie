@@ -53,6 +53,16 @@ trait ImmListOps
              default => throw new Error("value $property is not a member of ImmList") };
     }
 
+    public function append(mixed $element): ImmList
+    {
+        return ImmList(...array_merge($this->toArray(), [$element]));
+    }
+
+    public function prepend(mixed $element): ImmList
+    {
+        return ImmList(...array_merge([$element], $this->toArray()));
+    }
+
     public function head()
     {
         return $this->toArray()[0];

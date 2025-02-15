@@ -408,6 +408,22 @@ class ImmListSpec extends TestCase
             None()
         );
     }
+
+    /**
+     * @test
+     */
+    public function it_implements_append()
+    {
+        $this->assertIsLike(ImmList(1, 2, 3)->append(4), ImmList(1, 2, 3, 4));
+    }
+
+    /**
+     * @test
+     */
+    public function it_implements_prepend()
+    {
+        $this->assertIsLike(ImmList(1, 2, 3)->prepend(0), ImmList(0, 1, 2, 3));
+    }
 }
 
 class User
