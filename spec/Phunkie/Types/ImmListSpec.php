@@ -185,9 +185,10 @@ class ImmListSpec extends TestCase
      */
     public function it_will_complain_if_reduce_returns_a_type_different_to_the_list_type()
     {
-        $this->expectError();
-
-        ImmList(1, 2, 3)->reduce(fn ($x, $y) => "Oh no! a string!");
+        $this->expectException(\Error::class);
+        $this->expectExceptionMessage('callable must return the same type as list type variable');
+        
+        ImmList(1, 2, 3)->reduce(function($x, $y) { return "hello"; });
     }
 
     /**
