@@ -22,10 +22,23 @@ be used.
 Table of contents
 -----------------
 
+[Installation](installation.md)
+ - Requirements
+ - Installation via Composer
+ - Phunkie console
+ - Using the console
+
+[An introduction to functional programming](introduction_to_functional_programming.md)
+- What is functional programming?
+- The power of immutability
+- The importance of algebraic types, laws and data types
+- Functional programming in PHP
+- The approach of Phunkie
+
 [Kinds and parametricity](kinds.md)
 - Kinds (Proper kinds, First order kinds, Higher order kinds)
 - Parametricity
-- Phunkie console (Show,  Phunkie commands)
+- Showing types and kinds in the console
 
 [Phunkie Types](phunkie_types.md)
 - Options
@@ -54,8 +67,14 @@ Table of contents
   - zero
 
 [Functors](functors.md)
+- Understanding Functors
+- Common functors in Phunkie
+- Functor Laws
 
 [Applicatives](applicatives.md)
+- Applicatives
+- Common applicatives
+- Applicative laws
 
 [Monads](monads.md)
 
@@ -72,7 +91,6 @@ Table of contents
 [Monad Transformers](monad_transformers.md)
 
 [Validations](validations.md)
-
 - Disjunction of Success and Failure
 - NonEmptyList
 - Either constructor
