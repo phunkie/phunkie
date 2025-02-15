@@ -47,6 +47,7 @@ final class ImmMap implements ArrayAccess, Copiable, Functor, Kind
         return false;
     }
 
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         foreach ($this->values as $k) {

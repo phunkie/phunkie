@@ -57,8 +57,7 @@ class ImmMapSpec extends TestCase
      */
     public function it_cannot_be_constructed_with_an_odd_number()
     {
-        $this->expectError();
-        $this->expectErrorMessage("not enough arguments for constructor ImmMap");
+        $this->expectException(\Error::class);
 
         $map = ImmMap(
             new AccountNumber(1),
@@ -74,7 +73,7 @@ class ImmMapSpec extends TestCase
      */
     public function it_also_complains_on_one_argument_if_it_is_not_an_array()
     {
-        $this->expectError();
+        $this->expectException(\Error::class);
 
         $map = ImmMap(new AccountNumber(1));
     }

@@ -67,10 +67,8 @@ class IteratorSpec extends TestCase
      */
     public function it_is_immutable_after_created_from_lists()
     {
+        $this->expectException(\TypeError::class);
         $list = ImmList(1, 2, 3)->iterator();
-        $this->expectError();
-        $this->expectErrorMessage("Iterators are immutable");
-
         $list[42] = 32;
     }
 
@@ -157,10 +155,8 @@ class IteratorSpec extends TestCase
      */
     public function it_is_immutable_after_created_from_maps()
     {
+        $this->expectException(\TypeError::class);
         $map = ImmMap([1, 2, 3])->iterator();
-        $this->expectError();
-        $this->expectErrorMessage("Iterators are immutable");
-
         $map[42] = 32;
     }
 
@@ -259,10 +255,8 @@ class IteratorSpec extends TestCase
      */
     public function it_is_immutable_after_created_from_sets()
     {
+        $this->expectException(\TypeError::class);
         $set = ImmSet(1, 2, 3)->iterator();
-        $this->expectError();
-        $this->expectErrorMessage("Iterators are immutable");
-
         $set[42] = 32;
         // expect(ImmSet(1, 2, 3)->iterator())->toThrow()->duringOffsetSet(42);
         // expect(ImmSet(1, 2, 3)->iterator())->toThrow()->duringOffsetUnset();
