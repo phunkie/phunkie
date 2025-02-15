@@ -82,6 +82,7 @@ Table of contents
 
 [Monads](monads.md)
 - [What is a Monad?](monads.md#what-is-a-monad)
+- [The Identity Monad](monads.md#the-identity-monad)
 - [Monad Laws](monads.md#monad-laws)
 - [Common Monads](monads.md#common-monads)
 - [Working with Monads](monads.md#working-with-monads)
@@ -155,3 +156,14 @@ Table of contents
 - [Using Wildcards](pattern_matching.md#using-wildcards)
 - [Best Practices](pattern_matching.md#best-practices)
 - [Implementation Notes](pattern_matching.md#implementation-notes)
+
+[Free Monads](free_monads.md)
+- [What is a Free Monad?](free_monads.md#what-is-a-free-monad)
+- [Core Operations](free_monads.md#core-operations)
+  - [pure](free_monads.md#pure)
+  - [liftM](free_monads.md#liftm)
+  - [flatMap](free_monads.md#flatmap)
+  - [foldMap](free_monads.md#foldmap)
+- [Natural Transformations](free_monads.md#natural-transformations)
+- [Common Use Cases](free_monads.md#common-use-cases)
+- [Implementation Notes](free_monads.md#implementation-notes)

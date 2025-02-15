@@ -113,3 +113,33 @@ $result = $data
 - flatten helps work with nested monadic structures
 - Monad transformers handle composition of different monads
 - Laws ensure consistent and predictable behavior
+
+## The Identity Monad
+
+The Identity monad (Id) is the simplest possible monad that wraps a value. It serves as a way to lift values into a monadic context:
+
+```php
+use Phunkie\Cats\Id;
+
+$id = new Id(42);
+
+// Mapping over Id
+$result = $id->map(fn($x) => $x + 1);
+// Id(43)
+
+// FlatMapping with Id
+$result = $id->flatMap(fn($x) => new Id($x + 1));
+// Id(43)
+
+// Composition using andThen/compose
+$id1 = new Id("Hello");
+$id2 = new Id(" World");
+$result = $id1->andThen($id2);
+// Id("Hello World")
+```
+
+The Id monad is useful for:
+1. Testing monad laws and transformations
+2. Providing a default monad when no specific effects are needed
+3. Serving as an identity for monad transformers
+4. Understanding basic monadic operations
