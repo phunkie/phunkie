@@ -28,16 +28,18 @@ class Iterator implements \Iterator, ArrayAccess, Countable
         $this->storage = $storage;
     }
 
+    #[\ReturnTypeWillChange]
     public function current()
     {
         return $this->storage->getInfo();
     }
 
-    public function next()
+    public function next(): void
     {
         $this->storage->next();
     }
 
+    #[\ReturnTypeWillChange]
     public function key()
     {
         if ($this->storage->current() instanceof ImmString ||
@@ -47,17 +49,17 @@ class Iterator implements \Iterator, ArrayAccess, Countable
         return $this->storage->current();
     }
 
-    public function valid()
+    public function valid(): bool
     {
         return $this->storage->valid();
     }
 
-    public function rewind()
+    public function rewind(): void
     {
         $this->storage->rewind();
     }
 
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         foreach ($this->storage as $k) {
             if ($k == promote($offset)) {
@@ -67,6 +69,7 @@ class Iterator implements \Iterator, ArrayAccess, Countable
         return false;
     }
 
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         foreach ($this->storage as $k) {
@@ -77,17 +80,17 @@ class Iterator implements \Iterator, ArrayAccess, Countable
         return None();
     }
 
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
         throw new \TypeError("Iterators are immutable");
     }
 
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
         throw new \TypeError("Iterators are immutable");
     }
 
-    public function count()
+    public function count(): int
     {
         return $this->storage->count();
     }
