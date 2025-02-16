@@ -15,7 +15,6 @@ use ArrayAccess;
 use Countable;
 use Phunkie\Types\ImmInteger;
 use Phunkie\Types\ImmString;
-use Phunkie\Types\Option;
 use SplObjectStorage;
 
 use function Phunkie\Functions\type\promote;
