@@ -65,17 +65,20 @@ $result = $h(5); // (5 + 1) * 2 = 12
 All monads must satisfy three fundamental laws:
 
 1. Left Identity: `pure(a)->flatMap(f) === f(a)`
+
 ```php
 $f = fn($x) => Some($x + 1);
 Some(42)->flatMap($f) === $f(42)
 ```
 
 2. Right Identity: `m->flatMap(pure) === m`
+
 ```php
 Some(42)->flatMap(fn($x) => Some($x)) === Some(42)
 ```
 
 3. Associativity: `m->flatMap(f)->flatMap(g) === m->flatMap(fn($x) => f($x)->flatMap(g))`
+
 ```php
 $f = fn($x) => Some($x + 1);
 $g = fn($x) => Some($x * 2);
