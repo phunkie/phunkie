@@ -6,6 +6,7 @@ on:
   pull_request:
     branches:
       - master
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -15,7 +16,7 @@ jobs:
         php: ['8.1', '8.2', '8.3']
     name: PHP ${{ matrix.php }}
     steps:
-      - uses: actions/checkout@v3  # Updated from v2 to v3
+      - uses: actions/checkout@v3
       - name: Install PHP
         uses: shivammathur/setup-php@master
         with:
@@ -26,7 +27,7 @@ jobs:
         id: composer-cache
         run: echo "dir=$(composer config cache-files-dir)" >> "$GITHUB_ENV"
       - name: Cache dependencies
-        uses: actions/cache@v4  # Updated from v2 to v4
+        uses: actions/cache@v4
         with:
           path: ${{ env.dir }}
           key: ${{ runner.os }}-php-${{ matrix.php }}-composer-${{ github.run_id }}
@@ -38,3 +39,52 @@ jobs:
         run: find . -name "*.phpunit*" -type f -print0 | xargs -0 /bin/rm -f
       - name: Run test suite
         run: composer test
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master'
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Fetch all history for tags
+
+      - name: Get latest tag
+        id: get_version
+        run: echo "VERSION=$(git describe --tags --abbrev=0 2>/dev/null || echo '0.0.0')" >> "$GITHUB_ENV"
+
+      - name: Increment patch version
+        id: new_version
+        run: |
+          OLD_VERSION=${{ env.VERSION }}
+          IFS='.' read -r -a parts <<< "$OLD_VERSION"
+          NEW_VERSION="${parts[0]}.${parts[1]}.$((parts[2] + 1))"
+          echo "NEW_VERSION=$NEW_VERSION" >> "$GITHUB_ENV"
+
+      - name: Get commit messages since last tag
+        id: commit_messages
+        run: |
+          LAST_TAG=${{ env.VERSION }}
+          COMMIT_LOG=$(git log $LAST_TAG..HEAD --pretty=format:"- %s" --no-merges)
+          echo "CHANGELOG=$COMMIT_LOG" >> "$GITHUB_ENV"
+
+      - name: Create Git Tag
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+          git tag ${{ env.NEW_VERSION }}
+          git push origin ${{ env.NEW_VERSION }}
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ env.NEW_VERSION }}
+          name: Release ${{ env.NEW_VERSION }}
+          body: |
+            ## Changes in this release:
+            ${{ env.CHANGELOG }}
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
