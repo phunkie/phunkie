@@ -66,8 +66,12 @@ jobs:
         id: commit_messages
         run: |
           LAST_TAG=${{ env.VERSION }}
+          echo "Generating changelog since $LAST_TAG..."
           COMMIT_LOG=$(git log $LAST_TAG..HEAD --pretty=format:"- %s" --no-merges)
-          echo "CHANGELOG=$COMMIT_LOG" >> "$GITHUB_ENV"
+          echo "$COMMIT_LOG" > changelog.txt
+          echo "CHANGELOG<<EOF" >> "$GITHUB_ENV"
+          cat changelog.txt >> "$GITHUB_ENV"
+          echo "EOF" >> "$GITHUB_ENV"
 
       - name: Create Git Tag
         run: |
