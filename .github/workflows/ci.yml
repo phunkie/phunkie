@@ -15,7 +15,7 @@ jobs:
         php: ['8.1', '8.2', '8.3']
     name: PHP ${{ matrix.php }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3  # Updated from v2 to v3
       - name: Install PHP
         uses: shivammathur/setup-php@master
         with:
@@ -24,17 +24,17 @@ jobs:
         run: composer validate
       - name: Get Composer cache directory
         id: composer-cache
-        run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+        run: echo "dir=$(composer config cache-files-dir)" >> "$GITHUB_ENV"
       - name: Cache dependencies
-        uses: actions/cache@v2
+        uses: actions/cache@v4  # Updated from v2 to v4
         with:
-          path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ matrix.php }}-composer-${{ hashFiles('**/composer.lock') }}
-          restore-keys: ${{ matrix.php }}-composer-
+          path: ${{ env.dir }}
+          key: ${{ runner.os }}-php-${{ matrix.php }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-php-${{ matrix.php }}-composer-
       - name: Install dependencies
         run: composer install --prefer-dist --no-progress --no-suggest
       - name: Purge project of any phpunit cache files
         run: find . -name "*.phpunit*" -type f -print0 | xargs -0 /bin/rm -f
       - name: Run test suite
         run: composer test
-
