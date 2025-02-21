@@ -33,6 +33,11 @@ use function Phunkie\PatternMatching\Referenced\Success as Valid;
 
 /**
  * @mixin ImmList
+ * @property int $length
+ * @property mixed $head
+ * @property ImmList $tail
+ * @property ImmList $init
+ * @property mixed $last
  */
 trait ImmListOps
 {

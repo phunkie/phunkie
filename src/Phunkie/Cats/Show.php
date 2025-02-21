@@ -17,12 +17,12 @@ trait Show
 {
     abstract public function toString(): string;
 
-    public function show()
+    public function show(): string
     {
         return $this->toString();
     }
 
-    public function showType()
+    public function showType(): string
     {
         if ($this instanceof Kind) {
             return sprintf($this::kind . "<%s>", implode(", ", $this->getTypeVariables()));
