@@ -11,29 +11,100 @@
 
 namespace Phunkie\Types;
 
+use InvalidArgumentException;
 use Phunkie\Cats\Show;
+use TypeError;
 use function Phunkie\Functions\show\showValue;
 
+/**
+ * Pairs are specialized tuples with exactly two elements.
+ * 
+ * Pairs are immutable and type-safe. The types of both elements are preserved
+ * through generic type parameters T1 and T2.
+ *
+ * Example:
+ * ```php
+ * $pair = Pair("name", 25);
+ * $name = $pair->_1; // "name" (type T1)
+ * $age = $pair->_2;  // 25 (type T2)
+ * ```
+ *
+ * @template T1 The type of the first element
+ * @template T2 The type of the second element
+ * @property-read T1 $_1 First element of the pair
+ * @property-read T2 $_2 Second element of the pair
+ * @implements Show<Pair<T1,T2>>
+ */
 final class Pair extends Tuple
 {
     use Show;
 
-    public function __get($i) { return match ($i) {
-        "_1", "_2" => parent::__get($i),
-        default => throw new \InvalidArgumentException("Invalid index $i for pair")};
+    /**
+     * Access pair elements by property name.
+     * 
+     * Elements can be accessed using _1 and _2 properties:
+     * ```php
+     * $pair = Pair("name", 25);
+     * echo $pair->_1; // "name"
+     * echo $pair->_2; // 25
+     * ```
+     *
+     * @param string $member The property name (_1 or _2)
+     * @return T1|T2 The value at the given position
+     * @throws InvalidArgumentException if the member name is not _1 or _2
+     */
+    public function __get(string $member) { return match ($member) {
+        "_1", "_2" => parent::__get($member),
+        default => throw new InvalidArgumentException("Invalid index $member for pair")};
     }
 
-    public function __set($i, $value)
+    /**
+     * Pairs are immutable - attempting to modify elements throws an error.
+     *
+     * Example:
+     * ```php
+     * $pair = Pair("hello", 42);
+     * $pair->_1 = "world"; // Throws TypeError
+     * $pair->_3 = true;    // Throws TypeError
+     * ```
+     *
+     * @param string $member Unused - pairs are immutable
+     * @param mixed $value Unused - pairs are immutable  
+     * @throws TypeError always, since pairs are immutable
+     */
+    public function __set($member, $value): void
     {
-        throw new \TypeError("Pairs are immutable");
+        throw new TypeError("Pairs are immutable");
     }
 
+    /**
+     * Returns a string representation of the pair.
+     *
+     * Example:
+     * ```php
+     * $pair = Pair("name", 25);
+     * echo $pair->toString(); // "Pair(name, 25)"
+     * ```
+     *
+     * @return string The string representation
+     */
     public function toString(): string
     {
         return "Pair(" . showValue(parent::__get("_1")) . ", " . showValue(parent::__get("_2")) . ")";
     }
 
-    public function showType()
+    /**
+     * Returns a string showing the types of both elements.
+     *
+     * Example:
+     * ```php
+     * $pair = Pair("hello", 42);
+     * echo $pair->showType(); // "(String, Int)"
+     * ```
+     *
+     * @return string The type representation as "(T1, T2)"
+     */
+    public function showType(): string
     {
         return sprintf("(%s)", implode(", ", $this->getTypeVariables()));
     }

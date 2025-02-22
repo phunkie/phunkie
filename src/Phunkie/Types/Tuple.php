@@ -12,6 +12,7 @@
 namespace Phunkie\Types;
 
 use Error;
+use InvalidArgumentException;
 use Phunkie\Cats\Functor;
 use Phunkie\Cats\Show;
 use Phunkie\Ops\Tuple\TupleFunctorOps;
@@ -21,11 +22,25 @@ use function Phunkie\Functions\functor\fmap;
 use const Phunkie\Functions\show\showType;
 use const Phunkie\Functions\show\showValue;
 
+/**
+ * Tuples in Phunkie are immutable ordered collections of elements where each element
+ * can have a different type.
+ *
+ * @template T1
+ * @template T2
+ * @template T3
+ * ...
+ * @template TN
+ */
 class Tuple implements Copiable, Functor, Kind
 {
     use Show;
     use TupleFunctorOps;
-    private $values;
+
+    /**
+     * @var array<int,...TN>
+     */
+    private array $values;
 
     final public function __construct(...$values)
     {
@@ -34,7 +49,11 @@ class Tuple implements Copiable, Functor, Kind
         $this->values = $values;
     }
 
-    public function __get($member)
+    /**
+     * @param string $member
+     * @return mixed (T1 | T2 | T3 | ... | TN)
+     */
+    public function __get(string $member)
     {
         $this->startsWithUnderscore($member);
         $this->followedByANumber($member);
@@ -43,16 +62,34 @@ class Tuple implements Copiable, Functor, Kind
         return $this->values[$this->keyFromMember($member)];
     }
 
-    public function __set($arg, $value)
+    /**
+     * Tuples and Pairs are immutable
+     *
+     * $tuple = Tuple("hello", 42, true);
+     *
+     * These will throw TypeError:
+     * $tuple->_1 = "world";     // Error: Tuples are immutable
+     * $tuple->_4 = false;       // Error: _4 is not a member of tuple
+     *
+     * @param $member
+     * @param $value
+     * @return void
+     * @throws TypeError always. Tuples are immutable
+     */
+    public function __set($member, $value): void
     {
         throw new \TypeError("Tuples are immutable");
     }
 
-    public function copy(array $parameters): Tuple
+    /**
+     * @param array $fields array<int, T1|T2|T3|...|TN>
+     * @return Tuple<T1,...,TN>
+     */
+    public function copy(array $fields): Tuple
     {
         $values = $this->values;
 
-        foreach ($parameters as $parameter => $value) {
+        foreach ($fields as $parameter => $value) {
             $key = $this->keyFromMember($parameter);
             $this->validateKey($key, $parameter);
             $values[$key] = $value;
@@ -60,37 +97,61 @@ class Tuple implements Copiable, Functor, Kind
         return Tuple(...$values);
     }
 
+    /**
+     * @return string
+     */
     public function toString(): string
     {
         return "(" . implode(", ", fmap(showValue, ImmList(...$this->values))->toArray()) . ")";
     }
 
-    public function showType()
+    /**
+     * @return string
+     */
+    public function showType(): string
     {
         return sprintf("(%s)", implode(", ", $this->getTypeVariables()));
     }
 
+    /**
+     * @return array
+     */
     public function toArray(): array
     {
         return $this->values;
     }
 
+    /**
+     * @return int
+     */
     public function getArity(): int
     {
         return count($this->values);
     }
 
+    /**
+     * @return int
+     */
     public function getTypeArity(): int
     {
         return $this->getArity();
     }
 
+    /**
+     * @return array
+     */
     public function getTypeVariables(): array
     {
         return array_map(showType, $this->values);
     }
 
-    private function guardNumArgs(int $numArgs)
+    /**
+     * @param int $numArgs
+     * @return void
+     * @throws TypeError when trying to create a unit with arguments
+     * @throws TypeError when trying to create a pair with the wrong number of arguments
+     */
+    private function guardNumArgs(int $numArgs): void
     {
         if (get_class($this) === Unit::class && $numArgs > 0) {
             throw new \TypeError(sprintf("Unit does not take arguments %d given", $numArgs));
@@ -101,43 +162,72 @@ class Tuple implements Copiable, Functor, Kind
         }
     }
 
-    private function tupleIsSealed()
+    /**
+     * @return void
+     * @throws TypeError when trying to extend a sealed class outside its package
+     */
+    private function tupleIsSealed(): void
     {
         if (!in_array(get_class($this), [Tuple::class, Pair::class, Unit::class])) {
             throw new TypeError("Tuple is sealed. It cannot be extended outside Phunkie");
         }
     }
 
-    private function validateKey($key, $parameter)
+    /**
+     * @param $key
+     * @param $member
+     * @return void
+     * @throws InvalidArgumentException when the key is not a member of the tuple
+     */
+    private function validateKey($key, $member): void
     {
         if (!array_key_exists($key, $this->values)) {
-            throw new \InvalidArgumentException("$parameter is not a member of " . get_class($this) . ".");
+            throw new InvalidArgumentException("$member is not a member of " . get_class($this) . ".");
         }
     }
 
-    private function startsWithUnderscore($arg)
+    /**
+     * @param $member
+     * @return void
+     * @throws Error when the argument does not start with an underscore
+     */
+    private function startsWithUnderscore($member): void
     {
-        if (strpos($arg, "_") !== 0) {
-            throw new Error("$arg is not a member of Tuple");
+        if (!str_starts_with($member, "_")) {
+            throw new Error("$member is not a member of " . get_class($this) . ".");
         }
     }
 
-    private function followedByANumber($arg)
+    /**
+     * @param $member
+     * @return void
+     * @throws Error when the argument does not contain a number after the underscore
+     */
+    private function followedByANumber($member): void
     {
-        if (!is_numeric(substr($arg, 1))) {
-            throw new Error("$arg is not a member of Tuple");
+        if (!is_numeric(substr($member, 1))) {
+            throw new Error("$member is not a member of " . get_class($this) . ".");
         }
     }
 
-    private function includedInMembers($arg)
+    /**
+     * @param string $member
+     * @return void
+     * @throws Error when the argument is not a member of the tuple
+     */
+    private function includedInMembers(string $member): void
     {
-        if (!array_key_exists($this->keyFromMember($arg), $this->values)) {
-            throw new Error("$arg is not a member of Tuple");
+        if (!array_key_exists($this->keyFromMember($member), $this->values)) {
+            throw new Error("$member is not a member of Tuple");
         }
     }
 
-    private function keyFromMember($arg): int
+    /**
+     * @param string $member
+     * @return int
+     */
+    private function keyFromMember(string $member): int
     {
-        return ((int)substr($arg, 1)) - 1;
+        return ((int)substr($member, 1)) - 1;
     }
 }
