@@ -15,6 +15,33 @@ namespace Phunkie\Functions\show {
     use Phunkie\Types\Option;
     use function Phunkie\Functions\type\normaliseType;
 
+    /**
+     * Functions for converting values to strings.
+     * 
+     * This module provides functions for getting human-readable
+     * string representations of values, particularly useful for
+     * debugging and testing.
+     */
+
+    /**
+     * Converts a value to a string representation.
+     * 
+     * Returns a readable string format of the value.
+     * Uses the type's show implementation if available.
+     *
+     * Example:
+     * ```php
+     * show(42);                    // "42"
+     * show("hello");              // "\"hello\""
+     * show(ImmList(1,2,3));       // "List(1, 2, 3)"
+     * show(Some("value"));        // "Some(\"value\")"
+     * show(Pair("key", 123));     // "Pair(\"key\", 123)"
+     * ```
+     *
+     * @template A
+     * @param A $value Value to convert
+     * @return string String representation
+     */
     const show = "\\Phunkie\\Functions\\show\\show";
     function show(...$values)
     {
@@ -23,6 +50,24 @@ namespace Phunkie\Functions\show {
         }, $values);
     }
 
+    /**
+     * Gets a function that shows a value.
+     * 
+     * Returns a function that converts values to strings.
+     * Useful for composing with other functions.
+     *
+     * Example:
+     * ```php
+     * $showList = showValue();
+     * $showList(ImmList(1,2,3));  // "List(1, 2, 3)"
+     * 
+     * $numbers = ImmList(1,2,3);
+     * $numbers->map(showValue()); // List("1", "2", "3")
+     * ```
+     *
+     * @template A
+     * @return callable(A):string Function that converts to string
+     */
     const showValue = "\\Phunkie\\Functions\\show\\showValue";
     function showValue($value): string { return match(true) {
         is_showable($value) => $value->show(),
@@ -43,6 +88,22 @@ namespace Phunkie\Functions\show {
         default => $value};
     }
 
+    /**
+     * Shows array values.
+     * 
+     * Returns a string representation of array contents.
+     * Handles both associative and sequential arrays.
+     *
+     * Example:
+     * ```php
+     * showArrayValue([1, 2, 3]);              // "[1, 2, 3]"
+     * showArrayValue(["a" => 1, "b" => 2]);   // '["a" => 1, "b" => 2]'
+     * showArrayValue([]);                      // "[]"
+     * ```
+     *
+     * @param array<mixed> $value Array to convert
+     * @return string String representation
+     */
     function showArrayValue(array $value): string
     {
         return is_assoc($value) ?
@@ -50,6 +111,24 @@ namespace Phunkie\Functions\show {
             "[" . implode(", ", array_map(showValue, $value)) . "]";
     }
 
+    /**
+     * Shows a value with type information.
+     * 
+     * Like show(), but includes the type name.
+     * Useful for debugging type issues.
+     *
+     * Example:
+     * ```php
+     * showType(42);              // "Int(42)"
+     * showType("hello");         // "String(\"hello\")"
+     * showType(Some(1));         // "Option(Some(1))"
+     * showType(ImmList(1,2));    // "List(List(1, 2))"
+     * ```
+     *
+     * @template A
+     * @param A $value Value to show with type
+     * @return string Type and value representation
+     */
     const showType = "\\Phunkie\\Functions\\show\\showType";
     function showType($value): string {return match (true) {
         is_showable($value) => $value->showType(),
@@ -66,6 +145,24 @@ namespace Phunkie\Functions\show {
         is_object($value) => get_class($value) };
     }
 
+    /**
+     * Shows array type information.
+     * 
+     * Returns the type of elements in an array.
+     * For mixed types, returns "Mixed".
+     * For empty arrays, returns "Nothing".
+     *
+     * Example:
+     * ```php
+     * showArrayType([1, 2, 3]);           // "Int"
+     * showArrayType([1, "hello"]);        // "Mixed"
+     * showArrayType([Some(1), None()]);   // "Option<Int>"
+     * showArrayType([]);                  // "Nothing"
+     * ```
+     *
+     * @param array<mixed> $value Array to check type
+     * @return string Type description
+     */
     const showArrayType = "\\Phunkie\\Functions\\show\\showArrayType";
     function showArrayType($value): string
     {
@@ -132,6 +229,27 @@ namespace Phunkie\Functions\show {
             None() };
     }
 
+    /**
+     * Checks if an object uses a trait.
+     * 
+     * Recursively checks if a trait is used by an object's class
+     * or any of its parent classes. Also checks traits used by traits.
+     *
+     * Example:
+     * ```php
+     * class MyClass {
+     *     use Show;
+     * }
+     * 
+     * usesTrait(new MyClass(), Show::class);     // true
+     * usesTrait(new MyClass(), SomeTrait::class); // false
+     * usesTrait("not an object", Show::class);    // false
+     * ```
+     *
+     * @param mixed $object Object to check
+     * @param class-string $trait Trait class name to look for
+     * @return bool True if object uses trait
+     */
     const usesTrait = "\\Phunkie\\Functions\\show\\usesTrait";
     function usesTrait($object, $trait): bool
     {
@@ -153,12 +271,41 @@ namespace Phunkie\Functions\show {
         return (bool)$countOfShowTraitUsage;
     }
 
+    /**
+     * Checks if a value implements Show.
+     * 
+     * Returns true if the value has a show() method.
+     *
+     * Example:
+     * ```php
+     * is_showable(Some(42));     // true
+     * is_showable(ImmList(1,2)); // true
+     * is_showable(42);           // false
+     * ```
+     *
+     * @param mixed $value Value to check
+     * @return bool True if showable
+     */
     const is_showable = "\\Phunkie\\Functions\\show\\is_showable";
     function is_showable($value): bool
     {
         return !is_object($value) ? false : usesTrait($value, Show::class);
     }
 
+    /**
+     * Checks if an array is associative.
+     * 
+     * Returns true if array has string keys.
+     *
+     * Example:
+     * ```php
+     * is_assoc([1, 2, 3]);           // false
+     * is_assoc(["a" => 1, "b" => 2]); // true
+     * ```
+     *
+     * @param array<mixed> $arr Array to check
+     * @return bool True if associative
+     */
     const is_assoc = "\\Phunkie\\Functions\\show\\is_assoc";
     function is_assoc(array $value): bool
     {

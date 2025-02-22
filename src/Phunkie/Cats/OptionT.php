@@ -11,67 +11,140 @@
 
 namespace Phunkie\Cats;
 
+use Phunkie\Types\Kind;
 use Phunkie\Types\Option;
 
 /**
- * OptionT<F, A>
+ * A monad transformer that combines Option with another monad F.
+ * 
+ * OptionT allows you to work with nested structures of the form F<Option<A>>
+ * (like List<Option<A>>) as if they were a single monad. This makes it easier
+ * to compose computations that might fail within another effect.
+ *
+ * Example:
+ * ```php
+ * // Without OptionT
+ * $users = ImmList(Some(1), None(), Some(2));
+ * $result = $users->map(fn($id) => $id->map(fn($x) => $x + 1));
+ * // ImmList(Some(2), None(), Some(3))
+ *
+ * // With OptionT
+ * $users = OptionT(ImmList(Some(1), None(), Some(2)));
+ * $result = $users->map(fn($x) => $x + 1);
+ * // OptionT(ImmList(Some(2), None(), Some(3)))
+ * ```
+ *
+ * @template F The outer monad
+ * @template A The value type
+ * @implements Kind<OptionT,A>
  */
-class OptionT
+class OptionT implements Kind
 {
-    /**
-     * @var Monad<Option<A>>
-     */
-    private $value;
+    const kind = "OptionT";
 
-    public function __construct(Monad $value)
+    /**
+     * @var Kind<F,Option<A>>
+     */
+    private $monad;
+
+    /**
+     * Creates a new OptionT wrapping a monadic value containing Options.
+     *
+     * @param Kind<F,Option<A>> $monad The wrapped monadic value
+     */
+    public function __construct(Kind $monad)
     {
-        $this->value = $value;
+        $this->monad = $monad;
     }
 
     /**
-     * @param callable<A, B> $f
-     * @return OptionT<F, B>
+     * Gets the underlying monadic value.
+     *
+     * @return Kind<F,Option<A>> The wrapped value
      */
-    public function map($f): OptionT
+    public function getValue(): Kind
     {
-        return OptionT($this->value->map(fn (Option $o) => $o->map($f)));
+        return $this->monad;
     }
 
     /**
-     * @param callable<A, OptionT<F, B>> $f
-     * @return OptionT<F, B>
+     * Maps a function over the Option value inside the monad F.
+     *
+     * @template B
+     * @param callable(A):B $f The function to apply
+     * @return OptionT<F,B> A new OptionT with transformed values
      */
-    public function flatMap($f): OptionT
+    public function map(callable $f): OptionT
     {
-        return OptionT($this->value->flatMap(function (Option $o) use ($f) {
+        return new OptionT(
+            $this->monad->map(fn(Option $o) => $o->map($f))
+        );
+    }
+
+    /**
+     * Chains OptionT computations.
+     *
+     * @template B
+     * @param callable(A):OptionT<F,B> $f Function returning another OptionT
+     * @return OptionT<F,B> The composed computation
+     */
+    public function flatMap(callable $f): OptionT
+    {
+        return OptionT($this->monad->flatMap(function (Option $o) use ($f) {
             return $o->map(
-                fn ($a) => $f($a)->value
-            )->getOrElse($this->value->pure(None()));
+                fn ($a) => $f($a)->monad
+            )->getOrElse($this->monad->pure(None()));
         }));
     }
 
     /**
-     * @return F<Boolean>
+     * Checks if the Option values are defined.
+     *
+     * @return Kind<F,bool> A monadic value containing boolean results
      */
-    public function isDefined()
+    public function isDefined(): Kind
     {
-        return $this->value->map(fn (Option $o) => $o->isDefined());
+        return $this->monad->map(fn(Option $o) => $o->isDefined());
     }
 
     /**
-     * @return F<Boolean>
+     * Checks if the Option values are empty.
+     *
+     * @return Kind<F,bool> A monadic value containing boolean results
      */
-    public function isEmpty()
+    public function isEmpty(): Kind
     {
-        return $this->value->map(fn (Option $o) => $o->isEmpty());
+        return $this->monad->map(fn(Option $o) => $o->isEmpty());
     }
 
     /**
-     * @param A $default
-     * @return F<A>
+     * Gets the values or a default if None.
+     *
+     * @param A $default The default value
+     * @return Kind<F,A> A monadic value containing the results
      */
-    public function getOrElse($default)
+    public function getOrElse($default): Kind
     {
-        return $this->value->map(fn (Option $o) => $o->getOrElse($default));
+        return $this->monad->map(fn(Option $o) => $o->getOrElse($default));
+    }
+
+    /**
+     * Returns the number of type parameters.
+     *
+     * @return int Always returns 2 (F and A)
+     */
+    public function getTypeArity(): int
+    {
+        return 2;
+    }
+
+    /**
+     * Returns the type variables for this Kind.
+     *
+     * @return array<string> Array containing the type variables
+     */
+    public function getTypeVariables(): array
+    {
+        return ['F', 'A'];
     }
 }

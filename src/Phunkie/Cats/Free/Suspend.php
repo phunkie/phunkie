@@ -3,7 +3,6 @@
 namespace Phunkie\Cats\Free;
 
 use Phunkie\Cats\Free;
-use Phunkie\Types\Kind;
 
 /**
  * Represents a suspended computation in the Free monad.

@@ -14,7 +14,41 @@ namespace Phunkie\Functions\semigroup;
 use Phunkie\Types\Unit;
 use TypeError;
 
+/**
+ * Functions for working with Semigroups.
+ * 
+ * A Semigroup is a type with an associative binary operation (combine).
+ * This allows combining multiple values of the same type into one.
+ */
+
 const combine = "\\Phunkie\\Functions\\semigroup\\combine";
+ /**
+ * Combines two values of the same type.
+ * 
+ * Uses the type's combine operation to merge values.
+ * The operation must be associative: combine(a, combine(b, c)) = combine(combine(a, b), c)
+ *
+ * Example:
+ * ```php
+ * // Lists concatenate
+ * combine(ImmList(1,2), ImmList(3,4));  // ImmList(1,2,3,4)
+ * 
+ * // Options take first Some
+ * combine(Some(1), None());             // Some(1)
+ * combine(None(), Some(2));             // Some(2)
+ * 
+ * // Numbers add
+ * combine(1, 2);                        // 3
+ * 
+ * // Strings concatenate
+ * combine("hello ", "world");           // "hello world"
+ * ```
+ *
+ * @template A
+ * @param A $a First value
+ * @param A $b Second value
+ * @return A Combined result
+ */
 function combine(...$parts)
 {
     $getParentClasses = function ($object) {
@@ -69,6 +103,35 @@ function combine(...$parts)
 }
 
 const zero = "\\Phunkie\\Functions\\semigroup\\zero";
+/**
+ * Gets the identity element for a type.
+ * 
+ * Returns the value that, when combined with any other value x,
+ * returns x unchanged: combine(zero(), x) = x = combine(x, zero())
+ *
+ * Example:
+ * ```php
+ * // Empty list is identity for concatenation
+ * zero(ImmList::class);                // ImmList()
+ * combine(ImmList(1,2), zero());       // ImmList(1,2)
+ * 
+ * // None is identity for Options
+ * zero(Option::class);                 // None
+ * combine(Some(1), zero());           // Some(1)
+ * 
+ * // 0 is identity for addition
+ * zero('integer');                    // 0
+ * combine(42, zero());               // 42
+ * 
+ * // Empty string is identity for concatenation
+ * zero('string');                    // ""
+ * combine("hello", zero());         // "hello"
+ * ```
+ *
+ * @template A
+ * @param class-string<A>|string $type Type to get identity for
+ * @return A Identity element
+ */
 function zero($a) { return match (gettype($a)) {
     "int", "integer"=> 0,
     "double", "float"=> 0.0,

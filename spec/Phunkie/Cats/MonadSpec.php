@@ -21,19 +21,19 @@ class MonadSpec extends TestCase
         $fa = Some(42);
         $f = fn (int $x): Kind => Some(gettype($x));
         $g = fn (string $x): Kind => Some(strlen($x) % 2 == 0);
-        $this->assertTrue($this->flapMapAssociativity($fa, $f, $g));
+        $this->assertTrue($this->flatMapAssociativity($fa, $f, $g));
 
         // List
         $fa = ImmList(1, 2, 3);
         $f = fn (int $x): Kind => ImmList(gettype($x));
         $g = fn (string $x): Kind => ImmList(strlen($x) % 2 == 0);
-        $this->assertTrue($this->flapMapAssociativity($fa, $f, $g));
+        $this->assertTrue($this->flatMapAssociativity($fa, $f, $g));
 
         // Set
         $fa = ImmSet(1, 2, 3);
         $f = fn (int $x): Kind => ImmSet(gettype($x));
         $g = fn (string $x): Kind => ImmSet(strlen($x) % 2 == 0);
-        $this->assertTrue($this->flapMapAssociativity($fa, $f, $g));
+        $this->assertTrue($this->flatMapAssociativity($fa, $f, $g));
     }
 
     /**

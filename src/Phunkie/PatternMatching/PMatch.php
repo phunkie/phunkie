@@ -25,22 +25,73 @@ use Phunkie\Types\Some;
 use Phunkie\Validation\Failure;
 use Phunkie\Validation\Success;
 
+/**
+ * Pattern matching implementation for PHP.
+ * 
+ * PMatch provides Scala-like pattern matching capabilities, allowing you to:
+ * - Match values against patterns
+ * - Extract values using references
+ * - Use wildcards for partial matching
+ * - Match against complex data structures
+ *
+ * Example:
+ * ```php
+ * // Simple value matching
+ * $match = new PMatch($value);
+ * if ($match(42)) { ... }
+ * 
+ * // Pattern matching with extraction
+ * $x = null;
+ * $match = new PMatch(Some(42));
+ * if ($match(Some($x))) {
+ *     echo $x; // 42
+ * }
+ * 
+ * // List pattern matching
+ * $head = null; $tail = null;
+ * $match = new PMatch(ImmList(1,2,3));
+ * if ($match(ListWithTail($head, $tail))) {
+ *     echo "$head and " . $tail->mkString(); // "1 and 2,3"
+ * }
+ * 
+ * // Wildcard matching
+ * $match = new PMatch(Some(42));
+ * if ($match(Some(_))) { // matches any Some value
+ *     ...
+ * }
+ * ```
+ */
 class PMatch
 {
     private $values;
 
+    /**
+     * Creates a new pattern matcher for the given values.
+     *
+     * @param mixed ...$values Values to match against
+     */
     public function __construct(...$values)
     {
         $this->values = $values;
     }
 
+    /**
+     * Attempts to match the values against the given conditions.
+     * 
+     * The number of conditions must match the number of values
+     * (except when using a single wildcard).
+     *
+     * @param mixed ...$conditions Patterns to match against
+     * @return bool True if all patterns match
+     * @throws \Error If number of conditions doesn't match values
+     */
     public function __invoke(...$conditions): bool
     {
         $conditions = $this->wildcardGuard($conditions);
         $this->guardNumberOfConditionsAndValuesNotEqual($conditions);
 
         for ($position = 0; $position < count($conditions); $position++) {
-            if (!conditionIsValid($conditions[$position], $this->values[$position])) {
+            if (!$this->conditionIsValid($conditions[$position], $this->values[$position])) {
                 return false;
             }
         }
@@ -48,6 +99,9 @@ class PMatch
         return true;
     }
 
+    /**
+     * Expands a single wildcard to match multiple values.
+     */
     private function wildcardGuard($conditions)
     {
         if (count($conditions) == 1 && $conditions[0] == _ && count($conditions) < count($this->values)) {
@@ -56,163 +110,292 @@ class PMatch
         return $conditions;
     }
 
+    /**
+     * Ensures the number of conditions matches the number of values.
+     * 
+     * @throws \Error If counts don't match
+     */
     private function guardNumberOfConditionsAndValuesNotEqual($conditions)
     {
         if (count($conditions) != count($this->values)) {
             throw new \Error("number of conditions must equal number of arguments in match.");
         }
     }
-}
 
-function conditionIsValid($condition, $value) { return match (true) {
-    $condition === _,
-    matchSomeByReference($condition, $value),
-    matchByReference($condition, $value),
-    matchesNone($condition, $value),
-    matchesNil($condition, $value),
-    matchesWildcardedNel($condition, $value),
-    matchesConsWildcardedHead($condition, $value),
-    matchesConsWildcardedTail($condition, $value),
-    matchesWildcardedFunction1($condition, $value),
-    matchesWildcardedSome($condition, $value),
-    matchesWildcardedFailure($condition, $value),
-    matchesWildcardedSuccess($condition, $value),
-    sameTypeSameValue($condition, $value) =>
-        true,
-    default => false };
-}
-
-function matchesWildcardedSome($condition, $value)
-{
-    return $condition instanceof Some && $condition == Some(_) && $value instanceof Some;
-}
-
-function matchesWildcardedFunction1($condition, $value)
-{
-    return $condition instanceof WildcardedFunction1 && $value instanceof Function1;
-}
-
-function sameTypeSameValue($condition, $value)
-{
-    return gettype($condition) == gettype($value) &&
-           ($value == $condition || ($condition instanceof ImmList && $condition->eqv($value)));
-}
-
-function matchSomeByReference($condition, $value)
-{
-    if ($condition instanceof ReferencedSome && $value instanceof Some) {
-        $condition->value = $value->get();
-        return true;
+    /**
+     * Validates if a condition matches a value.
+     * 
+     * Checks various pattern matching conditions including:
+     * - Wildcards
+     * - Reference extractions
+     * - Type-specific matches (None, Nil, etc)
+     * - Value equality
+     *
+     * @param mixed $condition The pattern to match against
+     * @param mixed $value The value to match
+     * @return bool True if the pattern matches
+     */
+    private function conditionIsValid($condition, $value): bool 
+    { 
+        return match (true) {
+            $condition === _,
+            $this->matchSomeByReference($condition, $value),
+            $this->matchByReference($condition, $value),
+            $this->matchesNone($condition, $value),
+            $this->matchesNil($condition, $value),
+            $this->matchesWildcardedNel($condition, $value),
+            $this->matchesConsWildcardedHead($condition, $value),
+            $this->matchesConsWildcardedTail($condition, $value),
+            $this->matchesWildcardedFunction1($condition, $value),
+            $this->matchesWildcardedSome($condition, $value),
+            $this->matchesWildcardedFailure($condition, $value),
+            $this->matchesWildcardedSuccess($condition, $value),
+            $this->sameTypeSameValue($condition, $value) => true,
+            default => false 
+        };
     }
-    return false;
-}
 
-function matchesNone($condition, $value)
-{
-    return $condition == None && $value instanceof Option && $value == None();
-}
-
-function matchesNil($condition, $value)
-{
-    return $condition == Nil && $value instanceof ImmList && $value == Nil();
-}
-
-function matchesWildcardedFailure($condition, $value)
-{
-    return $condition instanceof Failure && $condition == Failure(_) && $value instanceof Failure;
-}
-
-function matchesWildcardedSuccess($condition, $value)
-{
-    return $condition instanceof Success && $condition == Success(_) && $value instanceof Success;
-}
-
-function matchesConsWildcardedHead($condition, $value)
-{
-    if ($condition instanceof WildcardedCons && $condition->head == _ && $value instanceof ImmList) {
-        $pmatch = new PMatch($value->tail());
-
-        return $pmatch($condition->tail);
+    /**
+     * Checks if a condition matches a Some value with wildcard.
+     *
+     * @param mixed $condition Pattern to match
+     * @param mixed $value Value to match against
+     * @return bool True if matches Some(_)
+     */
+    private function matchesWildcardedSome($condition, $value): bool
+    {
+        return $condition instanceof Some && $condition == Some(_) && $value instanceof Some;
     }
-    return false;
-}
 
-function matchesConsWildcardedTail($condition, $value)
-{
-    if ($condition instanceof WildcardedCons && $condition->tail == _ && $value instanceof ImmList) {
-        $pmatch = new PMatch($value->head);
-        return $pmatch($condition->head);
+    /**
+     * Checks if a condition matches a Function1 with wildcard.
+     *
+     * @param mixed $condition Pattern to match
+     * @param mixed $value Value to match against
+     * @return bool True if matches Function1(_)
+     */
+    private function matchesWildcardedFunction1($condition, $value): bool
+    {
+        return $condition instanceof WildcardedFunction1 && $value instanceof Function1;
     }
-    return false;
-}
 
-function matchesWildcardedNel($condition, $value)
-{
-    return $condition instanceof NonEmptyList && $condition == Nel(_) &&
-    $value instanceof NonEmptyList && $value->length > 0;
-}
-
-function matchByReference($condition, $value)
-{
-    if ($condition instanceof GenericReferenced) {
-        return matchGenericByReference($condition, $value, $condition->class);
+    /**
+     * Checks if two values are of the same type and equal.
+     * Special handling for ImmList using eqv comparison.
+     *
+     * @param mixed $condition Pattern to match
+     * @param mixed $value Value to match against
+     * @return bool True if types match and values are equal
+     */
+    private function sameTypeSameValue($condition, $value): bool
+    {
+        return gettype($condition) == gettype($value) &&
+               ($value == $condition || ($condition instanceof ImmList && $condition->eqv($value)));
     }
-    return match (true) {
-        matchListByReference($condition, $value),
-        matchListHeadByReference($condition, $value) =>
-            true,
-        default => false
-    };
-}
 
-function matchGenericByReference($condition, $object, $class)
-{
-    if ($condition instanceof GenericReferenced && is_object($object) && get_class($object) === $class) {
-        $reflected = new \ReflectionClass($object);
-        $parameters = $reflected->getConstructor()->getParameters();
-        for ($i = 1; $i <= count($parameters); $i++) {
-            if (!$reflected->hasProperty($parameters[$i - 1]->getName())) {
-                throw new \Error("To use generic pattern matching you have to name the constructor argument as you ".
-                    "have named the class property");
-            }
-            if (isset(((array) $object)["\0$class\0{$parameters[$i - 1]->getName()}"])) {
-                $condition->{"_$i"} = ((array)$object)["\0$class\0{$parameters[$i - 1]->getName()}"];
-            } elseif (isset(((array)$object)["{$parameters[$i - 1]->getName()}"])) {
-                $condition->{"_$i"} = ((array)$object)["{$parameters[$i - 1]->getName()}"];
-            }
+    /**
+     * Extracts value from Some into a reference.
+     *
+     * @param mixed $condition Referenced Some pattern
+     * @param mixed $value Some value to extract from
+     * @return bool True if extraction succeeded
+     */
+    private function matchSomeByReference($condition, $value): bool
+    {
+        if ($condition instanceof ReferencedSome && $value instanceof Some) {
+            $condition->value = $value->get();
+            return true;
         }
-        return true;
+        return false;
     }
-    return false;
-}
 
-function matchListByReference($condition, $value)
-{
-    if ($condition instanceof ListWithTail && $value instanceof ImmList) {
-        if ($condition->head == null) {
+    /**
+     * Checks if a condition matches None.
+     *
+     * @param mixed $condition Pattern to match
+     * @param mixed $value Value to match against
+     * @return bool True if matches None
+     */
+    private function matchesNone($condition, $value): bool
+    {
+        return $condition == None && $value instanceof Option && $value == None();
+    }
+
+    /**
+     * Checks if a condition matches Nil (empty list).
+     *
+     * @param mixed $condition Pattern to match
+     * @param mixed $value Value to match against
+     * @return bool True if matches Nil
+     */
+    private function matchesNil($condition, $value): bool
+    {
+        return $condition == Nil && $value instanceof ImmList && $value == Nil();
+    }
+
+    /**
+     * Checks if a condition matches a Failure with wildcard.
+     *
+     * @param mixed $condition Pattern to match
+     * @param mixed $value Value to match against
+     * @return bool True if matches Failure(_)
+     */
+    private function matchesWildcardedFailure($condition, $value): bool
+    {
+        return $condition instanceof Failure && $condition == Failure(_) && $value instanceof Failure;
+    }
+
+    /**
+     * Checks if a condition matches a Success with wildcard.
+     *
+     * @param mixed $condition Pattern to match
+     * @param mixed $value Value to match against
+     * @return bool True if matches Success(_)
+     */
+    private function matchesWildcardedSuccess($condition, $value): bool
+    {
+        return $condition instanceof Success && $condition == Success(_) && $value instanceof Success;
+    }
+
+    /**
+     * Checks if a condition matches a list with wildcarded head.
+     * Recursively matches the tail.
+     *
+     * @param mixed $condition Pattern to match
+     * @param mixed $value Value to match against
+     * @return bool True if matches Cons(_, tail)
+     */
+    private function matchesConsWildcardedHead($condition, $value): bool
+    {
+        if ($condition instanceof WildcardedCons && $condition->head == _ && $value instanceof ImmList) {
+            return (new self($value->tail()))($condition->tail);
+        }
+        return false;
+    }
+
+    /**
+     * Checks if a condition matches a list with wildcarded tail.
+     * Recursively matches the head.
+     *
+     * @param mixed $condition Pattern to match
+     * @param mixed $value Value to match against
+     * @return bool True if matches Cons(head, _)
+     */
+    private function matchesConsWildcardedTail($condition, $value): bool
+    {
+        if ($condition instanceof WildcardedCons && $condition->tail == _ && $value instanceof ImmList) {
+            return (new self($value->head))($condition->head);
+        }
+        return false;
+    }
+
+    /**
+     * Checks if a condition matches a non-empty list with wildcard.
+     *
+     * @param mixed $condition Pattern to match
+     * @param mixed $value Value to match against
+     * @return bool True if matches Nel(_)
+     */
+    private function matchesWildcardedNel($condition, $value): bool
+    {
+        return $condition instanceof NonEmptyList && $condition == Nel(_) &&
+               $value instanceof NonEmptyList && $value->length > 0;
+    }
+
+    /**
+     * Handles reference-based pattern matching.
+     * Delegates to specific reference matchers based on type.
+     *
+     * @param mixed $condition Referenced pattern
+     * @param mixed $value Value to match against
+     * @return bool True if reference matching succeeded
+     */
+    private function matchByReference($condition, $value): bool
+    {
+        if ($condition instanceof GenericReferenced) {
+            return $this->matchGenericByReference($condition, $value, $condition->class);
+        }
+        return match (true) {
+            $this->matchListByReference($condition, $value),
+            $this->matchListHeadByReference($condition, $value) => true,
+            default => false
+        };
+    }
+
+    /**
+     * Matches generic class instances by reference.
+     * Extracts constructor parameters into references.
+     *
+     * @param GenericReferenced $condition Referenced pattern
+     * @param object $object Object to match against
+     * @param string $class Expected class name
+     * @return bool True if matching succeeded
+     * @throws \Error If constructor param names don't match properties
+     */
+    private function matchGenericByReference($condition, $object, $class): bool
+    {
+        if ($condition instanceof GenericReferenced && is_object($object) && get_class($object) === $class) {
+            $reflected = new \ReflectionClass($object);
+            $parameters = $reflected->getConstructor()->getParameters();
+            for ($i = 1; $i <= count($parameters); $i++) {
+                if (!$reflected->hasProperty($parameters[$i - 1]->getName())) {
+                    throw new \Error("To use generic pattern matching you have to name the constructor argument as you ".
+                        "have named the class property");
+                }
+                if (isset(((array) $object)["\0$class\0{$parameters[$i - 1]->getName()}"])) {
+                    $condition->{"_$i"} = ((array)$object)["\0$class\0{$parameters[$i - 1]->getName()}"];
+                } elseif (isset(((array)$object)["{$parameters[$i - 1]->getName()}"])) {
+                    $condition->{"_$i"} = ((array)$object)["{$parameters[$i - 1]->getName()}"];
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Matches list with tail by reference.
+     * Extracts both head and tail into references.
+     *
+     * @param mixed $condition Referenced pattern
+     * @param mixed $value Value to match against
+     * @return bool True if matching succeeded
+     */
+    private function matchListByReference($condition, $value): bool
+    {
+        if ($condition instanceof ListWithTail && $value instanceof ImmList) {
+            if ($condition->head == null) {
+                $condition->head = $value->head;
+            } elseif ($condition->head != $value->head) {
+                return false;
+            }
+            if ($condition->tail == null) {
+                $condition->tail = $value->tail;
+            } elseif ($condition->tail != $value->tail) {
+                return false;
+            }
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Matches list head by reference.
+     * Extracts head and ensures tail is Nil.
+     *
+     * @param mixed $condition Referenced pattern
+     * @param mixed $value Value to match against
+     * @return bool True if matching succeeded
+     */
+    private function matchListHeadByReference($condition, $value): bool
+    {
+        if ($condition instanceof ListNoTail && $value instanceof ImmList) {
             $condition->head = $value->head;
-        } elseif ($condition->head != $value->head) {
-            return false;
+            if ($value->tail != Nil()) {
+                return false;
+            }
+            return true;
         }
-        if ($condition->tail == null) {
-            $condition->tail = $value->tail;
-        } elseif ($condition->tail != $value->tail) {
-            return false;
-        }
-        return true;
+        return false;
     }
-
-    return false;
-}
-
-function matchListHeadByReference($condition, $value)
-{
-    if ($condition instanceof ListNoTail && $value instanceof ImmList) {
-        $condition->head = $value->head;
-        if ($value->tail != Nil()) {
-            return false;
-        }
-        return true;
-    }
-    return false;
 }

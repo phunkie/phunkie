@@ -5,11 +5,54 @@ namespace {
     use Phunkie\Functions\comprehension\Bind;
     use Phunkie\Functions\comprehension\ForComprehension;
 
+    /**
+     * Creates a for-comprehension over monadic values.
+     * 
+     * For-comprehensions provide a more readable syntax for working with
+     * nested monadic operations, similar to Scala's for-yield expressions.
+     *
+     * Example:
+     * ```php
+     * // Instead of nested flatMaps:
+     * $users->flatMap(fn($user) =>
+     *     $user->getOrders()->flatMap(fn($order) =>
+     *         $order->getItems()
+     *     )
+     * );
+     * 
+     * // Use for-comprehension:
+     * for_(
+     *     __($user)->_($users),
+     *     __($order)->_($user->getOrders()),
+     *     __($items)->_($order->getItems())
+     * )->yields($items);
+     * ```
+     *
+     * @param Bind ...$binds The monadic bindings
+     * @return ForComprehension The comprehension builder
+     */
     function for_(...$binds)
     {
         return new ForComprehension($binds);
     }
 
+    /**
+     * Creates variable bindings for for-comprehension.
+     * 
+     * Allows binding values from monadic contexts to variables that
+     * can be used in subsequent expressions.
+     *
+     * Example:
+     * ```php
+     * for_(
+     *     __($x)->_(Some(1)),     // Bind x to Some(1)
+     *     __($y)->_(Some($x + 1)) // Use x in next binding
+     * )->yields($x + $y);         // Use both x and y
+     * ```
+     *
+     * @param mixed &...$vars References to bind values to
+     * @return Bind The binding object
+     */
     function __(
         &$_1 = _,
         &$_2 = _,
@@ -47,8 +90,19 @@ namespace Phunkie\Functions\comprehension {
     use Phunkie\Types\Tuple;
     use const Phunkie\Functions\function1\identity;
 
+    /**
+     * Represents a monadic binding in a for-comprehension.
+     * 
+     * Binds values from monadic contexts to variables that can be
+     * used in subsequent expressions.
+     */
     class Bind
     {
+        /**
+         * Creates a new binding.
+         *
+         * @param mixed &...$vars References to bind values to
+         */
         public function __construct(
             &$_1 = _,
             &$_2 = _,
@@ -78,6 +132,11 @@ namespace Phunkie\Functions\comprehension {
             }
         }
 
+        /**
+         * Assigns a value to the bound variables.
+         *
+         * @param mixed $x Value or tuple to assign
+         */
         public function to($x)
         {
             if (!$x instanceof Tuple) {
@@ -89,6 +148,12 @@ namespace Phunkie\Functions\comprehension {
             }
         }
 
+        /**
+         * Creates a monadic context for this binding.
+         *
+         * @param mixed $monad The monadic value to bind from
+         * @return MonadicContext The binding context
+         */
         public function _($monad)
         {
             $monad->map(function ($x) {
@@ -98,10 +163,19 @@ namespace Phunkie\Functions\comprehension {
         }
     }
 
+    /**
+     * Represents a monadic context in a for-comprehension.
+     * 
+     * Holds the binding and monadic value for a single step in
+     * the comprehension.
+     */
     class MonadicContext
     {
+        /** @var Bind The variable binding */
         public $bind;
+        /** @var mixed The monadic value */
         public $monad;
+        /** @var mixed The next context */
         public $next;
 
         public function __construct(Bind $bind, $monad)
@@ -111,14 +185,27 @@ namespace Phunkie\Functions\comprehension {
         }
     }
 
+    /**
+     * Builder for for-comprehensions.
+     * 
+     * Handles the construction and execution of for-comprehensions
+     * over monadic values.
+     */
     class ForComprehension
     {
         private $binds;
+
         public function __construct(array $binds)
         {
             $this->binds = $binds;
         }
 
+        /**
+         * Yields a value from the comprehension.
+         * 
+         * @param mixed &...$vars Values to yield
+         * @return mixed The comprehension result
+         */
         public function yields(
             &$_1 = _,
             &$_2 = _,
@@ -169,6 +256,13 @@ namespace Phunkie\Functions\comprehension {
             );
         }
 
+        /**
+         * Calls a function with the comprehension result.
+         *
+         * @param callable $f Function to call
+         * @param mixed &...$vars Values to pass
+         * @return mixed The function result
+         */
         public function call(
             callable $f,
             &$_1 = _,
@@ -220,6 +314,9 @@ namespace Phunkie\Functions\comprehension {
             );
         }
 
+        /**
+         * Resolves the comprehension with a function and values.
+         */
         private function resolve(
             callable $f,
             &$_1 = _,
