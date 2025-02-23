@@ -11,6 +11,7 @@
 
 namespace {
 
+    use Phunkie\Types\NonEmptyList;
     use Phunkie\Types\Option;
     use Phunkie\Validation\Failure;
     use Phunkie\Validation\Success;
@@ -62,10 +63,10 @@ namespace {
      * ```
      *
      * @template A
-     * @param string|Nel<string> $error Error message or non-empty list of errors
+     * @param string|Throwable|NonEmptyList<string>|Failure|callable $error Error message or non-empty list of errors
      * @return Failure<A> Failed validation
      */
-    function Failure($error): Failure
+    function Failure(string|Throwable|NonEmptyList|Failure|callable $error): Failure
     {
         return new Failure($error);
     }

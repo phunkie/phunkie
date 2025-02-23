@@ -28,6 +28,13 @@
             "src/Phunkie/Functions/common.php"
         ]
     },
+    "autoload-dev": {
+        "psr-4": {
+            "\\spec\\": [
+                "spec/"
+            ]
+        }
+    },
     "config": {
         "allow-plugins": {
             "ergebnis/composer-normalize": true

@@ -59,16 +59,14 @@ class ValidationSpec extends TestCase
     public function it_can_be_constructed_with_Attempt()
     {
         $this->assertIsLike(
-            Attempt(fn () => 42),
-            Success(42)
+            Success(42),
+            Attempt(fn () => 42)
         );
 
-        $failure = Attempt(function () {
-            throw new \Exception("nay");
-        });
-        $this->assertEquals(
-            'Failure(Exception("nay"))',
-            ($failure->fold(fn (\Exception $e) => 'Failure(' . get_class($e) . '("' . $e->getMessage() . '")' . ')'))(identity)
+        $e = new \Exception("nay");
+        $this->assertIsLike(
+            Failure($e),
+            Attempt(function () use ($e) { throw $e; })
         );
     }
 
@@ -167,5 +165,47 @@ class ValidationSpec extends TestCase
         $v = new Failure("nay");
 
         $this->assertIsLike($v->orElse(Success("ok")), Success("ok"));
+    }
+
+    /**
+     * @test
+     */
+    public function it_combines_successes()
+    {
+        $v1 = Success("Hello");
+        $v2 = Success("World");
+        
+        $this->assertIsLike(
+            $v1->combine($v2),
+            Success(Nel("Hello", "World"))
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function it_combines_failures()
+    {
+        $v1 = Failure("Error 1");
+        $v2 = Failure("Error 2");
+        
+        $this->assertIsLike(
+            $v1->combine($v2),
+            Failure(Nel("Error 1", "Error 2"))
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function it_combines_nel_failures()
+    {
+        $v1 = Failure(Nel("Error 1", "Error 2"));
+        $v2 = Failure("Error 3");
+        
+        $this->assertIsLike(
+            $v1->combine($v2),
+            Failure(Nel("Error 1", "Error 2", "Error 3"))
+        );
     }
 }
