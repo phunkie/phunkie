@@ -46,7 +46,7 @@ interface Apply extends Functor
      *
      * @template B
      * @param Kind<static,callable(A):B> $f The wrapped function
-     * @return static<B> The result of applying the function
+     * @return Kind<B> The result of applying the function
      */
     public function apply(Kind $f): Kind;
 
@@ -57,7 +57,7 @@ interface Apply extends Functor
      * @template C
      * @param Kind<static,B> $fb Second value
      * @param callable(A,B):C $f Function to apply
-     * @return static<C> Result of applying the function
+     * @return Kind<C> Result of applying the function
      */
     public function map2(Kind $fb, callable $f): Kind;
 }

@@ -135,9 +135,9 @@ final class Success extends Validation
      */
     public function apply(Kind $f): Kind { return match (true) {
         $f instanceof Success && is_callable($f->valid)
-            => Success(($f->valid)($this->valid)),
+        => Success(($f->valid)($this->valid)),
         $f instanceof Failure && !is_callable(($f->fold(identity))(_))
-            => $f };
+        => $f};
     }
 
     /**

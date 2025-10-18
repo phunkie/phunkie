@@ -38,8 +38,8 @@ class ShowSpec extends TestCase
 
         $this->assertEquals(showType(Pair(42, "42")), "(Int, String)");
 
-        $this->assertEquals(showType(Success("yay")), "Validation<E, String>");
-        $this->assertEquals(showType(Failure(new \Exception())), "Validation<Exception, A>");
+        $this->assertEquals("Validation<E, String>", showType(Success("yay")));
+        $this->assertEquals("Validation<Exception, A>", showType(Failure(new \Exception())));
 
         $this->assertEquals(showType(Tuple(1, true, "")), "(Int, Boolean, String)");
 

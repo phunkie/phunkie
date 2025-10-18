@@ -12,17 +12,21 @@
 namespace Phunkie\Ops\ImmList;
 
 use Phunkie\Ops\FunctorOps;
-use Phunkie\Types\Kind;
+use Phunkie\Types\ImmList;
+use ReturnTypeWillChange;
 
 trait ImmListFunctorOps
 {
     use FunctorOps;
-    public function map(callable $f): Kind
+
+    #[ReturnTypeWillChange]
+    public function map(callable $f): ImmList
     {
         return ImmList(...array_map(fn ($element) => $f($element), $this->values));
     }
 
-    public function imap(callable $f, callable $g): Kind
+    #[ReturnTypeWillChange]
+    public function imap(callable $f, callable $g): ImmList
     {
         return $this->map($f);
     }

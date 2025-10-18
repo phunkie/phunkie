@@ -44,14 +44,14 @@ interface FlatMap extends Functor
      *
      * @template B
      * @param callable(A):static<B> $f The function returning a new functor
-     * @return static<B> The result of applying and flattening
+     * @return Kind<B> The result of applying and flattening
      */
     public function flatMap(callable $f): Kind;
 
     /**
      * Flattens a nested functor structure.
      *
-     * @return static<T> where T is the type parameter of the inner functor
+     * @return Kind<T> where T is the type parameter of the inner functor
      */
     public function flatten(): Kind;
 }

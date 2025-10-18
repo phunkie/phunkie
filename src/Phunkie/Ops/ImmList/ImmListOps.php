@@ -15,6 +15,7 @@ use BadMethodCallException;
 use Error;
 use Phunkie\PatternMatching\PMatch;
 use Phunkie\Types\ImmList;
+use Phunkie\Types\NonEmptyList;
 use Phunkie\Types\Option;
 use Phunkie\Types\Pair;
 use Exception;
@@ -60,12 +61,18 @@ trait ImmListOps
 
     public function append(mixed $element): ImmList
     {
-        return ImmList(...array_merge($this->toArray(), [$element]));
+        return match(get_class($this)) {
+            NonEmptyList::class => Nel(...array_merge($this->toArray(), [$element])),
+            default => ImmList(...array_merge($this->toArray(), [$element]))
+        };
     }
 
     public function prepend(mixed $element): ImmList
     {
-        return ImmList(...array_merge([$element], $this->toArray()));
+        return match(get_class($this)) {
+            NonEmptyList::class => Nel(...array_merge($this->toArray(), [$element])),
+            default => ImmList(...array_merge([$element], $this->toArray()))
+        };
     }
 
     public function head()
@@ -75,12 +82,18 @@ trait ImmListOps
 
     public function tail(): ImmList
     {
-        return ImmList(...array_slice($this->toArray(), 1));
+        return match(get_class($this)) {
+            NonEmptyList::class  => $this->length > 1 ? Nel(...array_slice($this->toArray(), 1)) : Nil(),
+            default => ImmList(...array_slice($this->toArray(), 1))
+        };
     }
 
     public function init(): ImmList
     {
-        return ImmList(...array_slice($this->toArray(), 0, -1));
+        return match(get_class($this)) {
+            NonEmptyList::class  => $this->length > 1 ? Nel(...array_slice($this->toArray(), 1)) : Nil(),
+            default => ImmList(...array_slice($this->toArray(), 0, -1))
+        };
     }
 
     public function last()
@@ -95,11 +108,15 @@ trait ImmListOps
 
     /**
      * @param callable $condition
-     * @return Traversable|ImmList
+     * @return Traversable
      */
     public function filter(callable $condition): Traversable
     {
-        return ImmList(...array_filter($this->toArray(), $condition));
+        $filtered = array_filter($this->toArray(), $condition);
+        return match(get_class($this)) {
+            NonEmptyList::class  => count($filtered) > 1 ? Nel(...$filtered) : Nil(),
+            default => ImmList(...$filtered)
+        };
     }
 
     public function withFilter(callable $filter): WithFilter

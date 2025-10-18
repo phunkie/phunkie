@@ -24,6 +24,10 @@ use Phunkie\Validation\Failure;
 
 $success = Success(42);
 $failure = Failure("Invalid input");
+
+// Using Nel constructors
+$successNel = SuccessNel(1, 2, 3);        // Success(Nel(1, 2, 3))
+$failureNel = FailureNel("e1", "e2");     // Failure(Nel("e1", "e2"))
 ```
 
 ### Using Either
@@ -41,6 +45,27 @@ $validation = Attempt(function() {
     }
     return require "config.php";
 });
+```
+
+### Failure Creation
+```php
+// Single error
+$failure = Failure("Invalid input");
+
+// Multiple errors using Nel constructor
+$failure = FailureNel("Error 1", "Error 2");
+
+// Combining failures automatically creates Nel
+$f1 = Failure("Error 1");
+$f2 = Failure("Error 2");
+$result = $f1->combine($f2);
+// Failure(Nel("Error 1", "Error 2"))
+
+// Combining with existing Nel
+$f1 = FailureNel("Error 1", "Error 2");
+$f2 = Failure("Error 3");
+$result = $f1->combine($f2);
+// Failure(Nel("Error 1", "Error 2", "Error 3"))
 ```
 
 ## Core Operations
@@ -72,13 +97,18 @@ $failure = Failure("error")->getOrElse(0); // 0
 ### combine
 Accumulate errors or combine successes:
 ```php
-$v1 = Success(2);
-$v2 = Success(3);
-$v3 = Failure("First error");
-$v4 = Failure("Second error");
+$v1 = Success("Hello");
+$v2 = Success("World");
 
-$v1->combine($v2); // Success(5)
-$v3->combine($v4); // Failure("First errorSecond error")
+// Combine successes
+$result = $v1->combine($v2);
+// Success(Nel("Hello", "World"))
+
+// Combine failures
+$f1 = Failure("Error 1");
+$f2 = Failure("Error 2");
+$result = $f1->combine($f2);
+// Failure(Nel("Error 1", "Error 2"))
 ```
 
 ## Common Use Cases

@@ -13,7 +13,9 @@ namespace Phunkie\Validation;
 
 use Phunkie\Cats\Applicative;
 use Phunkie\Types\Kind;
+use Phunkie\Types\NonEmptyList;
 use function Phunkie\Functions\show\showValue;
+use function Phunkie\Functions\immlist\concat;
 
 /**
  * Represents a failed validation result.
@@ -116,7 +118,11 @@ final class Failure extends Validation
      */
     public function flatten(): Kind
     {
-        return $this->invalid;
+        if ($this->invalid instanceof Failure) {
+            return $this->invalid->flatten();
+        }
+
+        return $this;
     }
 
     /**
@@ -170,5 +176,18 @@ final class Failure extends Validation
     public function map2(Kind $fb, callable $f): Kind
     {
         return $this;
+    }
+
+    protected function combineFailures(Failure $x, Failure $y)
+    {
+        return Failure(match(true) {
+            $x->invalid instanceof NonEmptyList && $y->invalid instanceof NonEmptyList =>
+                Nel(...array_merge($x->invalid->toArray(), $y->invalid->toArray())),
+            $x->invalid instanceof NonEmptyList =>
+                $x->invalid->append($y),
+            $y->invalid instanceof NonEmptyList =>
+                $y->invalid->prepend($x),
+            default => Nel($x->invalid, $y->invalid)
+        });
     }
 }

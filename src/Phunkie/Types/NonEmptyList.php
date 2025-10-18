@@ -11,7 +11,10 @@
 
 namespace Phunkie\Types;
 
+use Phunkie\Validation\Failure;
+use Phunkie\Validation\Success;
 use function Phunkie\Functions\semigroup\combine;
+use const Phunkie\Functions\semigroup\combine;
 
 /**
  * A list that is guaranteed to contain at least one element.
@@ -39,12 +42,12 @@ final class NonEmptyList extends ImmList
      * ```
      *
      * @template B
-     * @param ImmList<B> $another The list to combine with
-     * @return NonEmptyList<A|B> The combined list
+     * @param ImmList<B> $b The list to combine with
+     * @return NonEmptyList<B> The combined list
      */
-    public function combine(ImmList $another)
+    public function combine(ImmList $b): NonEmptyList
     {
-        return Nel(...combine($this->toArray(), $another->toArray()));
+        return Nel(...combine($this->toArray(), $b->toArray()));
     }
 
     /**
@@ -52,7 +55,7 @@ final class NonEmptyList extends ImmList
      *
      * @return Failure<A> A Failure containing this list
      */
-    public function failure()
+    public function failure(): Failure
     {
         return Failure($this);
     }
@@ -62,7 +65,7 @@ final class NonEmptyList extends ImmList
      *
      * @return Success<A> A Success containing this list
      */
-    public function success()
+    public function success(): Success
     {
         return Success($this);
     }

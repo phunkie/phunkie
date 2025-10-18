@@ -12,6 +12,7 @@
 namespace {
 
     use Phunkie\PatternMatching\PMatch;
+    use Phunkie\PatternMatching\Referenced\GenericReferenced;
     use Phunkie\PatternMatching\Underscore;
 
     /**
@@ -31,7 +32,7 @@ namespace {
      *
      * @template A,B
      * @param A $value Value to match on
-     * @return callable(array<callable>):B Function accepting cases
+     * @return callable(array<callable>):B|GenericReferenced Function accepting cases
      */
     function pmatch(...$values)
     {
@@ -137,10 +138,10 @@ namespace Phunkie\PatternMatching\Referenced {
      * );
      * ```
      *
-     * @param string $type Type name to match
-     * @return Type Pattern for type matching
+     * @param string $value Type name to match
+     * @return GenericReferenced Pattern for type matching
      */
-    function Success(&$value)
+    function Success(&$value): GenericReferenced
     {
         return new GenericReferenced(Valid::class, $value);
     }
@@ -158,10 +159,10 @@ namespace Phunkie\PatternMatching\Referenced {
      * );
      * ```
      *
-     * @param string $type Type name to match
-     * @return Type Pattern for type matching
+     * @param string $value Type name to match
+     * @return GenericReferenced Pattern for type matching
      */
-    function Failure(&$value)
+    function Failure(&$value): GenericReferenced
     {
         return new GenericReferenced(Invalid::class, $value);
     }

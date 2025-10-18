@@ -18,6 +18,7 @@ use Phunkie\Cats\Show;
 use Phunkie\Ops\FunctorOps;
 use Phunkie\Types\Kind;
 use Phunkie\Types\Option;
+use Phunkie\Types\NonEmptyList;
 use TypeError;
 use function Phunkie\Functions\semigroup\combine;
 use function Phunkie\Functions\semigroup\zero;
@@ -106,11 +107,14 @@ abstract class Validation implements Applicative, Monad, Kind, Foldable
      * @param Validation<E,A> $that The validation to combine with
      * @return Validation<E,A> The combined validation
      */
-    public function combine(Validation $that): Validation { $on = pmatch($this, $that); return match (true) {
-        $on(Valid($a), Valid($b)) => Success(combine($a, $b)),
-        $on(Invalid($x), Invalid($y)) => Failure(combine($x, $y)),
-        $on(Failure(_), _) => $this,
-        $on(_) => $that };
+    public function combine(Validation $that): Validation { 
+        $on = pmatch($this, $that); 
+        return match (true) {
+            $on(Valid($a), Valid($b)) => Success(Nel($a, $b)),
+            $on(Invalid($x), Invalid($y)) => $this->combineFailures($this, $that),
+            $on(Failure(_), _) => $this,
+            $on(_) => $that 
+        };
     }
 
     /**
