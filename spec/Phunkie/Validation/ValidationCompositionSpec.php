@@ -49,4 +49,4 @@ class ValidationCompositionSpec extends TestCase
             Failure(Nel("Password too short"))
         );
     }
-} 
+}

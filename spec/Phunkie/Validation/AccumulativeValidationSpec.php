@@ -45,4 +45,4 @@ class AccumulativeValidationSpec extends TestCase
             Success(Pair("John", "john@email.com"))
         );
     }
-} 
+}

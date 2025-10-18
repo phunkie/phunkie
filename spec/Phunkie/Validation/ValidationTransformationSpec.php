@@ -36,4 +36,4 @@ class ValidationTransformationSpec extends TestCase
             $failure->fold(fn($e) => "Error: " . $e)(fn($v) => "Success: " . $v)
         );
     }
-} 
+}
