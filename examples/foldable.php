@@ -1,6 +1,6 @@
 <?php
 
-function foldable() {
+function foldable(): void {
     $list = ImmList(1, 2, 3, 4);
     printLn($list->foldLeft(0)(fn($acc, $x) => $acc + $x));
     printLn($list->foldRight(0)(fn($x, $acc) => $x + $acc));
