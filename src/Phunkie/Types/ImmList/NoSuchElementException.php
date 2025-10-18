@@ -30,6 +30,6 @@ use Exception;
  * }
  * ```
  */
-class NoSuchElementException extends Exception
+final class NoSuchElementException extends Exception
 {
 }

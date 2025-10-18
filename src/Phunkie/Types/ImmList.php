@@ -11,6 +11,7 @@
 
 namespace Phunkie\Types;
 
+use Error;
 use Phunkie\Cats\Applicative;
 use Phunkie\Cats\Foldable;
 use Phunkie\Cats\Monad;
@@ -25,6 +26,7 @@ use Phunkie\Ops\ImmList\ImmListOps;
 use Phunkie\Ops\ImmList\ImmListTraverseOps;
 use Phunkie\Utils\Iterator;
 use Phunkie\Utils\Traversable;
+use TypeError;
 use function Phunkie\Functions\show\showArrayType;
 use function Phunkie\Functions\type\promote;
 use const Phunkie\Functions\show\showValue;
@@ -63,7 +65,7 @@ class ImmList implements Kind, Applicative, Monad, Traverse, Foldable, Traversab
     use ImmListTraverseOps;
 
     public const kind = ImmList;
-    private $values;
+    private array $values;
 
     /**
      * Constructs a new ImmList.
@@ -81,8 +83,8 @@ class ImmList implements Kind, Applicative, Monad, Traverse, Foldable, Traversab
      * $cons = new Cons(1, ImmList(2));  // List(1, 2)
      * ```
      *
-     * @throws \Error if constructor constraints are violated
-     * @throws \TypeError if attempting to extend ImmList outside namespace
+     * @throws Error if constructor constraints are violated
+     * @throws TypeError if attempting to extend ImmList outside namespace
      */
     final public function __construct() { match (get_class($this)) {
         NonEmptyList::class => $this->constructNonEmptyList(func_num_args(), func_get_args()),
@@ -163,7 +165,7 @@ class ImmList implements Kind, Applicative, Monad, Traverse, Foldable, Traversab
      *
      * @return string The type representation
      */
-    public function showType()
+    public function showType(): string
     {
         return sprintf("List<%s>", $this->getTypeVariables()[0]);
     }
@@ -173,12 +175,12 @@ class ImmList implements Kind, Applicative, Monad, Traverse, Foldable, Traversab
      *
      * @param int $argc Number of arguments
      * @param array $argv Array of arguments
-     * @throws \Error if no arguments are provided
+     * @throws Error if no arguments are provided
      */
-    private function constructNonEmptyList(int $argc, array $argv)
+    private function constructNonEmptyList(int $argc, array $argv): void
     {
         if ($argc == 0) {
-            throw new \Error("not enough arguments for constructor Nel");
+            throw new Error("not enough arguments for constructor Nel");
         }
         $this->values = $argv;
     }
@@ -188,18 +190,18 @@ class ImmList implements Kind, Applicative, Monad, Traverse, Foldable, Traversab
      *
      * @param int $argc Number of arguments
      * @param array $argv Array of arguments
-     * @throws \Error if wrong number of arguments
-     * @throws \TypeError if tail is not an ImmList
+     * @throws Error if wrong number of arguments
+     * @throws TypeError if tail is not an ImmList
      */
-    private function constructCons(int $argc, array $argv)
+    private function constructCons(int $argc, array $argv): void
     {
         if ($argc != 2) {
-            throw new \Error(($argc < 2 ? "not enough" : "too many") . " arguments for constructor List");
+            throw new Error(($argc < 2 ? "not enough" : "too many") . " arguments for constructor List");
         }
         $head = $argv[0];
         $tail = $argv[1];
         if (!$tail instanceof ImmList) {
-            throw new \TypeError("type mismatch 2nd argument List: expected List, found " .
+            throw new TypeError("type mismatch 2nd argument List: expected List, found " .
                 ((gettype($tail) == "object") ? get_class($tail) : gettype($tail)));
         }
         $this->values = array_merge([$head], $tail->toArray());
@@ -209,12 +211,12 @@ class ImmList implements Kind, Applicative, Monad, Traverse, Foldable, Traversab
      * Constructs an empty list.
      *
      * @param int $argc Number of arguments
-     * @throws \Error if any arguments are provided
+     * @throws Error if any arguments are provided
      */
-    private function constructNil(int $argc)
+    private function constructNil(int $argc): void
     {
         if ($argc > 0) {
-            throw new \Error("too many arguments for constructor Nil");
+            throw new Error("too many arguments for constructor Nil");
         }
         $this->values = [];
     }
@@ -222,10 +224,10 @@ class ImmList implements Kind, Applicative, Monad, Traverse, Foldable, Traversab
     /**
      * Prevents extending ImmList outside its namespace.
      *
-     * @return \TypeError
+     * @return TypeError
      */
-    private function listIsSealed()
+    private function listIsSealed(): TypeError
     {
-        return new \TypeError("List cannot be extended outside namespace");
+        return new TypeError("List cannot be extended outside namespace");
     }
 }

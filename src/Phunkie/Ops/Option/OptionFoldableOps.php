@@ -17,21 +17,21 @@ use function Phunkie\Functions\semigroup\zero;
 
 trait OptionFoldableOps
 {
-    public function foldLeft($initial)
+    public function foldLeft($initial): callable
     {
         return applyPartially([$initial], func_get_args(), fn (callable $f) => $f($initial, $this->getOrElse(zero($initial))));
     }
 
-    public function foldRight($initial)
+    public function foldRight($initial): callable
     {
         return applyPartially([$initial], func_get_args(), fn (callable $f) => $f($this->getOrElse(zero($initial)), $initial));
     }
 
     public function foldMap(callable $f)
     {
-        $none = md5("None");
-        return $this->foldLeft(zero($this->getOrElse($none)), function ($b, $a) use ($f, $none) {
-            if ($b == $none) {
+        $uninitialized = uniqid("___Phunkie___");
+        return $this->foldLeft(zero($this->getOrElse($uninitialized)))(function ($b, $a) use ($f, $uninitialized) {
+            if ($b === $uninitialized) {
                 $b = zero($a);
             }
             return combine($b, $f($a));
