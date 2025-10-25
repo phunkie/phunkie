@@ -49,30 +49,35 @@ trait Function1ApplicativeOps
     use Function1FunctorOps;
 
     /**
-     * Lifts a value into a constant function.
-     * 
-     * Creates a function that ignores its input and always returns
-     * the provided value.
+     * Lifts a value into the Function1 context.
+     *
+     * For Function1 (Reader monad), pure creates a constant function
+     * if given a non-callable value, or wraps callables as Function1.
      *
      * @template T
      * @param T $a The value to lift
-     * @return Function1<A,T> A constant function returning $a
+     * @return Function1<A,T> A Function1 wrapping the value
      */
     public function pure($a): Applicative
     {
-        return Function1($a);
+        // If $a is callable, wrap it as Function1
+        // Otherwise, create a constant function
+        return is_callable($a) ? Function1($a) : Function1(fn($ignored) => $a);
     }
 
     /**
      * Applies a wrapped function to this function's result.
-     * 
+     *
      * Given:
      * - this: Function1<A,B>
-     * - f: Function1<A,B->C>
+     * - f: Function1<A,C>
      * Returns: Function1<A,C>
      *
+     * This is function composition: applies this function then the given function.
+     * Equivalent to andThen for Function1.
+     *
      * @template C
-     * @param Function1<A,callable(B):C> $f The function to apply
+     * @param Function1<A,C> $f The function to apply after this one
      * @return Function1<A,C> The composed function
      */
     public function apply(Kind $f): Kind { return match (true) {
@@ -83,8 +88,8 @@ trait Function1ApplicativeOps
 
     /**
      * Maps two functions into a combined result.
-     * 
-     * Applies both functions to the input and combines their results
+     *
+     * Applies both functions to the same input and combines their results
      * using the provided function.
      *
      * @template C
@@ -92,13 +97,14 @@ trait Function1ApplicativeOps
      * @param Kind<A,C> $fb Second function to apply
      * @param callable(B,C):D $f Function to combine results
      * @return Kind<A,D> Combined function
-     * @throws TypeError If $fb is not a Functor
+     * @throws TypeError If $fb is not a Function1
      */
     public function map2(Kind $fb, callable $f): Kind
     {
-        if (!$fb instanceof Functor) {
-            throw new \TypeError("Type error: map2 first argument must be a Functor");
+        if (!$fb instanceof Function1) {
+            throw new \TypeError("Type error: map2 first argument must be a Function1");
         }
-        return $this->apply($fb->map(fn ($b) => fn ($a) => $f($a, $b)));
+        $fa = $this;
+        return Function1(fn($x) => $f($fa->invokeFunctionOnArg($x), $fb->invokeFunctionOnArg($x)));
     }
 }

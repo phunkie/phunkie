@@ -13,9 +13,12 @@ namespace Phunkie\Types;
 
 use Error;
 use InvalidArgumentException;
+use Phunkie\Cats\Foldable;
 use Phunkie\Cats\Functor;
 use Phunkie\Cats\Show;
+use Phunkie\Ops\Tuple\TupleFoldableOps;
 use Phunkie\Ops\Tuple\TupleFunctorOps;
+use Phunkie\Ops\Tuple\TupleOps;
 use Phunkie\Utils\Copiable;
 use TypeError;
 use function Phunkie\Functions\functor\fmap;
@@ -26,16 +29,45 @@ use const Phunkie\Functions\show\showValue;
  * Tuples in Phunkie are immutable ordered collections of elements where each element
  * can have a different type.
  *
+ * Tuples support multiple type class instances:
+ * - Functor: map a function over all elements
+ * - Foldable: fold/reduce all elements to a single value
+ *
+ * Tuples also provide rich utility methods for accessing and manipulating elements.
+ *
+ * Example:
+ * ```php
+ * $tuple = Tuple("Alice", 30, "engineer");
+ * echo $tuple->_1;  // "Alice"
+ * echo $tuple->_2;  // 30
+ * echo $tuple->_3;  // "engineer"
+ *
+ * // Functor operations
+ * $tuple->map(fn($x) => strtoupper($x));
+ * // Tuple("ALICE", "30", "ENGINEER") - note: converts all to strings
+ *
+ * // Foldable operations
+ * $numbers = Tuple(1, 2, 3, 4);
+ * ($numbers->foldLeft(0))(fn($acc, $x) => $acc + $x);  // 10
+ *
+ * // Utility operations
+ * $tuple->head();      // "Alice"
+ * $tuple->last();      // "engineer"
+ * $tuple->contains(30); // true
+ * ```
+ *
  * @template T1
  * @template T2
  * @template T3
- * ...
  * @template TN
+ * @implements Foldable<mixed>
  */
-class Tuple implements Copiable, Functor, Kind
+class Tuple implements Copiable, Functor, Foldable, Kind
 {
     use Show;
     use TupleFunctorOps;
+    use TupleFoldableOps;
+    use TupleOps;
 
     /**
      * @var array<int,...TN>

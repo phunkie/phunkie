@@ -13,18 +13,30 @@ namespace Phunkie\Types;
 
 use Error;
 use Phunkie\Cats\Show;
+use Phunkie\Ops\Unit\UnitEqOps;
+use Phunkie\Ops\Unit\UnitMonoidOps;
 
 /**
  * Represents the Unit type - a type with exactly one value.
- * 
+ *
  * Unit is used when a function must return something but has no meaningful
  * value to return. It's similar to void in other languages, but is an actual
  * type with a value. In functional programming, Unit is often written as '()'.
+ *
+ * Unit forms a trivial monoid where combining any two Units produces Unit,
+ * and all Units are equal to each other.
  *
  * Example:
  * ```php
  * $unit = Unit();
  * echo $unit->toString(); // "()"
+ *
+ * // Monoid operations
+ * Unit()->combine(Unit());  // Unit()
+ * Unit()->zero();           // Unit()
+ *
+ * // Equality
+ * Unit()->eqv(Unit());      // true
  * ```
  *
  * @extends Tuple<never>
@@ -32,6 +44,8 @@ use Phunkie\Cats\Show;
 final class Unit extends Tuple
 {
     use Show;
+    use UnitEqOps;
+    use UnitMonoidOps;
 
     /**
      * Returns the string representation of Unit.
@@ -41,6 +55,16 @@ final class Unit extends Tuple
     public function toString(): string
     {
         return '()';
+    }
+
+    /**
+     * Magic method for string conversion.
+     *
+     * @return string Always returns "()"
+     */
+    public function __toString(): string
+    {
+        return $this->toString();
     }
 
     /**

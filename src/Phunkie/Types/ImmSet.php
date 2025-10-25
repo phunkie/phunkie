@@ -12,12 +12,17 @@
 namespace Phunkie\Types;
 
 use Phunkie\Cats\Applicative;
+use Phunkie\Cats\Foldable;
 use Phunkie\Cats\Monad;
 use Phunkie\Cats\Show;
 use Phunkie\Ops\ImmSet\ImmSetApplicativeOps;
 use Phunkie\Ops\ImmSet\ImmSetEqOps;
+use Phunkie\Ops\ImmSet\ImmSetFoldableOps;
 use Phunkie\Ops\ImmSet\ImmSetFunctorOps;
 use Phunkie\Ops\ImmSet\ImmSetMonadOps;
+use Phunkie\Ops\ImmSet\ImmSetMonoidOps;
+use Phunkie\Ops\ImmSet\ImmSetOps;
+use Phunkie\Ops\ImmSet\ImmSetTraverseOps;
 use Phunkie\Utils\Iterator;
 use function Phunkie\Functions\show\showArrayType;
 use function Phunkie\Functions\show\showValue;
@@ -25,30 +30,37 @@ use function Phunkie\Functions\type\promote;
 
 /**
  * An immutable set implementation.
- * 
+ *
  * ImmSet provides a type-safe, immutable collection of unique elements.
- * It implements Applicative and Monad for functional transformations while
- * maintaining uniqueness of elements.
+ * It implements Applicative, Monad, Foldable, and Monoid for functional
+ * transformations while maintaining uniqueness of elements.
  *
  * Example:
  * ```php
  * $set = ImmSet(1, 2, 2, 3); // ImmSet(1, 2, 3)
  * $set->contains(2);         // true
  * $set->map(fn($x) => $x * 2); // ImmSet(2, 4, 6)
+ * $set->filter(fn($x) => $x > 1); // ImmSet(2, 3)
+ * $set->foldLeft(0)(fn($acc, $x) => $acc + $x); // 6
  * ```
  *
  * @template A
  * @implements Kind<ImmSet, A>
  * @implements Applicative<ImmSet, A>
  * @implements Monad<ImmSet, A>
+ * @implements Foldable<A>
  */
-class ImmSet implements Kind, Applicative, Monad
+class ImmSet implements Kind, Applicative, Monad, Foldable
 {
     use Show;
     use ImmSetFunctorOps;
     use ImmSetApplicativeOps;
     use ImmSetEqOps;
     use ImmSetMonadOps;
+    use ImmSetFoldableOps;
+    use ImmSetMonoidOps;
+    use ImmSetTraverseOps;
+    use ImmSetOps;
     private $elements = [];
 
     /**
@@ -78,7 +90,7 @@ class ImmSet implements Kind, Applicative, Monad
      * @param A $element The element to check
      * @return bool True if the element exists
      */
-    public function contains($element)
+    public function contains($element): bool
     {
         return ((!is_object($element) && in_array($element, $this->elements, true)) ||
             (is_object($element) && in_array($element, $this->elements)));
@@ -96,7 +108,7 @@ class ImmSet implements Kind, Applicative, Monad
      * @param A $element The element to remove
      * @return ImmSet<A> A new set without the element
      */
-    public function minus($element)
+    public function minus($element): ImmSet
     {
         if (!$this->contains($element)) {
             return ImmSet(...$this->elements);
@@ -119,7 +131,7 @@ class ImmSet implements Kind, Applicative, Monad
      * @param A $element The element to add
      * @return ImmSet<A> A new set with the element added
      */
-    public function plus($element)
+    public function plus($element): ImmSet
     {
         if ($this->contains($element)) {
             return ImmSet(...$this->elements);
@@ -133,7 +145,7 @@ class ImmSet implements Kind, Applicative, Monad
      *
      * @return array<A> Array containing the set elements
      */
-    public function toArray()
+    public function toArray(): array
     {
         return $this->elements;
     }
@@ -201,7 +213,7 @@ class ImmSet implements Kind, Applicative, Monad
      * @param ImmSet<A> $set The set to union with
      * @return ImmSet<A> The union of both sets
      */
-    public function union(ImmSet $set)
+    public function union(ImmSet $set): ImmSet
     {
         return ImmSet(...array_merge($this->elements, $set->elements));
     }

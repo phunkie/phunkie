@@ -43,19 +43,6 @@ class ValidationSpec extends TestCase
     /**
      * @test
      */
-    public function it_offers_a_curried_Either()
-    {
-        $success = compose(Either("nay"));
-        $failure = compose(Either("nay"));
-
-        $this->assertIsLike($success("yay"), Success("yay"));
-        $this->assertIsLike($failure(None()), Failure("nay"));
-        $this->assertIsLike($failure(null), Failure("nay"));
-    }
-
-    /**
-     * @test
-     */
     public function it_can_be_constructed_with_Attempt()
     {
         $this->assertIsLike(

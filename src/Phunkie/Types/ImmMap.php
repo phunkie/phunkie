@@ -13,10 +13,16 @@ namespace Phunkie\Types;
 
 use ArrayAccess;
 use SplObjectStorage;
+use Phunkie\Cats\Foldable;
 use Phunkie\Cats\Functor;
 use Phunkie\Cats\Show;
+use Phunkie\Cats\Traverse;
 use Phunkie\Ops\ImmMap\ImmMapEqOps;
+use Phunkie\Ops\ImmMap\ImmMapFoldableOps;
 use Phunkie\Ops\ImmMap\ImmMapFunctorOps;
+use Phunkie\Ops\ImmMap\ImmMapMonoidOps;
+use Phunkie\Ops\ImmMap\ImmMapOps;
+use Phunkie\Ops\ImmMap\ImmMapTraverseOps;
 use Phunkie\Utils\Copiable;
 use Phunkie\Utils\Iterator;
 use function Phunkie\Functions\show\showArrayType;
@@ -25,16 +31,21 @@ use function Phunkie\Functions\type\promote;
 
 /**
  * An immutable key-value map implementation.
- * 
+ *
  * ImmMap provides a type-safe, immutable mapping between keys and values.
- * It implements Functor for transforming values while preserving the structure.
+ * It implements several type class interfaces:
+ * - Functor: Transform values while preserving structure
+ * - Foldable: Fold/reduce the map to a single value
+ * - Traverse: Sequence effects through the map
+ * - Monoid: Combine maps with the empty map as identity
  *
  * Example:
  * ```php
  * $map = ImmMap(1 => "one", 2 => "two");
  * $map->get(1);                    // Some("one")
  * $map->get(3);                    // None
- * $map->map(fn($x) => strtoupper($x)); // ImmMap(1 => "ONE", 2 => "TWO")
+ * $map->mapValues(fn($x) => strtoupper($x)); // ImmMap(1 => "ONE", 2 => "TWO")
+ * $map->foldLeft(0)(fn($acc, $pair) => $acc + strlen($pair->_2)); // 6
  * ```
  *
  * @template K
@@ -42,13 +53,19 @@ use function Phunkie\Functions\type\promote;
  * @implements ArrayAccess<K,V>
  * @implements Copiable
  * @implements Functor<V>
+ * @implements Foldable<Pair<K,V>>
+ * @implements Traverse
  * @implements Kind<ImmMap, K, V>
  */
-final class ImmMap implements ArrayAccess, Copiable, Functor, Kind
+final class ImmMap implements ArrayAccess, Copiable, Functor, Foldable, Traverse, Kind
 {
     use Show;
     use ImmMapEqOps;
     use ImmMapFunctorOps;
+    use ImmMapFoldableOps;
+    use ImmMapTraverseOps;
+    use ImmMapMonoidOps;
+    use ImmMapOps;
     private $values;
 
     /**

@@ -47,6 +47,7 @@ Table of contents
 
 [Phunkie Types](phunkie_types.md)
 - [Options](types/options.md)
+- [Either](types/either.md)
 - [Lists](types/lists.md)
 - [Tuples and Pairs](types/tuples_and_pairs.md)
 - [Unit](types/unit.md)
