@@ -398,6 +398,53 @@ class ImmMapSpec extends TestCase
     /**
      * @test
      */
+    public function it_can_flatten()
+    {
+        $nested = ImmMap([
+            "a" => ImmMap(["x" => 1, "y" => 2]),
+            "b" => ImmMap(["z" => 3])
+        ]);
+        $flattened = $nested->flatten();
+        $this->assertTrue(
+            $flattened->eqv(ImmMap(["x" => 1, "y" => 2, "z" => 3]))
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function it_can_apply()
+    {
+        $map = ImmMap(["a" => 5, "b" => 10]);
+        $fns = ImmMap(["a" => fn($x) => $x * 2, "b" => fn($x) => $x + 1]);
+        $result = $map->apply($fns);
+        $this->assertTrue($result->eqv(ImmMap(["a" => 10, "b" => 11])));
+    }
+
+    /**
+     * @test
+     */
+    public function it_can_map2()
+    {
+        $map1 = ImmMap(["a" => 5, "b" => 10]);
+        $map2 = ImmMap(["a" => 3, "b" => 2]);
+        $result = $map1->map2($map2, fn($x, $y) => $x + $y);
+        $this->assertTrue($result->eqv(ImmMap(["a" => 8, "b" => 12])));
+    }
+
+    /**
+     * @test
+     */
+    public function it_can_pure()
+    {
+        $map = ImmMap();
+        $pureMap = $map->pure(42);
+        $this->assertTrue($pureMap->eqv(ImmMap(["default" => 42])));
+    }
+
+    /**
+     * @test
+     */
     public function it_can_zip_maps()
     {
         $map1 = ImmMap(["a" => 1, "b" => 2, "c" => 3]);

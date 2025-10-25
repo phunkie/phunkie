@@ -113,36 +113,6 @@ trait ImmMapOps
     }
 
     /**
-     * Maps a function that returns a map for each entry, then flattens the results.
-     *
-     * Example:
-     * ```php
-     * $map = ImmMap("a" => 1, "b" => 2);
-     * $map->flatMap(fn($pair) => ImmMap(
-     *     $pair->_1 . "1" => $pair->_2,
-     *     $pair->_1 . "2" => $pair->_2 * 2
-     * ));
-     * // ImmMap("a1" => 1, "a2" => 2, "b1" => 2, "b2" => 4)
-     * ```
-     *
-     * @template K2
-     * @template V2
-     * @param callable(Pair<K,V>):ImmMap<K2,V2> $f Function returning a map
-     * @return ImmMap<K2,V2> Flattened result
-     */
-    public function flatMap(callable $f): ImmMap
-    {
-        $result = ImmMap();
-        foreach ($this->iterator() as $k => $v) {
-            $mapped = $f(Pair($k, $v));
-            foreach ($mapped->iterator() as $k2 => $v2) {
-                $result = $result->plus($k2, $v2);
-            }
-        }
-        return $result;
-    }
-
-    /**
      * Zips two maps by keys into pairs of values.
      *
      * Only includes keys present in both maps.

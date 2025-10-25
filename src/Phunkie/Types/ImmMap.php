@@ -13,13 +13,17 @@ namespace Phunkie\Types;
 
 use ArrayAccess;
 use SplObjectStorage;
+use Phunkie\Cats\Applicative;
 use Phunkie\Cats\Foldable;
 use Phunkie\Cats\Functor;
+use Phunkie\Cats\Monad;
 use Phunkie\Cats\Show;
 use Phunkie\Cats\Traverse;
+use Phunkie\Ops\ImmMap\ImmMapApplicativeOps;
 use Phunkie\Ops\ImmMap\ImmMapEqOps;
 use Phunkie\Ops\ImmMap\ImmMapFoldableOps;
 use Phunkie\Ops\ImmMap\ImmMapFunctorOps;
+use Phunkie\Ops\ImmMap\ImmMapMonadOps;
 use Phunkie\Ops\ImmMap\ImmMapMonoidOps;
 use Phunkie\Ops\ImmMap\ImmMapOps;
 use Phunkie\Ops\ImmMap\ImmMapTraverseOps;
@@ -35,6 +39,8 @@ use function Phunkie\Functions\type\promote;
  * ImmMap provides a type-safe, immutable mapping between keys and values.
  * It implements several type class interfaces:
  * - Functor: Transform values while preserving structure
+ * - Applicative: Lift values and apply functions in map context
+ * - Monad: Chain computations that produce maps
  * - Foldable: Fold/reduce the map to a single value
  * - Traverse: Sequence effects through the map
  * - Monoid: Combine maps with the empty map as identity
@@ -45,6 +51,7 @@ use function Phunkie\Functions\type\promote;
  * $map->get(1);                    // Some("one")
  * $map->get(3);                    // None
  * $map->mapValues(fn($x) => strtoupper($x)); // ImmMap(1 => "ONE", 2 => "TWO")
+ * $map->flatMap(fn($p) => ImmMap($p->_1 . "a" => $p->_2)); // Monad operations
  * $map->foldLeft(0)(fn($acc, $pair) => $acc + strlen($pair->_2)); // 6
  * ```
  *
@@ -52,16 +59,17 @@ use function Phunkie\Functions\type\promote;
  * @template V
  * @implements ArrayAccess<K,V>
  * @implements Copiable
- * @implements Functor<V>
+ * @implements Applicative<ImmMap<K,V>>
+ * @implements Monad<ImmMap<K,V>>
  * @implements Foldable<Pair<K,V>>
  * @implements Traverse
  * @implements Kind<ImmMap, K, V>
  */
-final class ImmMap implements ArrayAccess, Copiable, Functor, Foldable, Traverse, Kind
+final class ImmMap implements ArrayAccess, Copiable, Applicative, Monad, Foldable, Traverse, Kind
 {
     use Show;
     use ImmMapEqOps;
-    use ImmMapFunctorOps;
+    use ImmMapApplicativeOps;
     use ImmMapFoldableOps;
     use ImmMapTraverseOps;
     use ImmMapMonoidOps;
