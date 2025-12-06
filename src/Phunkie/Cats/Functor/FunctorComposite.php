@@ -41,8 +41,8 @@ use Phunkie\Types\Option;
  */
 class FunctorComposite
 {
+    public const kind = "FunctorComposite";
     use Show;
-    use FunctorOps;
     
     /** @var array<string> List of functor kinds in this composition */
     protected array $kinds = [];

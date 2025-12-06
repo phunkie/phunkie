@@ -29,7 +29,8 @@ class EitherTSpec extends TestCase
         $m = new EitherT(ImmList(Right(1), Left("error"), Right(2)));
 
         // Transform even numbers, fail on odd
-        $result = $m->flatMap(fn($x) =>
+        $result = $m->flatMap(
+            fn($x) =>
             $x % 2 === 0
                 ? new EitherT(ImmList(Right($x * 2)))
                 : new EitherT(ImmList(Left("odd number")))

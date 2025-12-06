@@ -6,6 +6,8 @@ Phunkie is a library with functional structures for PHP.
 
 Full documentation is available [here](https://github.com/phunkie/phunkie/blob/master/docs/index.md).
 
+See also our [Coding Style Guide](docs/coding_style.md) for contribution standards.
+
 For better Phunkie development, consider installing [phunkie-console](https://github.com/phunkie/phunkie-console).
 
 ```bash

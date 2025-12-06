@@ -62,7 +62,8 @@ class IOSpec extends TestCase
             return 2;
         });
 
-        $combined = $first->flatMap(fn($x) => 
+        $combined = $first->flatMap(
+            fn($x) => 
             $second->map(fn($y) => $x + $y)
         );
 

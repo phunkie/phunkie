@@ -3,6 +3,7 @@
 namespace Phunkie\Cats;
 
 use function Phunkie\Functions\type\normaliseType;
+use Phunkie\Types\Kind;
 
 /**
  * Represents a natural transformation between functors.
@@ -143,7 +144,7 @@ class NaturalTransformation
      */
     public function andThen(NaturalTransformation $g): NaturalTransformation
     {
-        return new class($this->f, $g) implements NaturalTransformation {
+        return new class($this->f, $g) extends NaturalTransformation {
             private $f;
             private $g;
 
@@ -155,7 +156,7 @@ class NaturalTransformation
 
             public function transform(Kind $fa): Kind
             {
-                return $this->g->transform($this->f($fa));
+                return $this->g->transform(($this->f)($fa));
             }
 
             public function andThen(NaturalTransformation $h): NaturalTransformation

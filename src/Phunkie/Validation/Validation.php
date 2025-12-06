@@ -48,6 +48,8 @@ use function Phunkie\PatternMatching\Referenced\Failure as Invalid;
  * @implements Monad<Validation<E,A>>
  * @implements Kind<Validation<E,A>>
  * @implements Foldable<A>
+ * @method mixed fold($initial)
+ * @method Validation combineFailures(Validation $a, Validation $b)
  */
 abstract class Validation implements Applicative, Monad, Kind, Foldable
 {

@@ -21,7 +21,8 @@ class KleisliSpec extends TestCase
      */
     public function it_composes_with_andThen()
     {
-        $parseString = new Kleisli(fn($s) => 
+        $parseString = new Kleisli(
+            fn($s) => 
             is_numeric($s) ? Some(intval($s)) : None()
         );
         $double = new Kleisli(fn($i) => Some($i * 2));
@@ -102,10 +103,12 @@ class KleisliSpec extends TestCase
      */
     public function it_handles_failure_cases()
     {
-        $validatePositive = new Kleisli(fn($x) => 
+        $validatePositive = new Kleisli(
+            fn($x) => 
             $x > 0 ? Some($x) : None()
         );
-        $validateEven = new Kleisli(fn($x) => 
+        $validateEven = new Kleisli(
+            fn($x) => 
             $x % 2 == 0 ? Some($x) : None()
         );
 

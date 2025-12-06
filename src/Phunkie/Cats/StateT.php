@@ -43,7 +43,7 @@ use Phunkie\Types\Pair;
  */
 class StateT implements Kind
 {
-    const kind = "StateT";
+    public const kind = "StateT";
 
     /**
      * @var Kind<F,State<S,A>>
@@ -172,7 +172,8 @@ class StateT implements Kind
     public function modify(callable $f): StateT
     {
         return new StateT(
-            $this->monad->map(fn(State $state) =>
+            $this->monad->map(
+                fn(State $state) =>
                 $state->modify($f)
             )
         );

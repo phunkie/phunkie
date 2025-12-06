@@ -67,6 +67,7 @@ use function Phunkie\Functions\type\promote;
  */
 final class ImmMap implements ArrayAccess, Copiable, Applicative, Monad, Foldable, Traverse, Kind
 {
+    public const kind = "ImmMap";
     use Show;
     use ImmMapEqOps;
     use ImmMapApplicativeOps;

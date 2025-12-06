@@ -41,7 +41,7 @@ use function Phunkie\Functions\semigroup\combine;
  */
 class Id implements Kind
 {
-    const kind = "Id";
+    public const kind = "Id";
     
     private $value;
 

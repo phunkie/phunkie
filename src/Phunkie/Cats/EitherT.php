@@ -39,7 +39,7 @@ use Phunkie\Types\Kind;
  */
 class EitherT implements Kind
 {
-    const kind = "EitherT";
+    public const kind = "EitherT";
 
     /**
      * @var Kind<F,Either<L,R>>
@@ -89,11 +89,9 @@ class EitherT implements Kind
      */
     public function flatMap(callable $f): EitherT
     {
-        return EitherT($this->monad->flatMap(function (Either $e) use ($f) {
-            return $e->isLeft()
+        return EitherT($this->monad->flatMap(fn (Either $e) => $e->isLeft()
                 ? $this->monad->pure($e)
-                : $f($e->get())->monad;
-        }));
+                : $f($e->get())->monad));
     }
 
     /**
@@ -137,7 +135,8 @@ class EitherT implements Kind
      */
     public function fold(callable $leftF, callable $rightF): Kind
     {
-        return $this->monad->map(fn(Either $e) =>
+        return $this->monad->map(
+            fn(Either $e) =>
             ($e->fold($leftF))($rightF)
         );
     }

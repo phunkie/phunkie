@@ -31,7 +31,8 @@ class OptionTSpec extends TestCase
         $m = new OptionT(ImmList(Some(1), None(), Some(2)));
         
         // More complex transformation showing proper monadic binding
-        $result = $m->flatMap(fn($x) => 
+        $result = $m->flatMap(
+            fn($x) => 
             $x % 2 === 0 
                 ? new OptionT(ImmList(Some($x * 2))) 
                 : new OptionT(ImmList(None()))

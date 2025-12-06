@@ -3,7 +3,7 @@
 namespace Phunkie\Cats\Free;
 
 use Phunkie\Cats\Free;
-
+use Phunkie\Types\Kind;
 /**
  * Represents a pure value in the Free monad.
  * 
@@ -53,6 +53,6 @@ final class Pure extends Free
      */
     public function resume(): Kind
     {
-        return Pure($this->a);
+        return new Pure($this->a);
     }
 }

@@ -67,11 +67,9 @@ trait MonadLaws
      */
     public function flatMapAssociativity(Kind $fa, callable $f, callable $g): bool
     {
-        return $fa->flatMap($f)->flatMap($g) == $fa->flatMap(function ($a) use ($f, $g) {
-            return $f($a)->flatMap(
-                fn ($b) => $g($b)
-            );
-        });
+        return $fa->flatMap($f)->flatMap($g) == $fa->flatMap(fn ($a) => $f($a)->flatMap(
+            fn ($b) => $g($b)
+        ));
     }
 
     /**

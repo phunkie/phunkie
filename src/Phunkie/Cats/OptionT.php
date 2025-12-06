@@ -40,7 +40,7 @@ use Phunkie\Types\Option;
  */
 class OptionT implements Kind
 {
-    const kind = "OptionT";
+    public const kind = "OptionT";
 
     /**
      * @var Kind<F,Option<A>>
@@ -90,11 +90,9 @@ class OptionT implements Kind
      */
     public function flatMap(callable $f): OptionT
     {
-        return OptionT($this->monad->flatMap(function (Option $o) use ($f) {
-            return $o->map(
-                fn ($a) => $f($a)->monad
-            )->getOrElse($this->monad->pure(None()));
-        }));
+        return OptionT($this->monad->flatMap(fn (Option $o) => $o->map(
+            fn ($a) => $f($a)->monad
+        )->getOrElse($this->monad->pure(None()))));
     }
 
     /**

@@ -375,11 +375,9 @@ class EitherSpec extends TestCase
      */
     public function it_can_be_used_for_error_handling()
     {
-        $divide = function($a, $b) {
-            return $b === 0
+        $divide = fn($a, $b) => $b === 0
                 ? Left("Division by zero")
                 : Right($a / $b);
-        };
 
         $this->assertIsLike($divide(10, 2), Right(5));
         $this->assertIsLike($divide(10, 0), Left("Division by zero"));

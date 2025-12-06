@@ -23,7 +23,8 @@ class IdSpec extends TestCase
     public function it_implements_flatMap()
     {
         $this->assertEquals(
-            43, (new Id(42))->flatMap(fn ($x) => new Id($x + 1))
+            43,
+            (new Id(42))->flatMap(fn ($x) => new Id($x + 1))
         );
     }
 

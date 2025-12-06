@@ -149,7 +149,10 @@ trait ImmSetFoldableOps
      */
     public function fold($initial)
     {
-        return applyPartially([$initial], func_get_args(), fn (callable $f) =>
+        return applyPartially(
+            [$initial],
+            func_get_args(),
+            fn (callable $f) =>
             (!$this->isEmpty()) ? $this->foldLeft($initial)($f) : $initial
         );
     }

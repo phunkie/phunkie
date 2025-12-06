@@ -1,0 +1,6 @@
+parameters:
+    level: 0
+    paths:
+        - src
+    ignoreErrors:
+        - '#Template type \w+ of (function|method) .+ is not referenced in a parameter#'
