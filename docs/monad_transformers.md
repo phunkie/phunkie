@@ -8,6 +8,37 @@ Monad transformers wrap one monad inside another, allowing you to work with both
 
 ## Available Transformers
 
+### EitherT
+Combines `Either` with another monad:
+
+```php
+use Phunkie\Cats\EitherT;
+
+// ImmList<Either<String, Int>>
+$listOfEithers = ImmList(Right(1), Left("error"), Right(2));
+$eitherT = EitherT($listOfEithers);
+
+// Map over the Right values
+$result = $eitherT->map(fn($x) => $x + 1);
+// EitherT(ImmList(Right(2), Left("error"), Right(3)))
+
+// FlatMap with another EitherT
+$result = $eitherT->flatMap(
+    fn($x) => EitherT(ImmList(Right($x * 2)))
+);
+// EitherT(ImmList(Right(2), Left("error"), Right(4)))
+
+// Error handling with IO
+$safeDivide = fn($a, $b) => IO(fn() =>
+    $b === 0 ? Left("Division by zero") : Right($a / $b)
+);
+
+$result = EitherT($safeDivide(10, 2))
+    ->map(fn($x) => $x * 2)
+    ->getOrElse(0);
+// IO that returns 10
+```
+
 ### OptionT
 Combines `Option` with another monad:
 
@@ -79,6 +110,32 @@ Chain operations that return transformed values:
 $optionT->flatMap(fn($x) => OptionT(Some($x * 2)));
 ```
 
+### Additional EitherT Operations
+
+```php
+$eitherT->isRight();         // F<Boolean>
+$eitherT->isLeft();          // F<Boolean>
+$eitherT->getOrElse(42);     // F<A>
+$eitherT->fold(              // F<B>
+    fn($e) => "Error: $e",
+    fn($v) => "Success: $v"
+);
+$eitherT->swap();            // EitherT<F,R,L>
+$eitherT->bimap(             // EitherT<F,A,B>
+    fn($e) => "Error: $e",
+    fn($v) => $v * 2
+);
+$eitherT->leftMap(           // EitherT<F,A,R>
+    fn($e) => "Error: $e"
+);
+$eitherT->toOptionT();       // OptionT<F,R>
+
+// Static constructors
+EitherT::pure($monad, 42);          // EitherT(Right(42))
+EitherT::left($monad, "error");     // EitherT(Left("error"))
+EitherT::fromOptionT($optionT, "not found"); // Convert OptionT
+```
+
 ### Additional OptionT Operations
 
 ```php
@@ -89,7 +146,31 @@ $optionT->getOrElse(42); // F<A>
 
 ## Common Use Cases
 
-### 1. Handling Optional Values in Collections
+### 1. Error Handling in IO Operations
+```php
+use Phunkie\Cats\EitherT;
+
+$readConfig = fn($path) => IO(fn() =>
+    file_exists($path)
+        ? Right(file_get_contents($path))
+        : Left("File not found: $path")
+);
+
+$parseJson = fn($content) => IO(fn() => {
+    $data = json_decode($content, true);
+    return json_last_error() === JSON_ERROR_NONE
+        ? Right($data)
+        : Left("Invalid JSON");
+});
+
+$config = EitherT($readConfig('config.json'))
+    ->flatMap(fn($content) => EitherT($parseJson($content)))
+    ->map(fn($data) => $data['setting'])
+    ->getOrElse('default');
+// Returns IO that produces either the setting or 'default'
+```
+
+### 2. Handling Optional Values in Collections
 ```php
 $users = ImmList(
     Some(['name' => 'Alice']),
@@ -101,6 +182,30 @@ $names = OptionT($users)
     ->map(fn($user) => $user['name'])
     ->getOrElse('Unknown');
 // ImmList('Alice', 'Unknown', 'Bob')
+```
+
+### 3. Validation Chains with Either
+```php
+$validateAge = fn($user) =>
+    $user['age'] >= 18
+        ? Right($user)
+        : Left("Must be 18 or older");
+
+$validateEmail = fn($user) =>
+    filter_var($user['email'], FILTER_VALIDATE_EMAIL)
+        ? Right($user)
+        : Left("Invalid email");
+
+$users = ImmList(
+    Right(['name' => 'Alice', 'age' => 25, 'email' => 'alice@example.com']),
+    Right(['name' => 'Bob', 'age' => 16, 'email' => 'bob@example.com'])
+);
+
+$validated = EitherT($users)
+    ->flatMap(fn($user) => EitherT(ImmList($validateAge($user))))
+    ->flatMap(fn($user) => EitherT(ImmList($validateEmail($user))))
+    ->getValue();
+// ImmList(Right(['name' => 'Alice', ...]), Left("Must be 18 or older"))
 ```
 
 ### 2. Stateful Computations with Effects

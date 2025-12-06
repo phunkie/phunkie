@@ -110,21 +110,21 @@ namespace {
 
     /**
      * Creates a validation based on an optional value.
-     * 
+     *
      * Returns Success if value exists, Failure with message if None/null.
      *
      * Example:
      * ```php
-     * Either("User not found")(Some($user));  // Success($user)
-     * Either("User not found")(None());       // Failure("User not found")
-     * Either("Missing value")(null);          // Failure("Missing value")
+     * Validation("User not found")(Some($user));  // Success($user)
+     * Validation("User not found")(None());       // Failure("User not found")
+     * Validation("Missing value")(null);          // Failure("Missing value")
      * ```
      *
      * @template A
      * @param string $message Error message for None/null case
      * @return callable(Option<A>|null):Validation<A,string> Function expecting optional value
      */
-    function Either($message)
+    function Validation($message)
     {
         return applyPartially([$message], func_get_args(), function ($result) use ($message) {
             if (($result instanceof Option && $result == None()) || $result === null) {

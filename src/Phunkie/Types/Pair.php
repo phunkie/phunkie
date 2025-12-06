@@ -12,32 +12,69 @@
 namespace Phunkie\Types;
 
 use InvalidArgumentException;
+use Phunkie\Cats\Bifunctor;
+use Phunkie\Cats\Comonad;
+use Phunkie\Cats\Foldable;
 use Phunkie\Cats\Show;
+use Phunkie\Ops\Pair\PairBifunctorOps;
+use Phunkie\Ops\Pair\PairComonadOps;
+use Phunkie\Ops\Pair\PairFoldableOps;
+use Phunkie\Ops\Pair\PairFunctorOps;
+use Phunkie\Ops\Pair\PairOps;
 use TypeError;
 use function Phunkie\Functions\show\showValue;
 
 /**
  * Pairs are specialized tuples with exactly two elements.
- * 
+ *
  * Pairs are immutable and type-safe. The types of both elements are preserved
  * through generic type parameters T1 and T2.
+ *
+ * Pairs support multiple type class instances:
+ * - Bifunctor: map over both elements independently
+ * - Functor: map over the second element
+ * - Foldable: fold over the second element
+ * - Comonad: extract and extend computations
  *
  * Example:
  * ```php
  * $pair = Pair("name", 25);
  * $name = $pair->_1; // "name" (type T1)
  * $age = $pair->_2;  // 25 (type T2)
+ *
+ * // Bifunctor operations
+ * $pair->bimap(fn($s) => strtoupper($s), fn($n) => $n + 1);
+ * // Pair("NAME", 26)
+ *
+ * // Functor operations (maps over second element)
+ * $pair->map(fn($n) => $n * 2);  // Pair("name", 50)
+ *
+ * // Foldable operations (folds over second element)
+ * ($pair->foldLeft(0))(fn($acc, $x) => $acc + $x);  // 25
+ *
+ * // Comonad operations
+ * $pair->extract();  // 25
+ * $pair->extend(fn($p) => $p->_1 . ": " . $p->_2);
+ * // Pair("name", "name: 25")
  * ```
  *
  * @template T1 The type of the first element
  * @template T2 The type of the second element
  * @property-read T1 $_1 First element of the pair
  * @property-read T2 $_2 Second element of the pair
+ * @implements Bifunctor<T1,T2>
+ * @implements Comonad<T2>
+ * @implements Foldable<T2>
  * @implements Show<Pair<T1,T2>>
  */
-final class Pair extends Tuple
+final class Pair extends Tuple implements Bifunctor, Comonad, Foldable
 {
     use Show;
+    use PairBifunctorOps;
+    use PairFunctorOps;
+    use PairFoldableOps;
+    use PairComonadOps;
+    use PairOps;
 
     /**
      * Access pair elements by property name.

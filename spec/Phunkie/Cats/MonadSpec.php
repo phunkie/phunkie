@@ -34,6 +34,12 @@ class MonadSpec extends TestCase
         $f = fn (int $x): Kind => ImmSet(gettype($x));
         $g = fn (string $x): Kind => ImmSet(strlen($x) % 2 == 0);
         $this->assertTrue($this->flatMapAssociativity($fa, $f, $g));
+
+        // Either
+        $fa = Right(42);
+        $f = fn (int $x): Kind => Right(gettype($x));
+        $g = fn (string $x): Kind => Right(strlen($x) % 2 == 0);
+        $this->assertTrue($this->flatMapAssociativity($fa, $f, $g));
     }
 
     /**
@@ -58,6 +64,12 @@ class MonadSpec extends TestCase
         $a = 1;
         $f = fn (int $x): Kind => ImmSet(($x + 2) % 2 == 0);
         $this->assertTrue($this->leftIdentity($fa, $a, $f));
+
+        // Either
+        $fa = Right(42);
+        $a = 1;
+        $f = fn (int $x): Kind => Right(($x + 2) % 2 == 0);
+        $this->assertTrue($this->leftIdentity($fa, $a, $f));
     }
 
     /**
@@ -75,6 +87,10 @@ class MonadSpec extends TestCase
 
         // Set
         $fa = ImmSet(1, 2, 3);
+        $this->assertTrue($this->rightIdentity($fa));
+
+        // Either
+        $fa = Right(42);
         $this->assertTrue($this->rightIdentity($fa));
     }
 }

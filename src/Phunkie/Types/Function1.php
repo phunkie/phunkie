@@ -12,9 +12,12 @@
 namespace Phunkie\Types;
 
 use Phunkie\Cats\Applicative;
+use Phunkie\Cats\Monad;
 use Phunkie\Cats\Show;
 use Phunkie\Ops\Function1\Function1ApplicativeOps;
 use Phunkie\Ops\Function1\Function1EqOps;
+use Phunkie\Ops\Function1\Function1MonadOps;
+use Phunkie\Ops\Function1\Function1ProfunctorOps;
 
 use function Phunkie\Functions\type\normaliseType;
 
@@ -38,12 +41,14 @@ use function Phunkie\Functions\type\normaliseType;
  * @template A The input type
  * @template B The output type
  * @implements Kind<Function1, A, B>
- * @implements Applicative<Function1, B>
+ * @implements Monad<Function1, B>
  */
-final class Function1 implements Kind, Applicative
+final class Function1 implements Kind, Monad
 {
     use Function1ApplicativeOps;
     use Function1EqOps;
+    use Function1MonadOps;
+    use Function1ProfunctorOps;
     use Show;
     public const kind = "Function1";
     private \ReflectionFunction|\ReflectionMethod $reflection;
@@ -176,6 +181,62 @@ final class Function1 implements Kind, Applicative
     public function combine(callable $g)
     {
         return $this->compose($g);
+    }
+
+    /**
+     * Returns a memoized version of this function.
+     *
+     * The memoized function caches results based on input values, so repeated
+     * calls with the same input return the cached result without re-executing
+     * the function. This is useful for expensive computations.
+     *
+     * Note: Memoization uses the input value as array key, so:
+     * - Works best with scalar inputs (int, string, bool)
+     * - Objects are converted to string via __toString or serialization
+     * - Arrays and resources are not suitable for memoization
+     *
+     * Example:
+     * ```php
+     * $expensive = Function1(function($n) {
+     *     sleep(1); // Simulate expensive computation
+     *     return $n * $n;
+     * });
+     *
+     * $memoized = $expensive->memoize();
+     *
+     * $memoized(5); // Takes ~1 second, returns 25
+     * $memoized(5); // Instant, returns cached 25
+     * $memoized(6); // Takes ~1 second, returns 36
+     * ```
+     *
+     * @return Function1<A,B> A memoized version of this function
+     */
+    public function memoize(): Function1
+    {
+        $cache = [];
+        $f = $this;
+
+        return Function1(function ($arg) use ($f, &$cache) {
+            // Generate cache key
+            $key = is_scalar($arg) ? $arg : (
+                is_object($arg) ? (
+                    method_exists($arg, '__toString') ?
+                        (string)$arg :
+                        spl_object_hash($arg)
+                ) : serialize($arg)
+            );
+
+            // Return cached result if available
+            if (array_key_exists($key, $cache)) {
+                return $cache[$key];
+            }
+
+            // Compute and cache result
+            $result = $f->invokeFunctionOnArg($arg);
+            $cache[$key] = $result;
+
+            return $result;
+        });
     }
 
     /**

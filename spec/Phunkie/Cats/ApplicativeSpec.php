@@ -54,6 +54,12 @@ class ApplicativeSpec extends TestCase
         $a = 42;
         $f = fn ($x) => $x + 1;
         $this->assertTrue($this->applicativeHomomorphism($fa, $a, $f));
+
+        // Map
+        $fa = ImmMap(["a" => 1]);
+        $a = 42;
+        $f = fn ($x) => $x + 1;
+        $this->assertTrue($this->applicativeHomomorphism($fa, $a, $f));
     }
 
     /**
@@ -82,6 +88,12 @@ class ApplicativeSpec extends TestCase
         $a = 42;
         $f = fn ($x): string => gettype($x);
         $this->assertTrue($this->applicativeInterchange($fa, $a, ImmSet($f)));
+
+        // Map
+        $fa = ImmMap();
+        $a = 42;
+        $f = fn ($x): string => gettype($x);
+        $this->assertTrue($this->applicativeInterchange($fa, $a, ImmMap(["default" => $f])));
     }
 
     /**
@@ -107,6 +119,11 @@ class ApplicativeSpec extends TestCase
         // Set
         $fa = ImmSet(42);
         $f = fn ($x) => $x + 1;
+        $this->assertTrue($this->applicativeMap($fa, $f));
+
+        // Map
+        $fa = ImmMap(["a" => 1]);
+        $f = fn ($pair) => Pair($pair->_1, $pair->_2 + 1);
         $this->assertTrue($this->applicativeMap($fa, $f));
     }
 }
