@@ -132,6 +132,15 @@ abstract class Validation implements Applicative, Monad, Kind, Foldable
     }
 
     /**
+     * Folds over the validation result.
+     *
+     * @template B
+     * @param mixed $initial The header for the fold (error handler or initial value)
+     * @return mixed
+     */
+    abstract public function fold($initial);
+
+    /**
      * Returns a default value if this is a Failure.
      *
      * @template B
