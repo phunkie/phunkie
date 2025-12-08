@@ -42,14 +42,16 @@ use function Phunkie\PatternMatching\Referenced\Failure as Invalid;
  * $v1->combine($v2); // Accumulates errors if both are Failures
  * ```
  *
- * @template E The error type
- * @template A The success type
+ * @template-covariant E The error type
+ * @template-covariant A The success type
  * @implements Applicative<Validation<E,A>>
  * @implements Monad<Validation<E,A>>
  * @implements Kind<Validation<E,A>>
  * @implements Foldable<A>
  * @method mixed fold($initial)
  * @method Validation combineFailures(Validation $a, Validation $b)
+ * @method Validation flatMap(callable(A):Validation $f)
+ * @method Validation flatten()
  */
 abstract class Validation implements Applicative, Monad, Kind, Foldable
 {

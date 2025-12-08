@@ -29,9 +29,9 @@ use const Phunkie\Functions\function1\identity;
  * $success->getOrElse(0);              // 42
  * ```
  *
- * @template E The error type (unused in Success)
  * @template A The success value type
- * @extends Validation<E,A>
+ * @template-covariant E The error type (always never for Success)
+ * @extends Validation<never, A>
  */
 final class Success extends Validation
 {
