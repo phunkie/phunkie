@@ -1,0 +1,30 @@
+#!/bin/bash
+
+# Pre-commit hook for Phunkie projects
+# Runs lint and tests before allowing commit
+
+set -e
+
+echo "🔍 Running pre-commit checks..."
+
+# Run lint (cs-check + phpstan)
+echo ""
+echo "📋 Running lint checks..."
+if ! composer lint; then
+    echo ""
+    echo "❌ Lint checks failed. Please fix the issues before committing."
+    echo "   Run 'composer cs-fix' to auto-fix code style issues."
+    exit 1
+fi
+
+# Run tests
+echo ""
+echo "🧪 Running tests..."
+if ! composer test; then
+    echo ""
+    echo "❌ Tests failed. Please fix the issues before committing."
+    exit 1
+fi
+
+echo ""
+echo "✅ All pre-commit checks passed!"

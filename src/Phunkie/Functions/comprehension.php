@@ -95,9 +95,53 @@ namespace Phunkie\Functions\comprehension {
      * 
      * Binds values from monadic contexts to variables that can be
      * used in subsequent expressions.
+     *
+     * @property mixed $_1
+     * @property mixed $_2
+     * @property mixed $_3
+     * @property mixed $_4
+     * @property mixed $_5
+     * @property mixed $_6
+     * @property mixed $_7
+     * @property mixed $_8
+     * @property mixed $_9
+     * @property mixed $_10
+     * @property mixed $_11
+     * @property mixed $_12
+     * @property mixed $_13
+     * @property mixed $_14
+     * @property mixed $_15
+     * @property mixed $_16
+     * @property mixed $_17
+     * @property mixed $_18
+     * @property mixed $_19
+     * @property mixed $_20
+     * @property mixed $_21
      */
     class Bind
     {
+        public $_1;
+        public $_2;
+        public $_3;
+        public $_4;
+        public $_5;
+        public $_6;
+        public $_7;
+        public $_8;
+        public $_9;
+        public $_10;
+        public $_11;
+        public $_12;
+        public $_13;
+        public $_14;
+        public $_15;
+        public $_16;
+        public $_17;
+        public $_18;
+        public $_19;
+        public $_20;
+        public $_21;
+
         /**
          * Creates a new binding.
          *

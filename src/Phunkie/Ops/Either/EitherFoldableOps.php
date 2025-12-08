@@ -46,7 +46,10 @@ trait EitherFoldableOps
      */
     public function foldLeft($initial): callable
     {
-        return applyPartially([$initial], func_get_args(), fn(callable $f) =>
+        return applyPartially(
+            [$initial],
+            func_get_args(),
+            fn(callable $f) =>
             $this->isLeft() ? $initial : $f($initial, $this->get())
         );
     }
@@ -71,7 +74,10 @@ trait EitherFoldableOps
      */
     public function foldRight($initial): callable
     {
-        return applyPartially([$initial], func_get_args(), fn(callable $f) =>
+        return applyPartially(
+            [$initial],
+            func_get_args(),
+            fn(callable $f) =>
             $this->isLeft() ? $initial : $f($this->get(), $initial)
         );
     }
@@ -126,7 +132,10 @@ trait EitherFoldableOps
      */
     public function fold($leftF)
     {
-        return applyPartially([$leftF], func_get_args(), fn(callable $rightF) =>
+        return applyPartially(
+            [$leftF],
+            func_get_args(),
+            fn(callable $rightF) =>
             $this->isLeft() ? $leftF($this->get()) : $rightF($this->get())
         );
     }

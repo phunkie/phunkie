@@ -213,20 +213,155 @@ namespace Phunkie\Functions\show {
     }
 
     const showKind = "\\Phunkie\\Functions\\show\\showKind";
-    function showKind($type): Option { return match (normaliseType($type)) {
-        "Int", "String", "Boolean", "Callable", "Null", "Double", "Float", "Resource"
-            => Some("proper: " . normaliseType($type) . " :: *"),
-        "List", "Map", "Set", "Option", "ImmList", "ImmMap", "ImmSet"
-            => Some("first-order: " . normaliseType($type) . " :: * -> *"),
-        "Pair", "Either"
-            => Some("first-order: " . normaliseType($type) . " :: * -> * -> *"),
-        "Functor", "Applicative", "Monad", "Apply", "Foldable", "Kleisli", "State", "Show", "Validation", "Id", "Lens", "Monoid", "Semigroup", "Eq", "Flatmap"
-            => Some("higher-order: " . normaliseType($type) . " :: (* -> *) -> Constraint"),
-        "StateT", "OptionT"
-            => Some("higher-order: " . normaliseType($type) . " :: (* -> *) -> * -> *"),
-        default => class_exists($type) ?
-            Some("proper: " . $type . " :: *") :
-            None() };
+    function showKind($typeSignature): Option
+    {
+        // Internal helper to reduce kind based on consumed arguments
+        $reduceKind = function (string $kind, int $consumed) use (&$reduceKind): string {
+            if ($consumed <= 0) return $kind;
+
+            // Remove the first argument type from the left
+            $depth = 0;
+            $splitPos = -1;
+            for ($i = 0; $i < strlen($kind); $i++) {
+                $char = $kind[$i];
+                if ($char == '(') $depth++;
+                if ($char == ')') $depth--;
+                if ($char == '-' && $depth == 0 && $i + 1 < strlen($kind) && $kind[$i + 1] == '>') {
+                    $splitPos = $i;
+                    break;
+                }
+            }
+
+            if ($splitPos !== -1) {
+                $remainder = trim(substr($kind, $splitPos + 2));
+                return $reduceKind($remainder, $consumed - 1);
+            }
+
+            return $kind;
+        };
+
+        // Internal helper to parse generic arguments
+        $parseGenerics = function (string $str): array {
+            $args = [];
+            $depth = 0;
+            $current = '';
+            for ($i = 0; $i < strlen($str); $i++) {
+                $char = $str[$i];
+                if ($char == '<') $depth++;
+                if ($char == '>') $depth--;
+                if ($char == ',' && $depth == 0) {
+                    $args[] = trim($current);
+                    $current = '';
+                } else {
+                    $current .= $char;
+                }
+            }
+            if ($current !== '') $args[] = trim($current);
+            return $args;
+        };
+
+        // Known kinds table: [Kind Signature, Arity]
+        $kinds = [
+            'Option' => ['* -> *', 1],
+            'List' => ['* -> *', 1],
+            'ImmList' => ['* -> *', 1],
+            'Set' => ['* -> *', 1],
+            'ImmSet' => ['* -> *', 1],
+            'Map' => ['* -> * -> *', 2],
+            'ImmMap' => ['* -> * -> *', 2],
+            'Validation' => ['* -> * -> *', 2],
+            'Either' => ['* -> * -> *', 2],
+            'IO' => ['* -> *', 1],
+            'State' => ['* -> * -> *', 2],
+            'Reader' => ['* -> * -> *', 2],
+            'Writer' => ['* -> * -> *', 2],
+            'Id' => ['* -> *', 1],
+            'Function1' => ['* -> * -> *', 2],
+            'Functor' => ['(* -> *) -> *', 1],
+            'Monad' => ['(* -> *) -> *', 1],
+            'Applicative' => ['(* -> *) -> *', 1],
+            'Show' => ['* -> *', 1],
+            'Eq' => ['* -> *', 1],
+            'Semigroup' => ['* -> *', 1],
+            'Monoid' => ['* -> *', 1],
+            'Int' => ['*', 0],
+            'String' => ['*', 0],
+            'Boolean' => ['*', 0],
+            'Bool' => ['*', 0],
+            'Float' => ['*', 0],
+            'Double' => ['*', 0],
+            'Mixed' => ['*', 0],
+            'Void' => ['*', 0], 
+            'Null' => ['*', 0],
+            'Callable' => ['*', 0], 
+            'Resource' => ['*', 0]
+        ];
+
+        $typeSignature = trim($typeSignature);
+        $normalized = normaliseType($typeSignature);
+
+        // 1. Direct match in table
+        if (isset($kinds[$normalized])) {
+             return Some($kinds[$normalized][0]);
+        }
+        
+        // 2. Direct match with alias (e.g. Int vs Integer if normaliseType handled it)
+        // normaliseType already converts Int -> Int, etc.
+        
+        // 3. Parse Generics: Type<A, B>
+        if (preg_match('/^([a-zA-Z0-9_]+)\s*<(.*)>$/', $typeSignature, $matches)) {
+            $base = $matches[1];
+            $argsStr = $matches[2];
+            
+            // Normalize base
+            $base = normaliseType($base);
+            
+            if (!isset($kinds[$base])) {
+                 return None();
+            }
+            
+            [$baseKind, $arity] = $kinds[$base];
+            
+            $args = $parseGenerics($argsStr);
+            
+            if (count($args) > $arity) {
+                 // In showKind we probably just fail or return None if invalid
+                 return None();
+            }
+            
+            $consumed = 0;
+            foreach ($args as $arg) {
+                $arg = trim($arg);
+                // Hole _
+                if ($arg === '_') {
+                    continue;
+                }
+                // Type Variable (Single Uppercase Letter) - does not consume
+                if (preg_match('/^[A-Z]$/', $arg)) {
+                    continue;
+                }
+                
+                // Otherwise, it consumes
+                $consumed++;
+            }
+            
+            return Some($reduceKind($baseKind, $consumed));
+        }
+
+        // 4. Default fallbacks from original logic
+        return match ($normalized) {
+            "Int", "String", "Boolean", "Callable", "Null", "Double", "Float", "Resource"
+                => Some("*"),
+            "List", "Map", "Set", "Option", "ImmList", "ImmMap", "ImmSet"
+                => Some("* -> *"),
+            "Pair", "Either"
+                => Some("* -> * -> *"),
+            "Functor", "Applicative", "Monad", "Apply", "Foldable", "Kleisli", "State", "Show", "Validation", "Id", "Lens", "Monoid", "Semigroup", "Eq", "Flatmap"
+                => Some("(* -> *) -> Constraint"),
+            "StateT", "OptionT"
+                => Some("(* -> *) -> * -> *"),
+            default => class_exists($typeSignature) ? Some("*") : None()
+        };
     }
 
     /**

@@ -37,8 +37,8 @@ use function Phunkie\Functions\immlist\concat;
  * ```
  *
  * @template E The error type
- * @template A The success type (unused in Failure)
- * @extends Validation<E,A>
+ * @template-covariant A The success type (always never for Failure)
+ * @extends Validation<E, never>
  */
 final class Failure extends Validation
 {

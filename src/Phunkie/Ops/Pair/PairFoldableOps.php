@@ -48,7 +48,10 @@ trait PairFoldableOps
      */
     public function foldLeft($initial): callable
     {
-        return applyPartially([$initial], func_get_args(), fn(callable $f) =>
+        return applyPartially(
+            [$initial],
+            func_get_args(),
+            fn(callable $f) =>
             $f($initial, $this->_2)
         );
     }
@@ -76,7 +79,10 @@ trait PairFoldableOps
      */
     public function foldRight($initial): callable
     {
-        return applyPartially([$initial], func_get_args(), fn(callable $f) =>
+        return applyPartially(
+            [$initial],
+            func_get_args(),
+            fn(callable $f) =>
             $f($this->_2, $initial)
         );
     }
@@ -122,7 +128,10 @@ trait PairFoldableOps
      */
     public function fold($initial): callable
     {
-        return applyPartially([$initial], func_get_args(), fn(callable $f) =>
+        return applyPartially(
+            [$initial],
+            func_get_args(),
+            fn(callable $f) =>
             $f($initial, $this->_2)
         );
     }

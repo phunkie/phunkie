@@ -97,6 +97,7 @@
 
  namespace Phunkie\Functions\immmap {
     use Phunkie\Types\ImmMap;
+    use Phunkie\Types\ImmList;
     use function Phunkie\Functions\currying\applyPartially;
 
     const mapValues = "\\Phunkie\\Functions\\immmap\\mapValues";

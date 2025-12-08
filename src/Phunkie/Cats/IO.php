@@ -39,7 +39,7 @@ use Phunkie\Types\Kind;
  */
 class IO implements Kind
 {
-    const kind = "IO";
+    public const kind = "IO";
     private $thunk;
 
     /**

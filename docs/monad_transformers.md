@@ -61,14 +61,17 @@ $result = $optionT->flatMap(
 ```
 
 ### StateT
-Combines `State` with another monad:
+Combines `State` with another monad `F`. The standard function signature is `S => F[(S, A)]`.
 
 ```php
 use Phunkie\Cats\StateT;
 
-// Some(State<Int, Int>)
-$stateT = new StateT(Some(fn($n) => Some(Pair($n + 1, $n))));
-$result = $stateT->run(1); // Some(Pair(2, 1))
+// StateT<Option, Int, Int>
+// Function takes state (Int) and returns Option<Pair<State, Value>>
+$stateT = new StateT(fn($n) => Some(Pair($n + 1, $n)));
+
+$result = $stateT->run(1); 
+// Some(Pair(2, 1))
 ```
 
 ### Kleisli (ReaderT)
@@ -208,14 +211,14 @@ $validated = EitherT($users)
 // ImmList(Right(['name' => 'Alice', ...]), Left("Must be 18 or older"))
 ```
 
-### 2. Stateful Computations with Effects
+### 4. Stateful Computations with Effects
 ```php
 $computation = new StateT(
-    Some(fn($state) => Some(Pair($state + 1, $state)))
+    fn($state) => Some(Pair($state + 1, $state))
 );
 ```
 
-### 3. Composing Validations
+### 5. Composing Validations
 ```php
 $validate = kleisli(fn($input) => 
     Option($input)

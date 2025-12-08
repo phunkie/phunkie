@@ -21,7 +21,7 @@ namespace {
 namespace Phunkie\Functions\reader {
 
     use const Phunkie\Functions\function1\identity;
-    use Phunkie\Types\Reader;
+    use Phunkie\Cats\Reader;
 
     const ask = "Md\\Phunkie\\Functions\\reader\\ask";
 
@@ -71,9 +71,7 @@ namespace Phunkie\Functions\reader {
      */
     function mapReader(callable $f): callable
     {
-        return function(Reader $reader) use ($f) {
-            return Reader(fn($r) => $f($reader->run($r)));
-        };
+        return fn(Reader $reader) => Reader(fn($r) => $f($reader->run($r)));
     }
 
     const apReader = "\\Phunkie\\Functions\\reader\\apReader";
@@ -103,8 +101,6 @@ namespace Phunkie\Functions\reader {
      */
     function apReader(Reader $rf): callable
     {
-        return function(Reader $ra) use ($rf) {
-            return Reader(fn($r) => ($rf->run($r))($ra->run($r)));
-        };
+        return fn(Reader $ra) => Reader(fn($r) => ($rf->run($r))($ra->run($r)));
     }
 }

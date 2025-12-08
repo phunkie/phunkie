@@ -3,6 +3,7 @@
 namespace Phunkie\Cats\Free;
 
 use Phunkie\Cats\Free;
+use Phunkie\Types\Kind;
 
 /**
  * Represents sequential composition in the Free monad.

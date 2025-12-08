@@ -17,24 +17,8 @@ use Phunkie\Types\Pair;
 /**
  * A monad transformer that combines State with another monad F.
  * 
- * StateT allows you to work with nested structures of the form F<State<S,A>>
- * by lifting state operations into any monad. This lets you combine stateful
- * computations with other effects like Option, List, or IO.
- *
- * Example:
- * ```php
- * // Counter with Option effect
- * $state = ImmList(
- *     State(fn($s) => Pair($s + 1, $s)),
- *     State(fn($s) => $s < 3 ? Pair($s + 1, $s) : None())
- * );
- * 
- * $st = new StateT($state);
- * $result = $st
- *     ->map(fn($x) => $x * 2)
- *     ->run(0);
- * // ImmList(Pair(1, 0), Pair(1, 0))
- * ```
+ * StateT allows you to work with nested structures of the form S => F[(S, A)].
+ * This lets you combine stateful computations with other effects like Option, List, or Validation.
  *
  * @template F The outer monad
  * @template S The state type
@@ -43,42 +27,45 @@ use Phunkie\Types\Pair;
  */
 class StateT implements Kind
 {
-    const kind = "StateT";
+    public const kind = "StateT";
 
     /**
-     * @var Kind<F,State<S,A>>
+     * @var callable(S): Kind<F, Pair<S, A>>
      */
-    private $monad;
+    private $run;
 
     /**
-     * Creates a new StateT wrapping a monadic value containing States.
+     * Creates a new StateT.
+     * 
+     * Can be constructed with:
+     * 1. A callable(S): Kind<F, Pair<S, A>> (New style)
+     * 2. A Kind<F, State<S, A>> (Legacy style)
      *
-     * @param Kind<F,State<S,A>> $value The wrapped monadic value
+     * @param callable|Kind $value
      */
-    public function __construct(Kind $monad)
+    public function __construct($value)
     {
-        $this->monad = $monad;
+        if ($value instanceof Kind) {
+            // Adapt Legacy F[State] to S => F[Pair]
+            $this->run = fn($s) => $value->map(fn(State $state) => $state->run($s));
+        } else {
+            $this->run = $value;
+        }
+    }
+
+    /**
+     * Runs the state transition.
+     *
+     * @param S $s Initial state
+     * @return Kind<F, Pair<S, A>>
+     */
+    public function run($s)
+    {
+        return ($this->run)($s);
     }
 
     /**
      * Maps a function over the result values in the state computation.
-     * 
-     * This lifts a function A => B into the StateT context, transforming
-     * StateT<F,S,A> into StateT<F,S,B>. The state itself remains unchanged,
-     * only the result values are modified.
-     *
-     * Example:
-     * ```php
-     * $state = ImmList(
-     *     State(fn($s) => Pair($s, $s + 1))
-     * );
-     * 
-     * $st = new StateT($state);
-     * $result = $st
-     *     ->map(fn($x) => $x * 2)
-     *     ->run(1);
-     * // ImmList(Pair(1, 4))  // State unchanged (1), result doubled (2 * 2)
-     * ```
      *
      * @template B
      * @param callable(A):B $f The function to apply to result values
@@ -86,42 +73,17 @@ class StateT implements Kind
      */
     public function map(callable $f): StateT
     {
-        return new StateT($this->monad->map(fn(State $s) => $s->gets($f)));
-    }
-
-    /**
-     * Runs this stateful computation with an initial state.
-     *
-     * @param S $s The initial state
-     * @return Kind<F,Pair<S,A>> The result in the outer monad
-     */
-    public function run($s)
-    {
-        return $this->monad->map(fn (State $state) => $state->run($s));
+        return new StateT(
+            fn($s) =>
+            $this->run($s)->map(
+                fn(Pair $p) =>
+                Pair($p->_1, $f($p->_2))
+            )
+        );
     }
 
     /**
      * Chains StateT computations.
-     * 
-     * This allows composing stateful computations where each step can depend
-     * on the result of the previous step. The state is threaded through the
-     * computation chain.
-     *
-     * Example:
-     * ```php
-     * $increment = new StateT(ImmList(
-     *     State(fn($s) => Pair($s + 1, $s))
-     * ));
-     * 
-     * $double = fn($x) => new StateT(ImmList(
-     *     State(fn($s) => Pair($s, $x * 2))
-     * ));
-     * 
-     * $result = $increment
-     *     ->flatMap($double)
-     *     ->run(1);
-     * // ImmList(Pair(2, 2))  // State incremented (1->2), value doubled (1*2)
-     * ```
      *
      * @template B
      * @param callable(A):StateT<F,S,B> $f Function producing next computation
@@ -129,35 +91,20 @@ class StateT implements Kind
      */
     public function flatMap(callable $f): StateT
     {
-        return new StateT(
-            $this->monad->flatMap(
-                fn(State $state) =>
-                    $this->monad->pure($state->flatMap(function($a) use ($f) {
-                        $x = null;
-                        $f($a)->monad->map(function ($_) use(&$x) {
-                            return $x = $_;
-                        });                        
-                        return $x;
-                    }))
-            )
-        );
+        return new StateT(function($s) use ($f) {
+            return $this->run($s)->flatMap(function(Pair $p) use ($f) {
+                // p is Pair(s', a)
+                $nextStateT = $f($p->_2);
+                return $nextStateT->run($p->_1);
+            });
+        });
     }
 
-    /**
-     * Returns the number of type parameters.
-     *
-     * @return int Always returns 3 (F, S, and A)
-     */
     public function getTypeArity(): int
     {
         return 3;
     }
 
-    /**
-     * Returns the type variables for this Kind.
-     *
-     * @return array<string> Array containing the type variables
-     */
     public function getTypeVariables(): array
     {
         return ['F', 'S', 'A'];
@@ -172,8 +119,10 @@ class StateT implements Kind
     public function modify(callable $f): StateT
     {
         return new StateT(
-            $this->monad->map(fn(State $state) =>
-                $state->modify($f)
+            fn($s) =>
+            $this->run($s)->map(
+                fn(Pair $p) =>
+                Pair($f($p->_1), \Unit())
             )
         );
     }

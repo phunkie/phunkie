@@ -1,15 +1,21 @@
 # Phunkie
 
-[![Build Status](https://travis-ci.org/phunkie/phunkie.svg?branch=master)](https://travis-ci.org/phunkie/phunkie)
+[![CI](https://github.com/phunkie/phunkie/actions/workflows/ci.yml/badge.svg)](https://github.com/phunkie/phunkie/actions)
+[![Latest Stable Version](https://poser.pugx.org/phunkie/phunkie/v/stable)](https://packagist.org/packages/phunkie/phunkie)
+[![Total Downloads](https://poser.pugx.org/phunkie/phunkie/downloads)](https://packagist.org/packages/phunkie/phunkie)
+[![License](https://poser.pugx.org/phunkie/phunkie/license)](https://packagist.org/packages/phunkie/phunkie)
+![PHP Version](https://img.shields.io/badge/php-%5E8.2%20%7C%7C%20%5E8.3%20%7C%7C%20%5E8.4-8892BF.svg)
 
 Phunkie is a library with functional structures for PHP.
 
 Full documentation is available [here](https://github.com/phunkie/phunkie/blob/master/docs/index.md).
 
-For better Phunkie development, consider installing [phunkie-console](https://github.com/phunkie/phunkie-console).
+See also our [Coding Style Guide](docs/coding_style.md) for contribution standards.
+
+For better Phunkie development, consider installing [phunkie/console](https://github.com/phunkie/console).
 
 ```bash
-$ bin/phunkie-console
+$ phunkie
 Welcome to phunkie console.
 
 Type in expressions to have them evaluated.

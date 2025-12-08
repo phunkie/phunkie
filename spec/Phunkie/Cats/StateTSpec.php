@@ -4,8 +4,8 @@ namespace spec\Phunkie\Cats;
 
 use Md\Unit\TestCase;
 use Phunkie\Cats\StateT;
+use Phunkie\Cats\State;
 use Phunkie\Types\ImmList;
-use Phunkie\Types\State;
 use Phunkie\Types\Pair;
 use Phunkie\Types\Unit;
 
@@ -16,7 +16,7 @@ class StateTSpec extends TestCase
      */
     public function it_runs_function_under_a_context()
     {
-        $s = new StateT(Some(State(fn ($n) => Some(Pair($n + 1, $n)))));
+        $s = new StateT(Some(new State(fn ($n) => Pair($n + 1, $n))));
         $this->assertIsLike($s->run(1), (Some(Pair(2, 1))));
     }
 
@@ -26,7 +26,7 @@ class StateTSpec extends TestCase
     public function it_implements_map()
     {
         $state = ImmList(
-            State(fn($s) => Pair($s + 1, $s))
+            new State(fn($s) => Pair($s + 1, $s))
         );
         
         $st = new StateT($state);
@@ -46,11 +46,11 @@ class StateTSpec extends TestCase
     public function it_implements_flatMap()
     {
         $increment = new StateT(ImmList(
-            State(fn($s) => Pair($s + 1, $s))
+            new State(fn($s) => Pair($s + 1, $s))
         ));
 
         $double = fn($x) => new StateT(ImmList(
-            State(fn($s) => Pair($s, $x * 2))
+            new State(fn($s) => Pair($s, $x * 2))
         ));
 
         $result = $increment
@@ -70,7 +70,7 @@ class StateTSpec extends TestCase
     {
         // Test with ImmList monad
         $listState = new StateT(ImmList(
-            State(fn($s) => Pair($s, "value"))
+            new State(fn($s) => Pair($s, "value"))
         ));
         $result = $listState
             ->modify(fn($s) => $s + 1)
@@ -82,7 +82,7 @@ class StateTSpec extends TestCase
 
         // Test with Option monad
         $optionState = new StateT(Some(
-            State(fn($s) => Pair($s, "value"))
+            new State(fn($s) => Pair($s, "value"))
         ));
         $result = $optionState
             ->modify(fn($s) => $s * 2)

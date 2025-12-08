@@ -137,11 +137,9 @@ final class Function1 implements Kind, Monad
     public function compose(callable $g): Function1
     {
         $f = $this;
-        return Function1(function ($x) use ($f, $g) {
-            return $f->invokeFunctionOnArg(
-                $g instanceof Function1 ? $g->invokeFunctionOnArg($x) : call_user_func($g, $x)
-            );
-        });
+        return Function1(fn ($x) => $f->invokeFunctionOnArg(
+            $g instanceof Function1 ? $g->invokeFunctionOnArg($x) : call_user_func($g, $x)
+        ));
     }
 
     /**
