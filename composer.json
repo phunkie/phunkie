@@ -16,8 +16,9 @@
         "ergebnis/composer-normalize": "^2",
         "friendsofphp/php-cs-fixer": "^3.90",
         "giorgiosironi/eris": "^0",
-        "phpstan/phpstan": "^1.10",
-        "phpunit/phpunit": "^9"
+        "phpstan/phpstan": "^2.0",
+        "phpunit/phpunit": "^9",
+        "phunkie/phpstan": "@dev"
     },
     "autoload": {
         "psr-0": {

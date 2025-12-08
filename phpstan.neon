@@ -1,3 +1,6 @@
+includes:
+    - vendor/phunkie/phpstan/extension.neon
+
 parameters:
     level: 0
     paths:
