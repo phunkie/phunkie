@@ -338,6 +338,27 @@ final class ImmMap implements ArrayAccess, Copiable, Applicative, Monad, Foldabl
     }
 
     /**
+     * Converts the map to an associative array.
+     *
+     * Example:
+     * ```php
+     * $map = ImmMap("a" => 1, "b" => 2);
+     * $map->toArray(); // ["a" => 1, "b" => 2]
+     * ```
+     *
+     * @return array<K,V> Associative array of key-value pairs
+     */
+    public function toArray(): array
+    {
+        $result = [];
+        foreach ($this->values as $k) {
+            $key = $k instanceof ImmString || $k instanceof ImmInteger ? $k->get() : $k;
+            $result[$key] = $this->values[$k];
+        }
+        return $result;
+    }
+
+    /**
      * Creates a map from an array.
      *
      * @param array<array<K,V>> $values Array containing a single associative array
