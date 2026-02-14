@@ -1,4 +1,5 @@
 includes:
+    - phpstan-baseline.neon
     - vendor/phunkie/phpstan/extension.neon
 
 parameters:
