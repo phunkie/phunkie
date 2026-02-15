@@ -1,20 +1,11 @@
 Learning Phunkie
 ================
 
-Phunkie is a functional structures library written in PHP. Much has been happening in the world of functional
-programming. Languages like Haskell and Scala have become increasingly popular. Functional programming is
-experiencing a come back. Most of the what exists out there in the internet (80%) is still written in PHP, which
-is not a functional language: identifiers are mainly variables, immutable identifiers (constants) are limited to a very
-small group of types, the syntax for functions is quite verbose, closures do not automatically enclose values — unless
-you explicitly tells it to do so, it is not a lazy language etc... However, when you know what the language can offer,
-you can bend it quite extensively and create the feel of functional programming.
+Phunkie is a functional structures library written in PHP. Much has been happening in the world of functional programming. Languages like Haskell and Scala have become increasingly popular. Functional programming is experiencing a come back. Most of the what exists out there in the internet (80%) is still written in PHP, which is not a functional language: identifiers are mainly variables, immutable identifiers (constants) are limited to a very small group of types, the syntax for functions is quite verbose, closures do not automatically enclose values — unless  you explicitly tells it to do so, it is not a lazy language etc... However, when you know what the language can offer,  you can bend it quite extensively and create the feel of functional programming.
 
-Phunkie is an attempt to create the functional programming feel for PHP developers. PHP developers will be able to
-learn the patterns, apply the principles and familiarise themselves with the functional structures and way of
-thinking.
+Phunkie is an attempt to create the functional programming feel for PHP developers. PHP developers will be able to learn the patterns, apply the principles and familiarise themselves with the functional structures and way of thinking.
 
-Phunkie has been inspired by libraries like Scalaz and Cats from the Scala community. It also offers a library of
-functions to capture a bit of the Haskell flavour.
+Phunkie has been inspired by libraries like Scalaz and Cats from the Scala community. It also offers a library of functions to capture a bit of the Haskell flavour.
 
 This manual will list all the features contained in the library and offer some illustrations of how they can
 be used.
