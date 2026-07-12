@@ -3,9 +3,11 @@ on:
   push:
     branches:
       - master
+      - 'developing-*'
+  # Every pull request, whatever it is opened against: a branch off a release
+  # branch is only ever merged into that release branch, and wants CI too.
   pull_request:
-    branches:
-      - master
+  workflow_dispatch:
 
 jobs:
   tests:

@@ -41,15 +41,18 @@ class StateT implements Kind
      * 1. A callable(S): Kind<F, Pair<S, A>> (New style)
      * 2. A Kind<F, State<S, A>> (Legacy style)
      *
-     * @param callable|Kind $value
+     * The argument is named after the property it is kept in, so that a StateT
+     * can be taken apart by pattern matching.
+     *
+     * @param callable|Kind $run
      */
-    public function __construct($value)
+    public function __construct($run)
     {
-        if ($value instanceof Kind) {
+        if ($run instanceof Kind) {
             // Adapt Legacy F[State] to S => F[Pair]
-            $this->run = fn($s) => $value->map(fn(State $state) => $state->run($s));
+            $this->run = fn($s) => $run->map(fn(State $state) => $state->run($s));
         } else {
-            $this->run = $value;
+            $this->run = $run;
         }
     }
 

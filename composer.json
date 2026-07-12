@@ -10,15 +10,15 @@
         }
     ],
     "require": {
-        "php": "^8.2 || ^8.3 || ^8.4 || ^8.5"
+        "php": "8.2.* || 8.3.* || 8.4.* || 8.5.*"
     },
     "require-dev": {
-        "ergebnis/composer-normalize": "^2",
-        "friendsofphp/php-cs-fixer": "^3.90",
-        "giorgiosironi/eris": "^0",
-        "phpstan/phpstan": "^2.0",
-        "phpunit/phpunit": "^9",
-        "phunkie/phpstan": "@dev"
+        "ergebnis/composer-normalize": "2.52.0",
+        "friendsofphp/php-cs-fixer": "3.95.13",
+        "giorgiosironi/eris": "0.14.1",
+        "phpstan/phpstan": "2.2.5",
+        "phpunit/phpunit": "9.6.35",
+        "phunkie/phpstan": "1.0.0"
     },
     "autoload": {
         "psr-0": {
