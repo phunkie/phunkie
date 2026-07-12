@@ -67,6 +67,17 @@ namespace Phunkie\PatternMatching\Referenced {
     use Phunkie\Types\Pair as PairType;
     use Phunkie\Types\Tuple as TupleType;
     use Phunkie\Types\Function1 as Function1Type;
+    use Phunkie\Cats\StateT as StateTType;
+    use Phunkie\Cats\Id as IdType;
+    use Phunkie\Cats\IO as IOType;
+    use Phunkie\Cats\State as StateType;
+    use Phunkie\Cats\Reader as ReaderType;
+    use Phunkie\Cats\Kleisli as KleisliType;
+    use Phunkie\Cats\OptionT as OptionTType;
+    use Phunkie\Cats\EitherT as EitherTType;
+    use Phunkie\Types\ImmString as ImmStringType;
+    use Phunkie\Types\ImmInteger as ImmIntegerType;
+    use Phunkie\Types\ImmSet as ImmSetType;
 
     /**
      * Creates a pattern that matches a Right and binds the value it holds.
@@ -170,6 +181,218 @@ namespace Phunkie\PatternMatching\Referenced {
     }
 
     /**
+     * Creates a pattern that matches an Id and binds the value it holds.
+     *
+     * Example:
+     * ```php
+     * $on = pmatch(new Id(42));
+     * $result = match (true) {
+     *     $on(Id($value)) => $value  // $value is 42
+     * };
+     * ```
+     *
+     * @param mixed $value Variable that receives the value held by the Id
+     * @return GenericReferenced Pattern matching an Id
+     */
+    function Id(&$value): GenericReferenced
+    {
+        return new GenericReferenced(IdType::class, $value);
+    }
+
+    /**
+     * Creates a pattern that matches an ImmString and binds the string it holds.
+     *
+     * Example:
+     * ```php
+     * $on = pmatch(new ImmString("hi"));
+     * $result = match (true) {
+     *     $on(ImmString($s)) => $s  // $s is "hi"
+     * };
+     * ```
+     *
+     * @param mixed $value Variable that receives the string held by the ImmString
+     * @return GenericReferenced Pattern matching an ImmString
+     */
+    function ImmString(&$value): GenericReferenced
+    {
+        return new GenericReferenced(ImmStringType::class, $value);
+    }
+
+    /**
+     * Creates a pattern that matches an ImmInteger and binds the number it holds.
+     *
+     * Example:
+     * ```php
+     * $on = pmatch(new ImmInteger(7));
+     * $result = match (true) {
+     *     $on(ImmInteger($i)) => $i  // $i is 7
+     * };
+     * ```
+     *
+     * @param mixed $value Variable that receives the number held by the ImmInteger
+     * @return GenericReferenced Pattern matching an ImmInteger
+     */
+    function ImmInteger(&$value): GenericReferenced
+    {
+        return new GenericReferenced(ImmIntegerType::class, $value);
+    }
+
+    /**
+     * Creates a pattern that matches an ImmSet and binds each of its elements.
+     *
+     * The set must hold as many elements as the pattern names, so a pattern of
+     * two does not match a set of three.
+     *
+     * Example:
+     * ```php
+     * $on = pmatch(ImmSet(1, 2));
+     * $result = match (true) {
+     *     $on(ImmSet($a, $b)) => $a + $b  // 3
+     * };
+     * ```
+     *
+     * @param mixed ...$elements Variables that receive the elements of the ImmSet
+     * @return GenericReferenced Pattern matching an ImmSet
+     */
+    function ImmSet(&...$elements): GenericReferenced
+    {
+        return new GenericReferenced(ImmSetType::class, ...$elements);
+    }
+
+    /**
+     * Creates a pattern that matches an IO and binds the thunk it wraps.
+     *
+     * Example:
+     * ```php
+     * $on = pmatch(new IO(fn () => 42));
+     * $result = match (true) {
+     *     $on(IO($thunk)) => $thunk()  // $thunk is the wrapped thunk, so 42
+     * };
+     * ```
+     *
+     * @param mixed $thunk Variable that receives the thunk wrapped by the IO
+     * @return GenericReferenced Pattern matching an IO
+     */
+    function IO(&$thunk): GenericReferenced
+    {
+        return new GenericReferenced(IOType::class, $thunk);
+    }
+
+    /**
+     * Creates a pattern that matches a State and binds the transition it wraps.
+     *
+     * Example:
+     * ```php
+     * $on = pmatch(new State(fn ($s) => Pair($s, $s + 1)));
+     * $result = match (true) {
+     *     $on(State($run)) => $run(1)->_2  // $run is the transition, so 2
+     * };
+     * ```
+     *
+     * @param mixed $run Variable that receives the transition wrapped by the State
+     * @return GenericReferenced Pattern matching a State
+     */
+    function State(&$run): GenericReferenced
+    {
+        return new GenericReferenced(StateType::class, $run);
+    }
+
+    /**
+     * Creates a pattern that matches a Reader and binds the function it wraps.
+     *
+     * Example:
+     * ```php
+     * $on = pmatch(new Reader(fn ($r) => $r * 2));
+     * $result = match (true) {
+     *     $on(Reader($run)) => $run(21)  // $run is the wrapped function, so 42
+     * };
+     * ```
+     *
+     * @param mixed $run Variable that receives the function wrapped by the Reader
+     * @return GenericReferenced Pattern matching a Reader
+     */
+    function Reader(&$run): GenericReferenced
+    {
+        return new GenericReferenced(ReaderType::class, $run);
+    }
+
+    /**
+     * Creates a pattern that matches a Kleisli and binds the function it wraps.
+     *
+     * Example:
+     * ```php
+     * $on = pmatch(new Kleisli(fn ($x) => new Id($x + 1)));
+     * $result = match (true) {
+     *     $on(Kleisli($run)) => ($run(1))()  // $run is the wrapped function, so 2
+     * };
+     * ```
+     *
+     * @param mixed $run Variable that receives the function wrapped by the Kleisli
+     * @return GenericReferenced Pattern matching a Kleisli
+     */
+    function Kleisli(&$run): GenericReferenced
+    {
+        return new GenericReferenced(KleisliType::class, $run);
+    }
+
+    /**
+     * Creates a pattern that matches an OptionT and binds the monad it wraps.
+     *
+     * Example:
+     * ```php
+     * $on = pmatch(new OptionT(new Id(Some(42))));
+     * $result = match (true) {
+     *     $on(OptionT($monad)) => $monad()->get()  // $monad is Id(Some(42))
+     * };
+     * ```
+     *
+     * @param mixed $monad Variable that receives the monad wrapped by the OptionT
+     * @return GenericReferenced Pattern matching an OptionT
+     */
+    function OptionT(&$monad): GenericReferenced
+    {
+        return new GenericReferenced(OptionTType::class, $monad);
+    }
+
+    /**
+     * Creates a pattern that matches an EitherT and binds the monad it wraps.
+     *
+     * Example:
+     * ```php
+     * $on = pmatch(new EitherT(new Id(Right(42))));
+     * $result = match (true) {
+     *     $on(EitherT($monad)) => $monad()->getOrElse(0)  // $monad is Id(Right(42))
+     * };
+     * ```
+     *
+     * @param mixed $monad Variable that receives the monad wrapped by the EitherT
+     * @return GenericReferenced Pattern matching an EitherT
+     */
+    function EitherT(&$monad): GenericReferenced
+    {
+        return new GenericReferenced(EitherTType::class, $monad);
+    }
+
+    /**
+     * Creates a pattern that matches a StateT and binds the transition it wraps.
+     *
+     * Example:
+     * ```php
+     * $on = pmatch(new StateT(fn ($s) => new Id(Pair($s, $s + 1))));
+     * $result = match (true) {
+     *     $on(StateT($run)) => $run(1)  // $run is the state transition
+     * };
+     * ```
+     *
+     * @param mixed $run Variable that receives the transition wrapped by the StateT
+     * @return GenericReferenced Pattern matching a StateT
+     */
+    function StateT(&$run): GenericReferenced
+    {
+        return new GenericReferenced(StateTType::class, $run);
+    }
+
+    /**
      * Creates a pattern that matches a non empty list, binding head and tail.
      *
      * Matches a NonEmptyList and nothing else: an ordinary list is matched with
@@ -190,6 +413,29 @@ namespace Phunkie\PatternMatching\Referenced {
     function Nel(&$head, &$tail): NonEmptyList
     {
         return new NonEmptyList($head, $tail);
+    }
+
+    /**
+     * Creates a pattern that matches a cons cell, binding head and tail.
+     *
+     * Matches a Cons and nothing else: an ordinary list is matched with
+     * ListWithTail, even when it holds something.
+     *
+     * Example:
+     * ```php
+     * $on = pmatch(Cons(1, ImmList(2, 3)));
+     * $result = match (true) {
+     *     $on(Cons($x, $xs)) => $x + $xs->head  // $x is 1, $xs is ImmList(2, 3)
+     * };
+     * ```
+     *
+     * @param mixed $head Variable that receives the head of the list
+     * @param mixed $tail Variable that receives the list after the head
+     * @return Cons Pattern matching a cons cell
+     */
+    function Cons(&$head, &$tail): Cons
+    {
+        return new Cons($head, $tail);
     }
 
     /**

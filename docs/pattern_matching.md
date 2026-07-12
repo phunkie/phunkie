@@ -145,12 +145,111 @@ $result = match(true) {
 }; // 42
 ```
 
+### Cons Matching
+
+`Cons` matches a cons cell and nothing else. An ordinary list is matched with
+`ListWithTail`, even when it holds something.
+
+```php
+use function Phunkie\PatternMatching\Referenced\Cons as ConsOf;
+
+$on = pmatch(Cons(1, ImmList(2, 3)));
+$result = match(true) {
+    $on(ConsOf($head, $tail)) => "First: $head"
+}; // "First: 1"
+```
+
+### Set Matching
+
+Like a tuple, a set is matched only when it holds as many elements as the
+pattern names.
+
+```php
+use function Phunkie\PatternMatching\Referenced\ImmSet as ImmSetOf;
+
+$on = pmatch(ImmSet(1, 2));
+$result = match(true) {
+    $on(ImmSetOf($a, $b)) => $a + $b
+}; // 3
+```
+
+### Map Matching
+
+A map has no pattern of its own. It is matched through the list of pairs it is
+made of, one entry and the rest of them at a time — the same way a list is
+matched.
+
+```php
+use function Phunkie\PatternMatching\Referenced\ListWithTail;
+
+function total($pairs) {
+    $on = pmatch($pairs);
+
+    return match(true) {
+        $on(Nil) => 0,
+        $on(ListWithTail($pair, $rest)) => $pair->_2 + total($rest)
+    };
+}
+
+total(ImmMap(["a" => 1, "b" => 2, "c" => 3])->toList()); // 6
+```
+
+### Wrapped Values
+
+`Id`, `ImmString` and `ImmInteger` bind the value they hold.
+
+```php
+use function Phunkie\PatternMatching\Referenced\Id as IdOf;
+
+$on = pmatch(new Id(42));
+$result = match(true) {
+    $on(IdOf($value)) => $value
+}; // 42
+```
+
+### Wrapped Functions
+
+`IO`, `State`, `Reader`, `Kleisli` and `Function1` bind the function they wrap.
+
+```php
+use function Phunkie\PatternMatching\Referenced\IO as IOOf;
+use function Phunkie\PatternMatching\Referenced\State as StateOf;
+
+$on = pmatch(new IO(fn () => 42));
+$result = match(true) {
+    $on(IOOf($thunk)) => $thunk()
+}; // 42
+
+$on = pmatch(new State(fn ($s) => Pair($s, $s + 1)));
+$result = match(true) {
+    $on(StateOf($run)) => $run(1)->_2
+}; // 2
+```
+
+### Monad Transformers
+
+`OptionT`, `EitherT` and `StateT` bind what they wrap.
+
+```php
+use function Phunkie\PatternMatching\Referenced\OptionT as OptionTOf;
+
+$on = pmatch(new OptionT(new Id(Some(42))));
+$result = match(true) {
+    $on(OptionTOf($monad)) => $monad()->get()
+}; // 42
+```
+
 ### Matching Your Own Classes
 
 Any class can be taken apart with `GenericReferenced`, as long as each
 constructor argument is named after the property it is stored in. The values are
 read whatever their visibility, and whether the class declares them itself or
 inherits them.
+
+The pattern has to account for every part the class is built from: a pattern of
+one does not match a class built from two, and a class built from none — one
+inheriting a constructor that declares no parameters, say — matches no pattern
+that asks for a part at all.
 
 ```php
 use Phunkie\PatternMatching\Referenced\GenericReferenced;

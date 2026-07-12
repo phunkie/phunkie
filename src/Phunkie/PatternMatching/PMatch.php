@@ -18,6 +18,8 @@ use Phunkie\PatternMatching\Wildcarded\Function1 as WildcardedFunction1;
 use Phunkie\PatternMatching\Wildcarded\ImmList as WildcardedCons;
 use Phunkie\PatternMatching\Referenced\ListNoTail;
 use Phunkie\PatternMatching\Referenced\NonEmptyList as ReferencedNel;
+use Phunkie\PatternMatching\Referenced\Cons as ReferencedCons;
+use Phunkie\Types\Cons as ConsType;
 use Phunkie\Types\Function1;
 use Phunkie\Types\ImmList;
 use Phunkie\Types\NonEmptyList;
@@ -319,9 +321,30 @@ class PMatch
         return match (true) {
             $this->matchListByReference($condition, $value),
             $this->matchNelByReference($condition, $value),
+            $this->matchConsByReference($condition, $value),
             $this->matchListHeadByReference($condition, $value) => true,
             default => false
         };
+    }
+
+    /**
+     * Matches a cons cell by reference.
+     * Extracts both head and tail into references.
+     *
+     * @param mixed $condition Referenced pattern
+     * @param mixed $value Value to match against
+     * @return bool True if matching succeeded
+     */
+    private function matchConsByReference($condition, $value): bool
+    {
+        if ($condition instanceof ReferencedCons && $value instanceof ConsType) {
+            $condition->head = $value->head;
+            $condition->tail = $value->tail;
+
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -337,8 +360,10 @@ class PMatch
         if ($condition instanceof ReferencedNel && $value instanceof NonEmptyList) {
             $condition->head = $value->head;
             $condition->tail = $value->tail;
+
             return true;
         }
+
         return false;
     }
 
@@ -362,16 +387,28 @@ class PMatch
                 return $this->matchVariadicByReference($condition, $object, $reflected, $parameters[0]->getName());
             }
 
+            // The pattern has to account for every part the class is built from.
+            // A class that is built from none, such as one inheriting a
+            // constructor that declares no parameters, can be taken apart into
+            // nothing, and matches no pattern that asks for a part.
+            if (count($parameters) !== $condition->arity) {
+                return false;
+            }
+
             for ($i = 1; $i <= count($parameters); $i++) {
                 $property = $this->propertyNamed($reflected, $parameters[$i - 1]->getName());
+
                 if ($property === null) {
                     throw new \Error("To use generic pattern matching you have to name the constructor argument as you ".
                         "have named the class property");
                 }
+
                 $condition->{"_$i"} = $property->getValue($object);
             }
+
             return true;
         }
+
         return false;
     }
 
@@ -393,12 +430,14 @@ class PMatch
     private function matchVariadicByReference($condition, $object, \ReflectionClass $reflected, string $name): bool
     {
         $property = $this->propertyNamed($reflected, $name);
+
         if ($property === null) {
             throw new \Error("To use generic pattern matching you have to name the constructor argument as you ".
                 "have named the class property");
         }
 
         $values = $property->getValue($object);
+
         if (!is_array($values) || count($values) !== $condition->arity) {
             return false;
         }
@@ -406,6 +445,7 @@ class PMatch
         for ($i = 1; $i <= count($values); $i++) {
             $condition->{"_$i"} = $values[$i - 1];
         }
+
         return true;
     }
 
@@ -427,6 +467,7 @@ class PMatch
             if ($class->hasProperty($name)) {
                 $property = $class->getProperty($name);
                 $property->setAccessible(true);
+
                 return $property;
             }
         }
