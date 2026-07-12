@@ -8,6 +8,12 @@ use function Phunkie\PatternMatching\Referenced\ListWithTail as ListWithTail;
 use function Phunkie\PatternMatching\Referenced\Some as Just;
 use function Phunkie\PatternMatching\Referenced\Success as Valid;
 use function Phunkie\PatternMatching\Referenced\Failure as Invalid;
+use function Phunkie\PatternMatching\Referenced\Right as RightOf;
+use function Phunkie\PatternMatching\Referenced\Left as LeftOf;
+use function Phunkie\PatternMatching\Referenced\Pair as PairOf;
+use function Phunkie\PatternMatching\Referenced\Tuple as TupleOf;
+use function Phunkie\PatternMatching\Referenced\Function1 as Function1Of;
+use function Phunkie\PatternMatching\Referenced\Nel as NelOf;
 use function Phunkie\PatternMatching\Wildcarded\ImmList as WildcardedImmList;
 
 error_reporting(E_ALL & ~E_DEPRECATED);
@@ -269,5 +275,112 @@ class PatternMatchingSpec extends TestCase
         };
 
         $this->assertEquals($x, $result);
+    }
+
+    /**
+     * @test
+     */
+    public function it_accepts_reference_when_comparing_rights()
+    {
+        $on = pmatch(Right(42));
+        $result = match (true) {
+            $on(RightOf($x)) => $x
+        };
+
+        $this->assertEquals(42, $result);
+    }
+
+    /**
+     * @test
+     */
+    public function it_accepts_reference_when_comparing_lefts()
+    {
+        $on = pmatch(Left("boom!"));
+        $result = match (true) {
+            $on(RightOf($x)) => "right: " . $x,
+            $on(LeftOf($x)) => "left: " . $x
+        };
+
+        $this->assertEquals("left: boom!", $result);
+    }
+
+    /**
+     * @test
+     */
+    public function it_accepts_reference_when_comparing_pairs()
+    {
+        $on = pmatch(Pair(1, 2));
+        $result = match (true) {
+            $on(PairOf($x, $y)) => $x + $y
+        };
+
+        $this->assertEquals(3, $result);
+    }
+
+    /**
+     * @test
+     */
+    public function it_accepts_reference_when_comparing_tuples()
+    {
+        $on = pmatch(Tuple(1, 2, 3));
+        $result = match (true) {
+            $on(TupleOf($x, $y, $z)) => $x + $y + $z
+        };
+
+        $this->assertEquals(6, $result);
+    }
+
+    /**
+     * @test
+     */
+    public function it_does_not_compare_a_tuple_to_one_of_a_different_size()
+    {
+        $on = pmatch(Tuple(1, 2, 3, 4));
+        $result = match (true) {
+            $on(TupleOf($x, $y, $z)) => "three",
+            $on(_) => "not three"
+        };
+
+        $this->assertEquals("not three", $result);
+    }
+
+    /**
+     * @test
+     */
+    public function it_accepts_reference_when_comparing_function1s()
+    {
+        $on = pmatch(Function1::identity());
+        $result = match (true) {
+            $on(Function1Of($f)) => $f(42)
+        };
+
+        $this->assertEquals(42, $result);
+    }
+
+    /**
+     * @test
+     */
+    public function it_accepts_reference_when_comparing_nels()
+    {
+        $on = pmatch(Nel(1, 2, 3));
+        $result = match (true) {
+            $on(NelOf($x, $xs)) => $x + $xs->head
+        };
+
+        $this->assertEquals(3, $result);
+    }
+
+    /**
+     * @test
+     */
+    public function it_does_not_compare_a_nel_to_an_ordinary_list()
+    {
+        $on = pmatch(ImmList(1, 2));
+        $result = match (true) {
+            $on(NelOf($x, $xs)) => "nel",
+            $on(_) => "list"
+        };
+
+        $this->assertEquals("list", $result);
     }
 }

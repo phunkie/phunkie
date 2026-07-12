@@ -62,6 +62,135 @@ namespace Phunkie\PatternMatching\Referenced {
 
     use Phunkie\Validation\Success as Valid;
     use Phunkie\Validation\Failure as Invalid;
+    use Phunkie\Types\Right as RightType;
+    use Phunkie\Types\Left as LeftType;
+    use Phunkie\Types\Pair as PairType;
+    use Phunkie\Types\Tuple as TupleType;
+    use Phunkie\Types\Function1 as Function1Type;
+
+    /**
+     * Creates a pattern that matches a Right and binds the value it holds.
+     *
+     * Example:
+     * ```php
+     * $on = pmatch(Right(42));
+     * $result = match (true) {
+     *     $on(Right($value)) => $value  // $value is 42
+     * };
+     * ```
+     *
+     * @param mixed $value Variable that receives the value held by the Right
+     * @return GenericReferenced Pattern matching a Right
+     */
+    function Right(&$value): GenericReferenced
+    {
+        return new GenericReferenced(RightType::class, $value);
+    }
+
+    /**
+     * Creates a pattern that matches a Left and binds the value it holds.
+     *
+     * Example:
+     * ```php
+     * $on = pmatch(Left("boom!"));
+     * $result = match (true) {
+     *     $on(Right($value)) => "right: " . $value,
+     *     $on(Left($value)) => "left: " . $value  // $value is "boom!"
+     * };
+     * ```
+     *
+     * @param mixed $value Variable that receives the value held by the Left
+     * @return GenericReferenced Pattern matching a Left
+     */
+    function Left(&$value): GenericReferenced
+    {
+        return new GenericReferenced(LeftType::class, $value);
+    }
+
+    /**
+     * Creates a pattern that matches a Pair and binds both of its values.
+     *
+     * Example:
+     * ```php
+     * $on = pmatch(Pair(1, 2));
+     * $result = match (true) {
+     *     $on(Pair($x, $y)) => $x + $y  // $x is 1, $y is 2
+     * };
+     * ```
+     *
+     * @param mixed $_1 Variable that receives the first value of the Pair
+     * @param mixed $_2 Variable that receives the second value of the Pair
+     * @return GenericReferenced Pattern matching a Pair
+     */
+    function Pair(&$_1, &$_2): GenericReferenced
+    {
+        return new GenericReferenced(PairType::class, $_1, $_2);
+    }
+
+    /**
+     * Creates a pattern that matches a Tuple and binds each of its values.
+     *
+     * The tuple must hold as many values as the pattern names, so a pattern of
+     * three does not match a tuple of four. Note that a tuple of two is a Pair,
+     * and is matched with the Pair pattern.
+     *
+     * Example:
+     * ```php
+     * $on = pmatch(Tuple(1, 2, 3));
+     * $result = match (true) {
+     *     $on(Tuple($x, $y, $z)) => $x + $y + $z  // 6
+     * };
+     * ```
+     *
+     * @param mixed ...$values Variables that receive the values of the Tuple
+     * @return GenericReferenced Pattern matching a Tuple
+     */
+    function Tuple(&...$values): GenericReferenced
+    {
+        return new GenericReferenced(TupleType::class, ...$values);
+    }
+
+    /**
+     * Creates a pattern that matches a Function1 and binds the function it wraps.
+     *
+     * Example:
+     * ```php
+     * $on = pmatch(Function1::identity());
+     * $result = match (true) {
+     *     $on(Function1($f)) => $f(42)  // $f is the wrapped function, so 42
+     * };
+     * ```
+     *
+     * @param mixed $f Variable that receives the function wrapped by the Function1
+     * @return GenericReferenced Pattern matching a Function1
+     */
+    function Function1(&$f): GenericReferenced
+    {
+        return new GenericReferenced(Function1Type::class, $f);
+    }
+
+    /**
+     * Creates a pattern that matches a non empty list, binding head and tail.
+     *
+     * Matches a NonEmptyList and nothing else: an ordinary list is matched with
+     * ListWithTail, even when it happens to hold something.
+     *
+     * Example:
+     * ```php
+     * $on = pmatch(Nel(1, 2, 3));
+     * $result = match (true) {
+     *     $on(Nel($x, $xs)) => $x + $xs->head  // $x is 1, $xs is ImmList(2, 3)
+     * };
+     * ```
+     *
+     * @param mixed $head Variable that receives the head of the list
+     * @param mixed $tail Variable that receives the tail of the list
+     * @return NonEmptyList Pattern matching a non empty list
+     */
+    function Nel(&$head, &$tail): NonEmptyList
+    {
+        return new NonEmptyList($head, $tail);
+    }
 
     /**
      * Creates a reference pattern.

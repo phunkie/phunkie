@@ -17,6 +17,7 @@ use Phunkie\PatternMatching\Referenced\Some as ReferencedSome;
 use Phunkie\PatternMatching\Wildcarded\Function1 as WildcardedFunction1;
 use Phunkie\PatternMatching\Wildcarded\ImmList as WildcardedCons;
 use Phunkie\PatternMatching\Referenced\ListNoTail;
+use Phunkie\PatternMatching\Referenced\NonEmptyList as ReferencedNel;
 use Phunkie\Types\Function1;
 use Phunkie\Types\ImmList;
 use Phunkie\Types\NonEmptyList;
@@ -317,9 +318,28 @@ class PMatch
         }
         return match (true) {
             $this->matchListByReference($condition, $value),
+            $this->matchNelByReference($condition, $value),
             $this->matchListHeadByReference($condition, $value) => true,
             default => false
         };
+    }
+
+    /**
+     * Matches a non empty list by reference.
+     * Extracts both head and tail into references.
+     *
+     * @param mixed $condition Referenced pattern
+     * @param mixed $value Value to match against
+     * @return bool True if matching succeeded
+     */
+    private function matchNelByReference($condition, $value): bool
+    {
+        if ($condition instanceof ReferencedNel && $value instanceof NonEmptyList) {
+            $condition->head = $value->head;
+            $condition->tail = $value->tail;
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -337,20 +357,81 @@ class PMatch
         if ($condition instanceof GenericReferenced && is_object($object) && get_class($object) === $class) {
             $reflected = new \ReflectionClass($object);
             $parameters = $reflected->getConstructor()->getParameters();
+
+            if (count($parameters) === 1 && $parameters[0]->isVariadic()) {
+                return $this->matchVariadicByReference($condition, $object, $reflected, $parameters[0]->getName());
+            }
+
             for ($i = 1; $i <= count($parameters); $i++) {
-                if (!$reflected->hasProperty($parameters[$i - 1]->getName())) {
+                $property = $this->propertyNamed($reflected, $parameters[$i - 1]->getName());
+                if ($property === null) {
                     throw new \Error("To use generic pattern matching you have to name the constructor argument as you ".
                         "have named the class property");
                 }
-                if (isset(((array) $object)["\0$class\0{$parameters[$i - 1]->getName()}"])) {
-                    $condition->{"_$i"} = ((array)$object)["\0$class\0{$parameters[$i - 1]->getName()}"];
-                } elseif (isset(((array)$object)["{$parameters[$i - 1]->getName()}"])) {
-                    $condition->{"_$i"} = ((array)$object)["{$parameters[$i - 1]->getName()}"];
-                }
+                $condition->{"_$i"} = $property->getValue($object);
             }
             return true;
         }
         return false;
+    }
+
+    /**
+     * Matches a class built from a variadic constructor, such as a Tuple.
+     *
+     * The values are held together in one property, so they are taken apart and
+     * bound one by one. The pattern matches only when the object holds as many
+     * values as the pattern has references for, so that Pair($x, $y) does not
+     * match a tuple of three.
+     *
+     * @param GenericReferenced $condition Referenced pattern
+     * @param object $object Object to match against
+     * @param \ReflectionClass $reflected The reflected object
+     * @param string $name Name of the property holding the values
+     * @return bool True if matching succeeded
+     * @throws \Error If the variadic constructor param does not name a property
+     */
+    private function matchVariadicByReference($condition, $object, \ReflectionClass $reflected, string $name): bool
+    {
+        $property = $this->propertyNamed($reflected, $name);
+        if ($property === null) {
+            throw new \Error("To use generic pattern matching you have to name the constructor argument as you ".
+                "have named the class property");
+        }
+
+        $values = $property->getValue($object);
+        if (!is_array($values) || count($values) !== $condition->arity) {
+            return false;
+        }
+
+        for ($i = 1; $i <= count($values); $i++) {
+            $condition->{"_$i"} = $values[$i - 1];
+        }
+        return true;
+    }
+
+    /**
+     * Finds a property by name on a class or on any of its parents.
+     *
+     * A property is looked up through the class hierarchy, and read whatever
+     * its visibility, so that a value can be extracted from a class that keeps
+     * it protected, or that inherits it, as Right and Left inherit theirs
+     * from Either.
+     *
+     * @param \ReflectionClass $reflected The class to look the property up on
+     * @param string $name The name of the property
+     * @return \ReflectionProperty|null The property, or null if there is none
+     */
+    private function propertyNamed(\ReflectionClass $reflected, string $name): ?\ReflectionProperty
+    {
+        for ($class = $reflected; $class !== false; $class = $class->getParentClass()) {
+            if ($class->hasProperty($name)) {
+                $property = $class->getProperty($name);
+                $property->setAccessible(true);
+                return $property;
+            }
+        }
+
+        return null;
     }
 
     /**
