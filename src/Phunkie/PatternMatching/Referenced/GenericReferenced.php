@@ -86,6 +86,18 @@ class GenericReferenced
     public $class;
 
     /**
+     * How many parts the pattern asked for.
+     *
+     * A class built from a variadic constructor, such as a Tuple, holds as many
+     * values as it was given, so the pattern only matches one holding as many
+     * values as the pattern has references for: Pair($x, $y) is not a match for
+     * a tuple of three.
+     *
+     * @var int
+     */
+    public $arity;
+
+    /**
      * Creates a new generic reference pattern.
      * 
      * Takes a class name and up to 21 references that will receive
@@ -143,5 +155,6 @@ class GenericReferenced
             $this->{"_$i"} = &${"_$i"};
         }
         $this->class = $class;
+        $this->arity = func_num_args() - 1;
     }
 }

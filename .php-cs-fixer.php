@@ -8,7 +8,7 @@ $finder = Finder::create()
   ->in(__DIR__);
 
 $rules = [
-    '@PHP81Migration' => true,
+    '@PHP8x1Migration' => true,
     'trailing_comma_in_multiline' => false,
     'use_arrow_functions' => true
 ];
