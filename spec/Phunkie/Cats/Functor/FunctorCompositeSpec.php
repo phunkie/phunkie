@@ -7,6 +7,7 @@ use Phunkie\Types\Function1;
 use Phunkie\Types\ImmList;
 use Phunkie\Types\Option;
 use Md\Unit\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 use function Phunkie\Functions\show\is_showable;
 
 /**
@@ -21,9 +22,7 @@ class FunctorCompositeSpec extends TestCase
         $this->functor = new FunctorComposite(Option::kind);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_works_like_a_functor()
     {
         $this->assertIsLike(
@@ -32,9 +31,7 @@ class FunctorCompositeSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_is_showable()
     {
         $this->assertTrue(is_showable($this->functor));
@@ -44,9 +41,7 @@ class FunctorCompositeSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_is_composable()
     {
         $this->assertEquals(
@@ -59,9 +54,7 @@ class FunctorCompositeSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_composes_functor_functionality()
     {
         $functor = (new FunctorComposite(ImmList::kind));

@@ -14,6 +14,7 @@ namespace spec\Phunkie\Utils;
 use Phunkie\Types\ImmList;
 use Phunkie\Utils\WithFilter;
 use Md\Unit\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class WithFilterSpec extends TestCase
 {
@@ -27,18 +28,14 @@ class WithFilterSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_is_initializable()
     {
         $ref = new \ReflectionClass($this->filter);
         $this->assertTrue($ref->isInstantiable());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_delegates_filter_to_monad()
     {
         $this->assertIsLike(

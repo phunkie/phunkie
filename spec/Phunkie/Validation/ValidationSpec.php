@@ -8,6 +8,7 @@ use Phunkie\Cats\Monad;
 use Phunkie\Validation\Failure;
 use Phunkie\Validation\Success;
 use Md\Unit\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 use function Phunkie\Functions\applicative\ap;
 use function Phunkie\Functions\applicative\map2;
 use function Phunkie\Functions\applicative\pure;
@@ -20,9 +21,7 @@ use const Phunkie\Functions\function1\identity;
 
 class ValidationSpec extends TestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function it_is_right_if_success()
     {
         $v = new Success("yay");
@@ -30,9 +29,7 @@ class ValidationSpec extends TestCase
         $this->assertTrue($v->isRight());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_is_left_if_failure()
     {
         $v = new Failure("nay");
@@ -40,9 +37,7 @@ class ValidationSpec extends TestCase
         $this->assertTrue($v->isLeft());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_can_be_constructed_with_Attempt()
     {
         $this->assertIsLike(
@@ -57,9 +52,7 @@ class ValidationSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_can_be_converted_to_an_option()
     {
         $this->assertIsLike(toOption(Success(42)), Some(42));
@@ -69,9 +62,7 @@ class ValidationSpec extends TestCase
         $this->assertIsLike(Failure("nay")->toOption(), None());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_is_a_functor()
     {
         $f = new Success("yay");
@@ -81,9 +72,7 @@ class ValidationSpec extends TestCase
         $this->assertIsLike((fmap("strlen"))(Failure("nay")), Failure("nay"));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_is_a_monad()
     {
         $m = new Success(1);
@@ -102,9 +91,7 @@ class ValidationSpec extends TestCase
         $this->assertIsLike(flatten(Failure(Failure(404))), Failure(404));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_is_an_applicative()
     {
         $ap = new Success(1);
@@ -134,9 +121,7 @@ class ValidationSpec extends TestCase
         $this->assertIsLike($xs, Failure("nay"));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function its_success_return_itself_on_orElse()
     {
         $v = new Success("ok");
@@ -144,9 +129,7 @@ class ValidationSpec extends TestCase
         $this->assertIsLike($v->orElse(Failure("nay")), Success("ok"));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function its_failure_return_argument_on_orElse()
     {
         $v = new Failure("nay");
@@ -154,9 +137,7 @@ class ValidationSpec extends TestCase
         $this->assertIsLike($v->orElse(Success("ok")), Success("ok"));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_combines_successes()
     {
         $v1 = Success("Hello");
@@ -168,9 +149,7 @@ class ValidationSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_combines_failures()
     {
         $v1 = Failure("Error 1");
@@ -182,9 +161,7 @@ class ValidationSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_combines_nel_failures()
     {
         $v1 = Failure(Nel("Error 1", "Error 2"));

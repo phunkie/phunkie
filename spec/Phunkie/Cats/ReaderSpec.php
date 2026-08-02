@@ -5,21 +5,18 @@ namespace spec\Phunkie\Cats;
 use PHPUnit\Framework\TestCase;
 use Phunkie\Cats\Reader;
 use Prophecy\Argument;
+use PHPUnit\Framework\Attributes\Test;
 
 class ReaderSpec extends TestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function it_wraps_a_function()
     {
         $r = new Reader(fn (string $a) => strrev($a));
         $this->assertEquals("olleh", $r->run("hello"));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_implements_map()
     {
         $r = new Reader(fn (string $a) => strrev($a));

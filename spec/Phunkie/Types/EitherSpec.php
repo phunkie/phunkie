@@ -19,6 +19,7 @@ use Phunkie\Cats\Functor;
 use Phunkie\Cats\Monad;
 use Phunkie\Types\Left;
 use Phunkie\Types\Right;
+use PHPUnit\Framework\Attributes\Test;
 use function Phunkie\Functions\applicative\ap;
 use function Phunkie\Functions\applicative\map2;
 use function Phunkie\Functions\applicative\pure;
@@ -29,9 +30,7 @@ use function Phunkie\Functions\monad\flatten;
 class EitherSpec extends TestCase
 {
     use TestTrait;
-    /**
-     * @test
-     */
+    #[Test]
     public function it_creates_a_right_either()
     {
         $either = Right(42);
@@ -41,9 +40,7 @@ class EitherSpec extends TestCase
         $this->assertFalse($either->isLeft());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_creates_a_left_either()
     {
         $either = Left("error");
@@ -53,18 +50,14 @@ class EitherSpec extends TestCase
         $this->assertFalse($either->isRight());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_is_showable()
     {
         $this->assertEquals("Right(42)", (string)Right(42));
         $this->assertEquals('Left("error")', (string)Left("error"));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_is_a_functor()
     {
         $right = Right(5);
@@ -83,9 +76,7 @@ class EitherSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_maps_right_values_only()
     {
         $right = Right(10);
@@ -102,9 +93,7 @@ class EitherSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_is_a_monad()
     {
         $right = Right(5);
@@ -130,9 +119,7 @@ class EitherSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_supports_bind()
     {
         $this->assertIsLike(
@@ -146,9 +133,7 @@ class EitherSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_supports_flatten()
     {
         $this->assertIsLike(
@@ -167,9 +152,7 @@ class EitherSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_is_an_applicative()
     {
         $right = Right(5);
@@ -194,9 +177,7 @@ class EitherSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_supports_pure()
     {
         $this->assertIsLike(
@@ -210,9 +191,7 @@ class EitherSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_supports_map2()
     {
         $this->assertIsLike(
@@ -232,18 +211,14 @@ class EitherSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_provides_getOrElse()
     {
         $this->assertEquals(42, Right(42)->getOrElse(0));
         $this->assertEquals(0, Left("error")->getOrElse(0));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_converts_to_option()
     {
         $this->assertIsLike(
@@ -257,9 +232,7 @@ class EitherSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_provides_orElse()
     {
         $this->assertIsLike(
@@ -278,9 +251,7 @@ class EitherSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_supports_fold()
     {
         $fold = fn($error) => "Error: $error";
@@ -297,9 +268,7 @@ class EitherSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_can_swap_left_and_right()
     {
         $this->assertIsLike(
@@ -313,9 +282,7 @@ class EitherSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_supports_filter_or_else()
     {
         $isEven = fn($x) => $x % 2 === 0;
@@ -336,9 +303,7 @@ class EitherSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_provides_contains()
     {
         $this->assertTrue(Right(42)->contains(42));
@@ -346,9 +311,7 @@ class EitherSpec extends TestCase
         $this->assertFalse(Left("error")->contains(42));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_provides_exists()
     {
         $isPositive = fn($x) => $x > 0;
@@ -358,9 +321,7 @@ class EitherSpec extends TestCase
         $this->assertFalse(Left("error")->exists($isPositive));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_provides_forall()
     {
         $isPositive = fn($x) => $x > 0;
@@ -370,9 +331,7 @@ class EitherSpec extends TestCase
         $this->assertTrue(Left("error")->forall($isPositive)); // vacuously true for Left
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_can_be_used_for_error_handling()
     {
         $divide = fn($a, $b) => $b === 0
@@ -383,9 +342,7 @@ class EitherSpec extends TestCase
         $this->assertIsLike($divide(10, 0), Left("Division by zero"));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_chains_computations_with_flatMap()
     {
         $safeDivide = fn($a, $b) => $b === 0 ? Left("div by zero") : Right($a / $b);
@@ -404,9 +361,7 @@ class EitherSpec extends TestCase
         $this->assertIsLike($errorResult, Left("div by zero"));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_bimap_transforms_both_sides()
     {
         $this->assertIsLike(
@@ -420,9 +375,7 @@ class EitherSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_leftMap_transforms_left_values()
     {
         $this->assertIsLike(
@@ -436,9 +389,7 @@ class EitherSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_supports_traversal()
     {
         $result = null;
@@ -450,9 +401,7 @@ class EitherSpec extends TestCase
         $this->assertNull($result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_obeys_functor_identity_law()
     {
         $this->forAll(new IntGen())->then(function ($x) {
@@ -472,9 +421,7 @@ class EitherSpec extends TestCase
         });
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_obeys_functor_composition_law()
     {
         $this->forAll(new IntGen())->then(function ($x) {
@@ -497,9 +444,7 @@ class EitherSpec extends TestCase
         });
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_obeys_monad_left_identity_law()
     {
         $this->forAll(new IntGen())->then(function ($x) {
@@ -513,9 +458,7 @@ class EitherSpec extends TestCase
         });
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_obeys_monad_right_identity_law()
     {
         $this->forAll(new IntGen())->then(function ($x) {
@@ -534,9 +477,7 @@ class EitherSpec extends TestCase
         });
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_obeys_monad_associativity_law()
     {
         $this->forAll(new IntGen())->then(function ($x) {
@@ -559,9 +500,7 @@ class EitherSpec extends TestCase
         });
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_obeys_applicative_identity_law()
     {
         $this->forAll(new IntGen())->then(function ($x) {
@@ -574,9 +513,7 @@ class EitherSpec extends TestCase
         });
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_obeys_applicative_homomorphism_law()
     {
         $this->forAll(new IntGen())->then(function ($x) {
@@ -590,9 +527,7 @@ class EitherSpec extends TestCase
         });
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_obeys_applicative_interchange_law()
     {
         $this->forAll(new IntGen())->then(function ($x) {
@@ -606,9 +541,7 @@ class EitherSpec extends TestCase
         });
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_handles_errors_consistently_in_property_tests()
     {
         $this->forAll(new IntGen())->then(function ($x) {

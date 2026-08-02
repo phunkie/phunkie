@@ -20,6 +20,7 @@ use Md\PropertyTesting\TestTrait;
 use Eris\Generator\SequenceGenerator as SeqGen;
 use Eris\Generator\IntegerGenerator as IntGen;
 use Phunkie\Utils\WithFilter;
+use PHPUnit\Framework\Attributes\Test;
 use function Phunkie\Functions\applicative\ap;
 use function Phunkie\Functions\applicative\pure;
 use function Phunkie\Functions\applicative\map2;
@@ -38,18 +39,14 @@ class ImmListSpec extends TestCase
 {
     use TestTrait;
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_is_showable()
     {
         $this->assertTrue(usesTrait(ImmList(2, 3, 4), Show::class));
         $this->assertEquals(showValue(ImmList(1, 2, 3)), "List(1, 2, 3)");
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_is_a_functor()
     {
         $spec = $this;
@@ -63,9 +60,7 @@ class ImmListSpec extends TestCase
         });
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_returns_an_empty_list_when_an_empty_list_is_mapped()
     {
         $list = ImmList();
@@ -73,17 +68,13 @@ class ImmListSpec extends TestCase
         $this->assertPropertyCount(0, $list->map(fn ($x) => $x + 1));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_is_has_applicative_ops()
     {
         $this->assertTrue(usesTrait(ImmList(1, 2, 3), ImmListApplicativeOps::class));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_returns_an_empty_list_when_an_empty_list_is_applied()
     {
         $list = ImmList();
@@ -93,9 +84,7 @@ class ImmListSpec extends TestCase
         ));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_applies_the_result_of_the_function_to_a_List()
     {
         $spec = $this;
@@ -109,17 +98,13 @@ class ImmListSpec extends TestCase
         });
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_returns_its_length()
     {
         $this->assertPropertyCount(3, ImmList(1, 2, 3));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_has_filter()
     {
         $this->assertIsLike(
@@ -128,9 +113,7 @@ class ImmListSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_has_withFilter()
     {
         $this->assertInstanceOf(
@@ -139,9 +122,7 @@ class ImmListSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function its_withFilter_plus_map_to_identity_is_equivalent_to_filter()
     {
         $list = ImmList(1, 2, 3);
@@ -153,9 +134,7 @@ class ImmListSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_has_reject()
     {
         $this->assertIsLike(
@@ -164,25 +143,19 @@ class ImmListSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_implements_reduce()
     {
         $this->assertEquals(6, ImmList(1, 2, 3)->reduce(fn ($x, $y) => $x + $y));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_implements_reduce_string_example()
     {
         $this->assertEquals("abc", ImmList("a", "b", "c")->reduce(fn ($x, $y) => $x . $y));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_will_complain_if_reduce_returns_a_type_different_to_the_list_type()
     {
         $this->expectException(\Error::class);
@@ -191,17 +164,13 @@ class ImmListSpec extends TestCase
         ImmList(1, 2, 3)->reduce(fn($x, $y) => "hello");
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_can_be_casted_to_array()
     {
         $this->assertEquals([1, 2, 3], ImmList(1, 2, 3)->toArray());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_can_be_transposed()
     {
         $list = ImmList(ImmList(1, 2, 3), ImmList(4, 5, 6));
@@ -214,9 +183,7 @@ class ImmListSpec extends TestCase
         $this->assertIsLike(transpose($list), $transposed);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_zips()
     {
         $list = ImmList(1, 2, 3);
@@ -226,17 +193,13 @@ class ImmListSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_takes_n_elements_from_list()
     {
         $this->assertIsLike(ImmList(1, 2, 3)->take(2), ImmList(1, 2));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_takes_while_something_is_true()
     {
         $list = ImmList(1, 2, 3, 4, 5, 6);
@@ -256,9 +219,7 @@ class ImmListSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_drops_while_something_is_true()
     {
         $list = ImmList(1, 2, 3, 4, 5, 6);
@@ -278,49 +239,37 @@ class ImmListSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_drops_n_elements_from_list()
     {
         $this->assertIsLike(ImmList(1, 2, 3)->drop(2), ImmList(3));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_implements_head()
     {
         $this->assertEquals(1, ImmList(1, 2, 3)->head);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_implements_tail()
     {
         $this->assertIsLike(ImmList(1, 2, 3)->tail, ImmList(2, 3));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_implements_init()
     {
         $this->assertIsLike(ImmList(1, 2, 3)->init, ImmList(1, 2));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_implements_last()
     {
         $this->assertEquals(3, ImmList(1, 2, 3)->last);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_implements_shortcut_for_mapping_over_class_members()
     {
         $_ = underscore();
@@ -331,9 +280,7 @@ class ImmListSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_is_an_applicative()
     {
         $xs = (ap(ImmList(fn ($a) => $a +1)))(ImmList(1));
@@ -346,9 +293,7 @@ class ImmListSpec extends TestCase
         $this->assertIsLike($xs, ImmList(3));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_is_a_monad()
     {
         $xs = (bind(fn ($a) => ImmList($a +1)))(ImmList(1));
@@ -368,9 +313,7 @@ class ImmListSpec extends TestCase
         $this->assertIsLike($hello($xs), ImmList("hello"));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_is_a_traverse()
     {
         $list = ImmList(1, 2, 3);
@@ -387,9 +330,7 @@ class ImmListSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_implements_sequence()
     {
         $this->assertIsLike(
@@ -398,9 +339,7 @@ class ImmListSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_returns_None_if_any_value_in_sequence_is_None()
     {
         $this->assertIsLike(
@@ -409,17 +348,13 @@ class ImmListSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_implements_append()
     {
         $this->assertIsLike(ImmList(1, 2, 3)->append(4), ImmList(1, 2, 3, 4));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_implements_prepend()
     {
         $this->assertIsLike(ImmList(1, 2, 3)->prepend(0), ImmList(0, 1, 2, 3));

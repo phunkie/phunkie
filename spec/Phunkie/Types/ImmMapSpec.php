@@ -5,6 +5,7 @@ namespace spec\Phunkie\Types;
 use Md\Unit\TestCase;
 use Phunkie\Cats\Functor;
 use Phunkie\Types\Pair;
+use PHPUnit\Framework\Attributes\Test;
 use function Phunkie\Functions\functor\allAs;
 use function Phunkie\Functions\functor\asVoid;
 use function Phunkie\Functions\functor\fmap;
@@ -16,27 +17,21 @@ use function Phunkie\Functions\show\show;
  */
 class ImmMapSpec extends TestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function it_can_be_created_with_associative_arrays()
     {
         $map = ImmMap(["hello" => "there"]);
         $this->assertIsLike($map->get("hello"), Some("there"));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_returns_None_when_key_does_not_exist()
     {
         $map = ImmMap(["hello" => "there"]);
         $this->assertIsLike($map->get("hi"), None());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_can_be_constructed_with_an_even_number_of_objects()
     {
         $map = ImmMap(
@@ -52,9 +47,7 @@ class ImmMapSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_cannot_be_constructed_with_an_odd_number()
     {
         $this->expectException(\Error::class);
@@ -68,9 +61,7 @@ class ImmMapSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_also_complains_on_one_argument_if_it_is_not_an_array()
     {
         $this->expectException(\Error::class);
@@ -78,9 +69,7 @@ class ImmMapSpec extends TestCase
         $map = ImmMap(new AccountNumber(1));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_lets_you_check_if_a_key_exists()
     {
         $map = ImmMap(["hello" => "there"]);
@@ -88,9 +77,7 @@ class ImmMapSpec extends TestCase
         $this->assertFalse($map->contains("hi"));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_lets_you_set_a_default_value()
     {
         $map = ImmMap(["hello" => "there"]);
@@ -98,18 +85,14 @@ class ImmMapSpec extends TestCase
         $this->assertEquals("there", $map->getOrElse("hello", "here"));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_is_showable()
     {
         $map = ImmMap(["hi" => "here", "hello" => "there"]);
         $this->assertEquals($map->toString(), 'Map("hi" -> "here", "hello" -> "there")');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_has_minus()
     {
         $map = ImmMap(["hello" => "there", "hi" => "here"]);
@@ -118,9 +101,7 @@ class ImmMapSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_has_plus()
     {
         $map = ImmMap(["hello" => "there"]);
@@ -131,9 +112,7 @@ class ImmMapSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_replaces_value_when_adding_with_same_key()
     {
         $map = ImmMap(["hello" => "there", "hi" => "here"]);
@@ -144,18 +123,14 @@ class ImmMapSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_can_be_copied()
     {
         $map = ImmMap(["hello" => "there", "hi" => "here"]);
         $this->assertEquals($map->copy()->show(), $map->show());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_is_a_functor()
     {
         $f = ImmMap(["a" => 1, "b" => 2, "c" => 3]);
@@ -229,9 +204,7 @@ class ImmMapSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_can_map_values()
     {
         $map = ImmMap(["a" => 1, "b" => 2, "c" => 3]);
@@ -239,9 +212,7 @@ class ImmMapSpec extends TestCase
         $this->assertTrue($result->eqv(ImmMap(["a" => 2, "b" => 4, "c" => 6])));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_can_map_keys()
     {
         $map = ImmMap([1 => "a", 2 => "b", 3 => "c"]);
@@ -249,9 +220,7 @@ class ImmMapSpec extends TestCase
         $this->assertTrue($result->eqv(ImmMap(["key_1" => "a", "key_2" => "b", "key_3" => "c"])));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_is_foldable()
     {
         $map = ImmMap(["a" => 1, "b" => 2, "c" => 3]);
@@ -269,9 +238,7 @@ class ImmMapSpec extends TestCase
         $this->assertEquals(6, $sum3);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_can_foldMap()
     {
         $map = ImmMap(["a" => 1, "b" => 2, "c" => 3]);
@@ -279,9 +246,7 @@ class ImmMapSpec extends TestCase
         $this->assertTrue($result->eqv(ImmList(1, 2, 3)));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_can_filter()
     {
         $map = ImmMap(["a" => 1, "b" => 2, "c" => 3, "d" => 4]);
@@ -289,9 +254,7 @@ class ImmMapSpec extends TestCase
         $this->assertTrue($result->eqv(ImmMap(["b" => 2, "d" => 4])));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_can_filter_keys()
     {
         $map = ImmMap(["a" => 1, "b" => 2, "c" => 3]);
@@ -299,9 +262,7 @@ class ImmMapSpec extends TestCase
         $this->assertTrue($result->eqv(ImmMap(["a" => 1, "c" => 3])));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_can_filter_values()
     {
         $map = ImmMap(["a" => 1, "b" => 2, "c" => 3, "d" => 4]);
@@ -309,9 +270,7 @@ class ImmMapSpec extends TestCase
         $this->assertTrue($result->eqv(ImmMap(["c" => 3, "d" => 4])));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_can_sequence()
     {
         $map = ImmMap(["a" => Some(1), "b" => Some(2), "c" => Some(3)]);
@@ -323,9 +282,7 @@ class ImmMapSpec extends TestCase
         $this->assertIsLike($result2, None());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_is_a_monoid()
     {
         $map1 = ImmMap(["a" => 1, "b" => 2]);
@@ -346,9 +303,7 @@ class ImmMapSpec extends TestCase
         $this->assertTrue($map1->combine($map1->zero())->eqv($map1));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_can_convert_to_list()
     {
         $map = ImmMap(["a" => 1, "b" => 2]);
@@ -356,9 +311,7 @@ class ImmMapSpec extends TestCase
         $this->assertTrue($list->eqv(ImmList(Pair("a", 1), Pair("b", 2))));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_supports_updated_and_removed()
     {
         $map = ImmMap(["a" => 1, "b" => 2]);
@@ -370,9 +323,7 @@ class ImmMapSpec extends TestCase
         $this->assertTrue($removed->eqv(ImmMap(["b" => 2])));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_can_map_with_key()
     {
         $map = ImmMap(["a" => 1, "b" => 2]);
@@ -380,9 +331,7 @@ class ImmMapSpec extends TestCase
         $this->assertTrue($result->eqv(ImmMap(["a" => "a:1", "b" => "b:2"])));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_can_flat_map()
     {
         $map = ImmMap(["a" => 1, "b" => 2]);
@@ -395,9 +344,7 @@ class ImmMapSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_can_flatten()
     {
         $nested = ImmMap([
@@ -410,9 +357,7 @@ class ImmMapSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_can_apply()
     {
         $map = ImmMap(["a" => 5, "b" => 10]);
@@ -421,9 +366,7 @@ class ImmMapSpec extends TestCase
         $this->assertTrue($result->eqv(ImmMap(["a" => 10, "b" => 11])));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_can_map2()
     {
         $map1 = ImmMap(["a" => 5, "b" => 10]);
@@ -432,9 +375,7 @@ class ImmMapSpec extends TestCase
         $this->assertTrue($result->eqv(ImmMap(["a" => 8, "b" => 12])));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_can_pure()
     {
         $map = ImmMap();
@@ -442,9 +383,7 @@ class ImmMapSpec extends TestCase
         $this->assertTrue($pureMap->eqv(ImmMap(["default" => 42])));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_can_zip_maps()
     {
         $map1 = ImmMap(["a" => 1, "b" => 2, "c" => 3]);
@@ -455,9 +394,7 @@ class ImmMapSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_can_zip_with_function()
     {
         $map1 = ImmMap(["a" => 1, "b" => 2]);
@@ -466,9 +403,7 @@ class ImmMapSpec extends TestCase
         $this->assertTrue($result->eqv(ImmMap(["a" => 11, "b" => 22])));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_can_partition()
     {
         $map = ImmMap(["a" => 1, "b" => 2, "c" => 3, "d" => 4]);
@@ -477,9 +412,7 @@ class ImmMapSpec extends TestCase
         $this->assertTrue($partitioned->_2->eqv(ImmMap(["a" => 1, "c" => 3])));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_can_group_by()
     {
         $map = ImmMap(["a" => 1, "b" => 2, "c" => 1, "d" => 3]);
@@ -496,9 +429,7 @@ class ImmMapSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_can_check_if_empty()
     {
         $empty = ImmMap();
@@ -508,9 +439,7 @@ class ImmMapSpec extends TestCase
         $this->assertFalse($nonEmpty->isEmpty());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_can_get_size()
     {
         $map = ImmMap(["a" => 1, "b" => 2, "c" => 3]);

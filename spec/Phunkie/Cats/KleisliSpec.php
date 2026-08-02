@@ -4,21 +4,18 @@ namespace spec\Phunkie\Cats;
 
 use Phunkie\Cats\Kleisli;
 use Md\Unit\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class KleisliSpec extends TestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function it_wraps_a_function_returning_a_monad()
     {
         $k = new Kleisli(fn($x) => Some($x * 2));
         $this->assertIsLike(Some(84), $k->run(42));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_composes_with_andThen()
     {
         $parseString = new Kleisli(
@@ -33,9 +30,7 @@ class KleisliSpec extends TestCase
         $this->assertIsLike(None(), $parseAndDouble->run("not a number"));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_composes_with_compose()
     {
         $double = new Kleisli(fn($i) => Some($i * 2));
@@ -46,9 +41,7 @@ class KleisliSpec extends TestCase
         $this->assertIsLike(Some("84"), $doubleAndString->run(42));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_obeys_the_left_identity_law()
     {
         $f = new Kleisli(fn($x) => Some($x * 2));
@@ -63,9 +56,7 @@ class KleisliSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_obeys_the_right_identity_law()
     {
         $f = new Kleisli(fn($x) => Some($x * 2));
@@ -80,9 +71,7 @@ class KleisliSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_obeys_the_associativity_law()
     {
         $f = new Kleisli(fn($x) => Some($x * 2));
@@ -98,9 +87,7 @@ class KleisliSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_handles_failure_cases()
     {
         $validatePositive = new Kleisli(

@@ -6,12 +6,11 @@ use PHPUnit\Framework\TestCase;
 use Phunkie\Utils\Trampoline\Done;
 use Phunkie\Utils\Trampoline\More;
 use Phunkie\Utils\Trampoline\Trampoline;
+use PHPUnit\Framework\Attributes\Test;
 
 class TrampolineSpec extends TestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function it_can_help_avoid_stack_overflow()
     {
         $this->assertTrue(odd(5)->run());

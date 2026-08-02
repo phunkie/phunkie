@@ -3,13 +3,12 @@
 namespace spec\Phunkie\Functions;
 
 use Md\Unit\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 use const Phunkie\Functions\semigroup\combine;
 
 class ComprehensionSpec extends TestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function it_is_equivalent_to_map_with_one_bind()
     {
         $this->assertIsLike(
@@ -20,9 +19,7 @@ class ComprehensionSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_passes_the_value_to_the_next_bind()
     {
         $this->assertIsLike(
@@ -34,9 +31,7 @@ class ComprehensionSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_works_for_three_calls()
     {
         $this->assertIsLike(
@@ -49,9 +44,7 @@ class ComprehensionSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_yields_pairs()
     {
         $this->assertIsLike(
@@ -63,9 +56,7 @@ class ComprehensionSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_binds_pairs_to_separate_vars()
     {
         $y = null;
@@ -80,9 +71,7 @@ class ComprehensionSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_lets_you_apply_a_function_to_binded_variables()
     {
         $this->assertIsLike(

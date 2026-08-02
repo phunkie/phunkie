@@ -20,6 +20,7 @@ use Phunkie\Cats\Comonad;
 use Phunkie\Cats\Foldable;
 use Phunkie\Cats\Functor;
 use Phunkie\Utils\Copiable;
+use PHPUnit\Framework\Attributes\Test;
 use const Phunkie\Functions\numbers\increment;
 
 class PairSpec extends TestCase
@@ -33,49 +34,37 @@ class PairSpec extends TestCase
         $this->pair = Pair("a", 1);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_is_copiable()
     {
         $this->assertInstanceOf(Copiable::class, $this->pair);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_implements_bifunctor()
     {
         $this->assertInstanceOf(Bifunctor::class, $this->pair);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_implements_functor()
     {
         $this->assertInstanceOf(Functor::class, $this->pair);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_implements_foldable()
     {
         $this->assertInstanceOf(Foldable::class, $this->pair);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_implements_comonad()
     {
         $this->assertInstanceOf(Comonad::class, $this->pair);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_can_access_elements()
     {
         $pair = Pair("hello", 42);
@@ -83,18 +72,14 @@ class PairSpec extends TestCase
         $this->assertEquals(42, $pair->_2);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_is_immutable()
     {
         $this->expectException(\TypeError::class);
         $this->pair->_1 = "b";
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_supports_copy()
     {
         $original = Pair("a", 1);
@@ -108,9 +93,7 @@ class PairSpec extends TestCase
 
     // Bifunctor Operations Tests
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_supports_bimap()
     {
         $pair = Pair("hello", 42);
@@ -122,9 +105,7 @@ class PairSpec extends TestCase
         $this->assertIsLike($result, Pair("HELLO", 84));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_supports_first()
     {
         $pair = Pair("hello", 42);
@@ -133,9 +114,7 @@ class PairSpec extends TestCase
         $this->assertIsLike($result, Pair("HELLO", 42));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_supports_second()
     {
         $pair = Pair("hello", 42);
@@ -144,9 +123,7 @@ class PairSpec extends TestCase
         $this->assertIsLike($result, Pair("hello", 84));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function bifunctor_identity_law()
     {
         $this->forAll(
@@ -162,9 +139,7 @@ class PairSpec extends TestCase
         });
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function bifunctor_composition_law()
     {
         $this->forAll(
@@ -189,9 +164,7 @@ class PairSpec extends TestCase
 
     // Functor Operations Tests
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_supports_map_on_second_element()
     {
         $pair = Pair("label", 42);
@@ -200,9 +173,7 @@ class PairSpec extends TestCase
         $this->assertIsLike($result, Pair("label", 84));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function functor_identity_law()
     {
         $this->forAll(
@@ -215,9 +186,7 @@ class PairSpec extends TestCase
         });
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function functor_composition_law()
     {
         $this->forAll(
@@ -237,9 +206,7 @@ class PairSpec extends TestCase
 
     // Foldable Operations Tests
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_supports_fold_left()
     {
         $pair = Pair("label", 42);
@@ -248,9 +215,7 @@ class PairSpec extends TestCase
         $this->assertEquals(52, $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_supports_fold_right()
     {
         $pair = Pair("label", 42);
@@ -259,9 +224,7 @@ class PairSpec extends TestCase
         $this->assertEquals([42], $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_supports_fold_map()
     {
         $pair = Pair("label", 5);
@@ -270,9 +233,7 @@ class PairSpec extends TestCase
         $this->assertEquals([5], $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_converts_to_list()
     {
         $pair = Pair("label", 42);
@@ -283,18 +244,14 @@ class PairSpec extends TestCase
 
     // Comonad Operations Tests
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_extracts_second_element()
     {
         $pair = Pair("context", 42);
         $this->assertEquals(42, $pair->extract());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_supports_duplicate()
     {
         $pair = Pair("x", 42);
@@ -304,9 +261,7 @@ class PairSpec extends TestCase
         $this->assertIsLike($result->_2, Pair("x", 42));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_supports_extend()
     {
         $pair = Pair("prefix: ", 42);
@@ -315,9 +270,7 @@ class PairSpec extends TestCase
         $this->assertIsLike($result, Pair("prefix: ", "prefix: 42"));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_supports_coflatmap_alias()
     {
         $pair = Pair(10, 5);
@@ -326,9 +279,7 @@ class PairSpec extends TestCase
         $this->assertIsLike($result, Pair(10, 15));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function comonad_left_identity_law()
     {
         $this->forAll(
@@ -343,9 +294,7 @@ class PairSpec extends TestCase
         });
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function comonad_right_identity_law()
     {
         $this->forAll(
@@ -362,9 +311,7 @@ class PairSpec extends TestCase
 
     // Utility Operations Tests
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_supports_swap()
     {
         $pair = Pair("name", 42);
@@ -373,9 +320,7 @@ class PairSpec extends TestCase
         $this->assertIsLike($swapped, Pair(42, "name"));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function swap_is_involution()
     {
         $this->forAll(
@@ -387,9 +332,7 @@ class PairSpec extends TestCase
         });
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_supports_merge()
     {
         $pair = Pair(10, 32);
@@ -398,9 +341,7 @@ class PairSpec extends TestCase
         $this->assertEquals(42, $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_supports_map_both()
     {
         $pair = Pair(3, 4);
@@ -409,27 +350,21 @@ class PairSpec extends TestCase
         $this->assertIsLike($result, Pair(9, 16));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_supports_fst_accessor()
     {
         $pair = Pair("name", 42);
         $this->assertEquals("name", $pair->fst());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_supports_snd_accessor()
     {
         $pair = Pair("name", 42);
         $this->assertEquals(42, $pair->snd());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_supports_foreach()
     {
         $pair = Pair("user", 42);
@@ -441,9 +376,7 @@ class PairSpec extends TestCase
         $this->assertEquals(["user", 42], $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_supports_forall_both()
     {
         $pair = Pair(10, 20);
@@ -458,9 +391,7 @@ class PairSpec extends TestCase
         ));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_supports_exists_both()
     {
         $pair = Pair(10, 5);
@@ -475,18 +406,14 @@ class PairSpec extends TestCase
         ));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_shows_correctly()
     {
         $pair = Pair("name", 25);
         $this->assertEquals('Pair("name", 25)', $pair->toString());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_shows_type_correctly()
     {
         $pair = Pair("hello", 42);

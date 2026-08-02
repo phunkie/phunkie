@@ -6,6 +6,7 @@ use Md\PropertyTesting\TestTrait;
 use Phunkie\Laws\InvariantLaws;
 use Md\PropertyTesting\Generator\RandomKindGenerator;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class InvariantSpec extends TestCase
 {
@@ -13,9 +14,7 @@ class InvariantSpec extends TestCase
     use RandomKindGenerator;
     use TestTrait;
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_obeys_the_identity_law_of_invariance()
     {
         $this->forAll(
@@ -25,9 +24,7 @@ class InvariantSpec extends TestCase
         });
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_obeys_the_composition_law_of_invariance()
     {
         $this->forAll(

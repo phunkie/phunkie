@@ -4,12 +4,11 @@ namespace spec\Phunkie\Cats;
 
 use Phunkie\Cats\IO;
 use Md\Unit\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class IOSpec extends TestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function it_delays_execution_until_run()
     {
         $executed = false;
@@ -23,9 +22,7 @@ class IOSpec extends TestCase
         $this->assertTrue($executed);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_implements_map()
     {
         $io = new IO(fn() => 21);
@@ -34,9 +31,7 @@ class IOSpec extends TestCase
         $this->assertEquals(42, $doubled->run());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_implements_flatMap()
     {
         $io = new IO(fn() => 21);
@@ -45,9 +40,7 @@ class IOSpec extends TestCase
         $this->assertEquals(42, $result->run());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_sequences_operations()
     {
         $operations = [];
@@ -71,9 +64,7 @@ class IOSpec extends TestCase
         $this->assertEquals(['first', 'second'], $operations);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_maintains_referential_transparency()
     {
         $counter = 0;

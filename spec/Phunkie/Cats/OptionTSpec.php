@@ -6,12 +6,11 @@ use Md\Unit\TestCase;
 use Phunkie\Cats\OptionT;
 use Phunkie\Types\ImmList;
 use Phunkie\Types\Option;
+use PHPUnit\Framework\Attributes\Test;
 
 class OptionTSpec extends TestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function it_implements_map()
     {
         $m = new OptionT(ImmList(Some(1), None(), Some(2)));
@@ -23,9 +22,7 @@ class OptionTSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_implements_flatMap()
     {
         $m = new OptionT(ImmList(Some(1), None(), Some(2)));
@@ -44,9 +41,7 @@ class OptionTSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_implements_isDefined()
     {
         $m = new OptionT(ImmList(Some(1), None(), Some(2)));
@@ -58,9 +53,7 @@ class OptionTSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_implements_isEmpty()
     {
         $m = new OptionT(ImmList(Some(1), None(), Some(2)));
@@ -72,9 +65,7 @@ class OptionTSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_implements_getOrElse()
     {
         $m = new OptionT(ImmList(Some(1), None(), Some(2)));
@@ -86,9 +77,7 @@ class OptionTSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_composes_multiple_transformations()
     {
         $m = new OptionT(ImmList(Some(1), None(), Some(2)));
@@ -105,9 +94,7 @@ class OptionTSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_implements_kind()
     {
         $m = new OptionT(ImmList(Some(42)));
@@ -117,9 +104,7 @@ class OptionTSpec extends TestCase
         $this->assertEquals(['F', 'A'], $m->getTypeVariables());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_preserves_the_outer_monad_structure()
     {
         // Using different monad structures

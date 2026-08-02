@@ -24,6 +24,7 @@ use Phunkie\Ops\Function1\Function1FunctorOps;
 use Phunkie\Ops\Function1\Function1MonadOps;
 use Phunkie\Ops\Function1\Function1ProfunctorOps;
 use Phunkie\Types\Function1;
+use PHPUnit\Framework\Attributes\Test;
 use function Phunkie\Functions\show\showValue;
 use function Phunkie\Functions\show\usesTrait;
 use const Phunkie\Functions\function1\identity;
@@ -55,9 +56,7 @@ class Function1Spec extends TestCase
         $this->h = Function1(fn($x): string => (string)$x);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_wraps_a_callable()
     {
         $f = Function1(fn($x) => $x + 1);
@@ -65,17 +64,13 @@ class Function1Spec extends TestCase
         $this->assertEquals(43, $f(42));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_runs_with_run_method()
     {
         $this->assertEquals(43, $this->f->run(42));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_is_showable()
     {
         $f = Function1(fn(int $x): int => $x + 1);
@@ -83,9 +78,7 @@ class Function1Spec extends TestCase
         $this->assertEquals("Function1(Int=>Int)", showValue($f));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_has_all_required_traits()
     {
         $this->assertTrue(usesTrait($this->f, Function1ApplicativeOps::class));
@@ -94,9 +87,7 @@ class Function1Spec extends TestCase
         $this->assertTrue(usesTrait($this->f, Function1ProfunctorOps::class));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_implements_type_class_interfaces()
     {
         $this->assertInstanceOf(Functor::class, $this->f);
@@ -108,9 +99,7 @@ class Function1Spec extends TestCase
     // FUNCTOR OPERATIONS
     // =========================================================================
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_is_a_functor()
     {
         $spec = $this;
@@ -126,9 +115,7 @@ class Function1Spec extends TestCase
         });
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_composes_functions_with_map()
     {
         // map should compose: f->map(g) === g . f
@@ -140,9 +127,7 @@ class Function1Spec extends TestCase
         $this->assertEquals("84", $composed(42));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function functor_identity_law()
     {
         // map(id) === id
@@ -157,9 +142,7 @@ class Function1Spec extends TestCase
         });
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function functor_composition_law()
     {
         // map(f . g) === map(f) . map(g)
@@ -184,17 +167,13 @@ class Function1Spec extends TestCase
     // APPLICATIVE OPERATIONS
     // =========================================================================
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_is_an_applicative()
     {
         $this->assertInstanceOf(Applicative::class, $this->f);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_lifts_values_with_pure()
     {
         $pure42 = $this->f->pure(42);
@@ -206,9 +185,7 @@ class Function1Spec extends TestCase
         $this->assertEquals(42, $pure42("anything"));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_applies_functions_with_apply()
     {
         // This test matches the existing behavior
@@ -224,9 +201,7 @@ class Function1Spec extends TestCase
         $this->assertEquals(22, $result(10));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_combines_two_functions_with_map2()
     {
         $add = Function1(fn($x) => $x + 1);
@@ -240,9 +215,7 @@ class Function1Spec extends TestCase
         $this->assertEquals(16, $combined(5));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function applicative_identity_law()
     {
         // pure(id)->apply(v) === v
@@ -257,9 +230,7 @@ class Function1Spec extends TestCase
         });
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_returns_an_identity_when_identity_is_applied_to_itself()
     {
         $f = Function1(identity);
@@ -273,17 +244,13 @@ class Function1Spec extends TestCase
     // MONAD OPERATIONS
     // =========================================================================
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_is_a_monad()
     {
         $this->assertInstanceOf(Monad::class, $this->f);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_chains_computations_with_flatMap()
     {
         // flatMap for Kleisli composition
@@ -299,9 +266,7 @@ class Function1Spec extends TestCase
         $this->assertEquals(15, $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_flattens_nested_functions()
     {
         // Create a function that returns a function
@@ -313,9 +278,7 @@ class Function1Spec extends TestCase
         $this->assertEquals(10, $flattened(5)); // 5 + 5 = 10
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function flatMap_throws_on_non_function1_return()
     {
         $this->expectException(\TypeError::class);
@@ -326,9 +289,7 @@ class Function1Spec extends TestCase
         $bad(5);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function monad_left_identity_law()
     {
         // pure(a)->flatMap(f) === f(a)
@@ -347,9 +308,7 @@ class Function1Spec extends TestCase
         });
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function monad_right_identity_law()
     {
         // m->flatMap(pure) === m
@@ -367,9 +326,7 @@ class Function1Spec extends TestCase
         });
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function monad_associativity_law()
     {
         // m->flatMap(f)->flatMap(g) === m->flatMap(x => f(x)->flatMap(g))
@@ -392,9 +349,7 @@ class Function1Spec extends TestCase
     // PROFUNCTOR OPERATIONS
     // =========================================================================
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_maps_over_input_with_lmap()
     {
         // lmap preprocesses input (contravariant)
@@ -405,9 +360,7 @@ class Function1Spec extends TestCase
         $this->assertEquals(84, $doubleString("42"));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_maps_over_output_with_rmap()
     {
         // rmap postprocesses output (covariant)
@@ -418,9 +371,7 @@ class Function1Spec extends TestCase
         $this->assertEquals("84", $doubleToString(42));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_maps_over_both_with_dimap()
     {
         // dimap does both pre and post processing
@@ -434,9 +385,7 @@ class Function1Spec extends TestCase
         $this->assertEquals("84", $stringDoubleString("42"));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function profunctor_identity_law()
     {
         // dimap(id, id) === id
@@ -454,9 +403,7 @@ class Function1Spec extends TestCase
         });
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function profunctor_composition_law()
     {
         // dimap(f . g, h . i) === dimap(g, h)->dimap(f, i)
@@ -487,9 +434,7 @@ class Function1Spec extends TestCase
         });
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function lmap_equals_dimap_with_identity_on_output()
     {
         $spec = $this;
@@ -507,9 +452,7 @@ class Function1Spec extends TestCase
         });
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function rmap_equals_dimap_with_identity_on_input()
     {
         $spec = $this;
@@ -531,9 +474,7 @@ class Function1Spec extends TestCase
     // COMPOSITION OPERATIONS
     // =========================================================================
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_composes_with_andThen()
     {
         $add1 = Function1(fn($x) => $x + 1);
@@ -545,9 +486,7 @@ class Function1Spec extends TestCase
         $this->assertEquals(12, $composed(5));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_composes_with_compose()
     {
         $double = Function1(fn($x) => $x * 2);
@@ -559,9 +498,7 @@ class Function1Spec extends TestCase
         $this->assertEquals(12, $composed(5));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function andThen_and_compose_are_inverses()
     {
         $spec = $this;
@@ -579,9 +516,7 @@ class Function1Spec extends TestCase
         });
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_provides_identity_function()
     {
         $id = Function1::identity();
@@ -591,9 +526,7 @@ class Function1Spec extends TestCase
         $this->assertEquals([1, 2], $id([1, 2]));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function identity_is_left_identity_for_composition()
     {
         $spec = $this;
@@ -608,9 +541,7 @@ class Function1Spec extends TestCase
         });
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function identity_is_right_identity_for_composition()
     {
         $spec = $this;
@@ -625,9 +556,7 @@ class Function1Spec extends TestCase
         });
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_has_combine_as_alias_for_compose()
     {
         $spec = $this;
@@ -648,9 +577,7 @@ class Function1Spec extends TestCase
     // MEMOIZATION
     // =========================================================================
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_memoizes_function_results()
     {
         $callCount = 0;
@@ -678,9 +605,7 @@ class Function1Spec extends TestCase
         $this->assertEquals(2, $callCount, "Function should still use cache");
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function memoized_function_is_still_a_function1()
     {
         $f = Function1(fn($x) => $x * 2);
@@ -689,9 +614,7 @@ class Function1Spec extends TestCase
         $this->assertInstanceOf(Function1::class, $memoized);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function memoization_works_with_string_keys()
     {
         $callCount = 0;
@@ -713,9 +636,7 @@ class Function1Spec extends TestCase
     // TYPE SAFETY
     // =========================================================================
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_requires_exactly_one_parameter()
     {
         $this->expectException(\TypeError::class);
@@ -724,9 +645,7 @@ class Function1Spec extends TestCase
         Function1(fn($x, $y) => $x + $y);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_rejects_zero_parameter_functions()
     {
         $this->expectException(\TypeError::class);
@@ -739,9 +658,7 @@ class Function1Spec extends TestCase
     // HELPER METHODS
     // =========================================================================
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_has_zero_returning_identity()
     {
         $zero = $this->f->zero();
@@ -751,17 +668,13 @@ class Function1Spec extends TestCase
         $this->assertEquals(42, $zero(42));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_reports_correct_type_arity()
     {
         $this->assertEquals(2, $this->f->getTypeArity());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_returns_type_variables()
     {
         $f = Function1(fn(int $x): string => (string)$x);

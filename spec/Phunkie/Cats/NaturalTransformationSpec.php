@@ -5,14 +5,13 @@ namespace spec\Phunkie\Cats;
 use Md\Unit\TestCase;
 use Phunkie\Cats\Show;
 use Phunkie\Cats\NaturalTransformation;
+use PHPUnit\Framework\Attributes\Test;
 use function Phunkie\Functions\show\usesTrait;
 use const Phunkie\Functions\option\optionToList;
 
 class NaturalTransformationSpec extends TestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function it_applies_a_natural_transformation()
     {
         $nt = new NaturalTransformation(optionToList);
@@ -20,9 +19,7 @@ class NaturalTransformationSpec extends TestCase
         $this->assertIsLike($nt(Some(42)), ImmList(42));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_is_showable()
     {
         $nt = new NaturalTransformation(optionToList);

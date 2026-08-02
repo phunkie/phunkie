@@ -3,12 +3,11 @@
 namespace spec\Phunkie\Validation;
 
 use Md\Unit\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class ValidationTransformationSpec extends TestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function it_transforms_to_option()
     {
         $success = Success(42);
@@ -18,9 +17,7 @@ class ValidationTransformationSpec extends TestCase
         $this->assertIsLike($failure->toOption(), None());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_folds_over_success_and_failure()
     {
         $success = Success(42);

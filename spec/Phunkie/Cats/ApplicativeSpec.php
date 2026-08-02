@@ -7,6 +7,7 @@ use Md\PropertyTesting\Generator\RandomKindGenerator;
 use PHPUnit\Framework\TestCase;
 
 use Eris\TestTrait;
+use PHPUnit\Framework\Attributes\Test;
 
 class ApplicativeSpec extends TestCase
 {
@@ -14,9 +15,7 @@ class ApplicativeSpec extends TestCase
     use TestTrait;
     use RandomKindGenerator;
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_obeys_the_identity_law()
     {
         $this->forAll(
@@ -26,9 +25,7 @@ class ApplicativeSpec extends TestCase
         });
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_obeys_the_homomorphism_law()
     {
         // Option
@@ -62,9 +59,7 @@ class ApplicativeSpec extends TestCase
         $this->assertTrue($this->applicativeHomomorphism($fa, $a, $f));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_obeys_the_interchange_law()
     {
         // Option
@@ -96,9 +91,7 @@ class ApplicativeSpec extends TestCase
         $this->assertTrue($this->applicativeInterchange($fa, $a, ImmMap(["default" => $f])));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_obeys_the_map_law()
     {
         // Option

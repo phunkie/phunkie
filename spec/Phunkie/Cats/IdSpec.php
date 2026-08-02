@@ -4,12 +4,11 @@ namespace spec\Phunkie\Cats;
 
 use Phunkie\Cats\Id;
 use Md\Unit\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class IdSpec extends TestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function it_implements_map()
     {
         $f = new Id(42);
@@ -17,9 +16,7 @@ class IdSpec extends TestCase
         $this->assertEquals(43, $f->map($increment));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_implements_flatMap()
     {
         $this->assertEquals(
@@ -28,18 +25,14 @@ class IdSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_implements_andThen()
     {
         $f = new Id("a");
         $this->assertEquals("ab", $f->andThen("b"));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_implements_compose()
     {
         $f = new Id("a");

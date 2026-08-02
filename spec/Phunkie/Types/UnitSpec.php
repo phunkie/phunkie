@@ -16,6 +16,7 @@ use Md\Unit\TestCase;
 use Md\PropertyTesting\TestTrait;
 use Phunkie\Cats\Show;
 use Phunkie\Types\Unit;
+use PHPUnit\Framework\Attributes\Test;
 use function Phunkie\Functions\show\showValue;
 use function Phunkie\Functions\show\usesTrait;
 
@@ -23,9 +24,7 @@ class UnitSpec extends TestCase
 {
     use TestTrait;
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_creates_a_unit_value()
     {
         $unit = Unit();
@@ -33,9 +32,7 @@ class UnitSpec extends TestCase
         $this->assertInstanceOf(Unit::class, $unit);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_is_showable()
     {
         $unit = Unit();
@@ -46,9 +43,7 @@ class UnitSpec extends TestCase
         $this->assertEquals("()", showValue($unit));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_shows_its_type()
     {
         $unit = Unit();
@@ -56,9 +51,7 @@ class UnitSpec extends TestCase
         $this->assertEquals("Unit", $unit->showType());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_throws_error_when_accessing_members()
     {
         $unit = Unit();
@@ -69,9 +62,7 @@ class UnitSpec extends TestCase
         $unit->_1;
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_throws_error_when_setting_members()
     {
         $unit = Unit();
@@ -82,9 +73,7 @@ class UnitSpec extends TestCase
         $unit->_1 = 42;
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_throws_error_when_copying()
     {
         $unit = Unit();
@@ -95,9 +84,7 @@ class UnitSpec extends TestCase
         $unit->copy(['1' => 42]);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_supports_equality_comparison()
     {
         $unit1 = Unit();
@@ -108,9 +95,7 @@ class UnitSpec extends TestCase
         $this->assertTrue($unit2->eqv($unit1));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_provides_monoid_zero()
     {
         $unit = Unit();
@@ -120,9 +105,7 @@ class UnitSpec extends TestCase
         $this->assertTrue($unit->eqv($zero));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_combines_units()
     {
         $unit1 = Unit();
@@ -133,9 +116,7 @@ class UnitSpec extends TestCase
         $this->assertTrue($result->eqv(Unit()));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_obeys_monoid_left_identity_law()
     {
         // zero().combine(x) == x
@@ -147,9 +128,7 @@ class UnitSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_obeys_monoid_right_identity_law()
     {
         // x.combine(zero()) == x
@@ -161,9 +140,7 @@ class UnitSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_obeys_monoid_associativity_law()
     {
         // (a.combine(b)).combine(c) == a.combine(b.combine(c))
@@ -178,9 +155,7 @@ class UnitSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_obeys_eq_reflexivity_law()
     {
         // x.eqv(x) == true
@@ -189,9 +164,7 @@ class UnitSpec extends TestCase
         $this->assertTrue($unit->eqv($unit));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_obeys_eq_symmetry_law()
     {
         // x.eqv(y) == y.eqv(x)
@@ -204,9 +177,7 @@ class UnitSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_obeys_eq_transitivity_law()
     {
         // if x.eqv(y) and y.eqv(z) then x.eqv(z)
@@ -219,9 +190,7 @@ class UnitSpec extends TestCase
         $this->assertTrue($x->eqv($z));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_demonstrates_singleton_behavior()
     {
         // All Unit values are equal
@@ -237,9 +206,7 @@ class UnitSpec extends TestCase
         }
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_combines_multiple_units()
     {
         // Combining multiple Units should always result in Unit
@@ -254,9 +221,7 @@ class UnitSpec extends TestCase
         $this->assertTrue($result->eqv(Unit()));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_can_be_used_as_return_value()
     {
         // Unit is useful as a return value for side-effecting functions
@@ -270,9 +235,7 @@ class UnitSpec extends TestCase
         $this->assertEquals("()", $result->toString());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_maintains_monoid_properties_under_repeated_operations()
     {
         $unit = Unit();
@@ -286,9 +249,7 @@ class UnitSpec extends TestCase
         $this->assertTrue($result->eqv(Unit()));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_zero_is_idempotent()
     {
         // Calling zero() multiple times should always return equivalent Units
@@ -302,9 +263,7 @@ class UnitSpec extends TestCase
         $this->assertTrue($zero1->eqv($zero3));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_has_consistent_string_representation()
     {
         // All Units should have the same string representation

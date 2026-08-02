@@ -7,6 +7,7 @@ use Phunkie\Laws\FunctorLaws;
 use Phunkie\Types\Function1;
 use Md\PropertyTesting\Generator\RandomKindGenerator;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class FunctorSpec extends TestCase
 {
@@ -14,9 +15,7 @@ class FunctorSpec extends TestCase
     use TestTrait;
     use RandomKindGenerator;
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_obeys_the_identity_law_of_covariance()
     {
         $this->forAll(
@@ -27,9 +26,7 @@ class FunctorSpec extends TestCase
         });
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_obeys_the_composition_law_of_covariance()
     {
         $this->forAll(
