@@ -40,8 +40,6 @@ use function Phunkie\PatternMatching\Referenced\OptionT as OptionTOf;
 use function Phunkie\PatternMatching\Referenced\EitherT as EitherTOf;
 use function Phunkie\PatternMatching\Wildcarded\ImmList as WildcardedImmList;
 
-error_reporting(E_ALL & ~E_DEPRECATED);
-
 class PatternMatchingSpec extends TestCase
 {
     /**

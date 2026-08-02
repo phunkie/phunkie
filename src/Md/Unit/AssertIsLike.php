@@ -45,7 +45,6 @@ trait AssertIsLike
             function ($acc, $val) use ($ref, $obj, $null) {
                 $name = $val->getName();
                 $prop = $ref->getProperty($name);
-                $prop->setAccessible(true);
 
                 $acc[$name] = $null ? (is_object($prop->getValue($obj)) ? null : $prop->getValue($obj)) : $prop->getValue($obj);
 

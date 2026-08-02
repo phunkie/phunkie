@@ -29,7 +29,7 @@ use function Phunkie\Functions\type\promote;
  * Example:
  * ```php
  * $storage = new SplObjectStorage();
- * $storage->attach($key, $value);
+ * $storage[$key] = $value;
  * $iterator = new Iterator($storage);
  * 
  * // Iterate over elements

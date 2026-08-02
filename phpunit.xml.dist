@@ -1,18 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<phpunit
-    colors="true"
-    columns="max"
-    verbose="true"
-    bootstrap="vendor/autoload.php"
->
-    <coverage>
-        <include>
-            <directory suffix=".php">src</directory>
-        </include>
-    </coverage>
-    <testsuites>
-        <testsuite name="phunkie testsuite">
-            <directory suffix="Spec.php">spec</directory>
-        </testsuite>
-    </testsuites>
+<phpunit colors="true" columns="max" bootstrap="vendor/autoload.php" cacheDirectory=".phpunit.cache" failOnDeprecation="true">
+  <testsuites>
+    <testsuite name="phunkie testsuite">
+      <directory suffix="Spec.php">spec</directory>
+    </testsuite>
+  </testsuites>
+  <!-- failOnDeprecation guards Phunkie's own code; deprecations raised inside
+       dependencies are ignored, as they can only be fixed upstream. -->
+  <source ignoreIndirectDeprecations="true">
+    <include>
+      <directory suffix=".php">src</directory>
+    </include>
+  </source>
 </phpunit>
