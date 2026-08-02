@@ -12,8 +12,6 @@ use Md\PropertyTesting\Generator\RandomKindGenerator;
 use PHPUnit\Framework\TestCase;
 use Eris\Generator\ElementsGenerator as ElementsGen;
 
-error_reporting(E_ALL & ~E_DEPRECATED);
-
 class MonoidSpec extends TestCase
 {
     use TestTrait;

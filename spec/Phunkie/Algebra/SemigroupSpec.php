@@ -13,8 +13,6 @@ use PHPUnit\Framework\TestCase;
 use function Phunkie\Functions\semigroup\combine;
 use function Phunkie\Functions\show\show;
 
-error_reporting(E_ALL & ~E_DEPRECATED);
-
 class SemigroupSpec extends TestCase
 {
     use TestTrait;

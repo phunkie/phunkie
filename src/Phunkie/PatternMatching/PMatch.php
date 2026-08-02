@@ -465,10 +465,7 @@ class PMatch
     {
         for ($class = $reflected; $class !== false; $class = $class->getParentClass()) {
             if ($class->hasProperty($name)) {
-                $property = $class->getProperty($name);
-                $property->setAccessible(true);
-
-                return $property;
+                return $class->getProperty($name);
             }
         }
 

@@ -56,12 +56,12 @@ use Phunkie\Types\Some;
  */
 final class GenLens
 {
-    /** @var bool Token to control lens immutability */
-    private $modifierToken = false;
+    /** @var array<string,Lens> The configured lenses, keyed by field name */
+    private array $lenses = [];
 
     /**
      * Creates lenses for multiple fields.
-     * 
+     *
      * Used internally by makeLenses() to create field accessors.
      * Each field gets a corresponding lens that can get/set its value.
      *
@@ -85,7 +85,7 @@ final class GenLens
                 return $data->$getter();
             };
             $s = fn ($newValue, Copiable $data) => $data->copy([$field => $newValue]);
-            $this->addLens($field, new Lens($g, $s));
+            $this->lenses[$field] = new Lens($g, $s);
         }
     }
 
@@ -95,35 +95,29 @@ final class GenLens
      * @param string $lens Name of the lens to get
      * @throws \Error If lens not configured
      */
-    public function __get(string $lens)
+    public function __get(string $lens): Lens
     {
-        if (!isset($this->$lens)) {
-            throw new \Error("Lens $lens has not been configured.");
+        if (!isset($this->lenses[$lens])) {
+            throw new \Error(sprintf('Lens %s has not been configured.', $lens));
         }
+
+        return $this->lenses[$lens];
+    }
+
+    public function __isset(string $lens): bool
+    {
+        return isset($this->lenses[$lens]);
     }
 
     /**
-     * Sets a lens (protected by modifierToken).
+     * Lenses are configured once, at construction.
      *
      * @param string $name Lens name
      * @param Lens $lens The lens to set
-     * @throws \Error If attempting to modify after construction
+     * @throws \Error Always: lenses are immutable
      */
     public function __set(string $name, Lens $lens)
     {
-        if (!$this->modifierToken) {
-            throw new \Error("Lenses are immutable.");
-        }
-        $this->$name = $lens;
-    }
-
-    /**
-     * Adds a lens during construction.
-     */
-    private function addLens(string $name, Lens $lens)
-    {
-        $this->modifierToken = true;
-        $this->__set($name, $lens);
-        $this->modifierToken = false;
+        throw new \Error('Lenses are immutable.');
     }
 }

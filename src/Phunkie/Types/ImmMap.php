@@ -168,7 +168,7 @@ final class ImmMap implements ArrayAccess, Copiable, Applicative, Monad, Foldabl
         $copy->values = clone $this->values;
         foreach ($fields as $field => $value) {
             $copy = $copy->minus($field);
-            $copy->values->attach(promote($field), $value);
+            $copy->values[promote($field)] = $value;
         }
         return $copy;
     }
@@ -299,7 +299,7 @@ final class ImmMap implements ArrayAccess, Copiable, Applicative, Monad, Foldabl
         }
 
         $mappings = clone $this->values;
-        $mappings->attach(promote($k), $v);
+        $mappings[promote($k)] = $v;
         $map = new self();
         $map->values = $mappings;
         return $map;

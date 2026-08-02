@@ -266,6 +266,32 @@ class LensSpec extends TestCase
         $this->assertIsLike($codeLens->get($user), Some("US"));
     }
 
+    /**
+     * @test
+     */
+    public function it_throws_when_a_lens_was_not_configured()
+    {
+        $lenses = makeLenses("name");
+
+        $this->expectException(\Error::class);
+        $this->expectExceptionMessage("Lens lastName has not been configured.");
+
+        $lenses->lastName;
+    }
+
+    /**
+     * @test
+     */
+    public function it_does_not_allow_lenses_to_be_reassigned()
+    {
+        $lenses = makeLenses("name");
+
+        $this->expectException(\Error::class);
+        $this->expectExceptionMessage("Lenses are immutable.");
+
+        $lenses->name = $lenses->name;
+    }
+
     private function userNameLens()
     {
         return new class (
