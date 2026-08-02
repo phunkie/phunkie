@@ -19,6 +19,7 @@ use Phunkie\Ops\Option\OptionApplicativeOps;
 use Md\PropertyTesting\TestTrait;
 use Eris\Generator\IntegerGenerator as IntGen;
 use Phunkie\Utils\WithFilter;
+use PHPUnit\Framework\Attributes\Test;
 use function Phunkie\Functions\show\showValue;
 use function Phunkie\Functions\show\usesTrait;
 use function Phunkie\Functions\applicative\ap;
@@ -41,17 +42,13 @@ class OptionSpec extends TestCase
         $this->option = Option(1);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function let()
     {
         $this->assertInstanceOf(Some::class, Option(1));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_is_showable()
     {
         $this->assertTrue(usesTrait(Option(2), Show::class));
@@ -59,9 +56,7 @@ class OptionSpec extends TestCase
         $this->assertEquals(showValue(None()), "None");
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_is_a_functor()
     {
         $spec = $this;
@@ -75,9 +70,7 @@ class OptionSpec extends TestCase
         });
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_has_filter()
     {
         $this->assertIsLike(
@@ -86,9 +79,7 @@ class OptionSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_has_withFilter()
     {
         $this->assertInstanceOf(
@@ -97,9 +88,7 @@ class OptionSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function its_withFilter_plus_map_to_identity_is_equivalent_to_filter()
     {
         $this->assertIsLike(
@@ -111,9 +100,7 @@ class OptionSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_is_an_applicative()
     {
         $x = (ap(Option(fn ($a) => $a +1)))(Option(1));
@@ -126,9 +113,7 @@ class OptionSpec extends TestCase
         $this->assertIsLike($x, Option(3));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_is_a_monad()
     {
         $xs = (bind(fn ($a) => Option($a +1)))(Option(1));
@@ -145,9 +130,7 @@ class OptionSpec extends TestCase
         $this->assertIsLike($hello($xs), Option("hello"));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_returns_none_when_none_is_mapped()
     {
         $option = Option(null);
@@ -159,9 +142,7 @@ class OptionSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_has_applicative_ops()
     {
         $ref = new \ReflectionClass($this->option);
@@ -171,9 +152,7 @@ class OptionSpec extends TestCase
         $this->assertTrue(usesTrait($this->option, OptionApplicativeOps::class));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_returns_none_when_none_is_applied()
     {
         $option = Option(null);
@@ -184,9 +163,7 @@ class OptionSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_applies_the_result_of_the_function_to_a_List()
     {
         $spec = $this;

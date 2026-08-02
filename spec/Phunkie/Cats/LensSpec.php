@@ -7,6 +7,7 @@ use Phunkie\Laws\LensLaws;
 use Phunkie\Types\Option;
 use Phunkie\Utils\Copiable;
 use Md\Unit\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 use function Phunkie\Functions\lens\contains;
 use function Phunkie\Functions\lens\fst;
 use function Phunkie\Functions\lens\member;
@@ -20,9 +21,7 @@ class LensSpec extends TestCase
 {
     use LensLaws;
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_obeys_the_law_of_identity()
     {
         $name = new Name("Jack Bauer");
@@ -31,9 +30,7 @@ class LensSpec extends TestCase
         $this->assertTrue($this->identityLaw($userNameLens, $user, $name));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_obeys_the_law_of_retention()
     {
         $name = new Name("Jack Bauer");
@@ -43,9 +40,7 @@ class LensSpec extends TestCase
         $this->assertTrue($this->retentionLaw($userNameLens, $user, $name, $anotherName));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_obeys_the_law_of_double_set()
     {
         $user = new User(new Name("Chuck Norris"));
@@ -53,36 +48,28 @@ class LensSpec extends TestCase
         $this->assertTrue($this->doubleSetLaw($userNameLens, $user));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_implements_trivial()
     {
         $this->assertTrue(trivial()->get(42) == Unit());
         $this->assertEquals(34, trivial()->set(42, 34));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_implements_self()
     {
         $this->assertEquals(42, self()->get(42));
         $this->assertEquals(42, self()->set(42, 34));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_implements_fst()
     {
         $this->assertEquals(1, fst()->get(Pair(1, 2)));
         $this->assertTrue(Pair(3, 2) == fst()->set(3, Pair(1, 2)));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_implements_snd()
     {
         $this->assertEquals(2, snd()->get(Pair(1, 2)));
@@ -101,9 +88,7 @@ class LensSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_implements_member()
     {
         $m = ImmMap(["a" => 1, "b" => 2]);
@@ -119,9 +104,7 @@ class LensSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_offers_shortcut_for_lenses_getter()
     {
         $user = new User(new Name("Jack Bauer"));
@@ -131,9 +114,7 @@ class LensSpec extends TestCase
         $this->assertTrue($lenses->name->get($user) == new Name("Jack Bauer"));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_offers_shortcut_for_lenses_setter()
     {
         $user = new User(new Name("Jack Bauer"));
@@ -145,9 +126,7 @@ class LensSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_offers_shortcut_for_lenses_mod()
     {
         $user = new User(new Name("Jack Bauer"));
@@ -159,9 +138,7 @@ class LensSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_offers_shortcut_for_map_get()
     {
         $user = ImmMap(["name" => "Jack Bauer"]);
@@ -170,9 +147,7 @@ class LensSpec extends TestCase
         $this->assertIsLike($lenses->name->get($user), Some("Jack Bauer"));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_offers_shortcut_for_map_set()
     {
         $user = ImmMap(["name" => "Jack Bauer"]);
@@ -186,9 +161,7 @@ class LensSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_offers_mod_for_maps()
     {
         $user = ImmMap(["name" => new Name("Jack Bauer")]);
@@ -198,9 +171,7 @@ class LensSpec extends TestCase
         $this->assertTrue($userCopy->eqv(ImmMap(["name" => new Name("JACK BAUER")])));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_offers_get_set_and_mod_for_pairs()
     {
         $user = Pair("Jack", "Bauer");
@@ -217,9 +188,7 @@ class LensSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_lets_you_create_multiple_lenses()
     {
         $lenses = makeLenses("name", "lastName");
@@ -231,9 +200,7 @@ class LensSpec extends TestCase
         $this->assertEquals("Bauer", $lastName);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_lets_you_compose_lenses()
     {
         $user = new User(new Name("Jack Bauer"));
@@ -243,9 +210,7 @@ class LensSpec extends TestCase
         $this->assertEquals("Bauer", $lastName->get($user));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_lets_you_compose_lenses_for_maps()
     {
         $user = ImmMap([
@@ -266,9 +231,7 @@ class LensSpec extends TestCase
         $this->assertIsLike($codeLens->get($user), Some("US"));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_throws_when_a_lens_was_not_configured()
     {
         $lenses = makeLenses("name");
@@ -279,9 +242,7 @@ class LensSpec extends TestCase
         $lenses->lastName;
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_does_not_allow_lenses_to_be_reassigned()
     {
         $lenses = makeLenses("name");

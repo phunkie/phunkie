@@ -3,13 +3,12 @@
 namespace spec\Phunkie\Validation;
 
 use Md\Unit\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 use function Phunkie\Functions\semigroup\combine;
 
 class AccumulativeValidationSpec extends TestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function it_accumulates_failures_with_combine()
     {
         $validateName = fn($name) => 
@@ -30,9 +29,7 @@ class AccumulativeValidationSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_succeeds_when_all_validations_succeed()
     {
         $result = combine(

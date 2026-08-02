@@ -4,6 +4,7 @@ namespace spec\Phunkie\Utils;
 
 use Phunkie\Utils\Iterator;
 use Md\Unit\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class IteratorSpec extends TestCase
 {
@@ -14,9 +15,7 @@ class IteratorSpec extends TestCase
         $this->it = new Iterator(new \SplObjectStorage());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_is_initializable()
     {
         $ref = new \ReflectionClass($this->it);
@@ -27,33 +26,25 @@ class IteratorSpec extends TestCase
     // Lists           //
     /////////////////////
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_can_be_created_from_lists()
     {
         $this->assertInstanceOf(\Iterator::class, ImmList(1, 2, 3)->iterator());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_is_countable_after_created_from_lists()
     {
         $this->assertCount(3, ImmList(1, 2, 3)->iterator());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_is_array_access()
     {
         $this->assertInstanceOf(\ArrayAccess::class, ImmList(1, 2, 3)->iterator());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_lets_you_access_lists_elements_via_array_notation()
     {
         $this->assertIsLike(ImmList(1, 2, 3)->iterator()[0], Some(1));
@@ -62,9 +53,7 @@ class IteratorSpec extends TestCase
         $this->assertIsLike(ImmList(1, 2, 3)->iterator()[3], None());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_is_immutable_after_created_from_lists()
     {
         $this->expectException(\TypeError::class);
@@ -72,18 +61,14 @@ class IteratorSpec extends TestCase
         $list[42] = 32;
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_lets_you_check_if_a_list_index_exists()
     {
         $this->assertTrue(isset(ImmList(1, 2, 3)->iterator()[2]));
         $this->assertFalse(isset(ImmList(1, 2, 3)->iterator()[3]));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_is_foreachable_after_created_from_lists()
     {
         $dataProvider = [1, 2, 3];
@@ -94,9 +79,7 @@ class IteratorSpec extends TestCase
         }
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_is_foreachable_with_key_and_value_after_created_from_lists()
     {
         $dataProvider = [
@@ -117,25 +100,19 @@ class IteratorSpec extends TestCase
     // Maps            //
     /////////////////////
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_can_be_created_from_Maps()
     {
         $this->assertInstanceOf(Iterator::class, ImmMap([1,2,3,4])->iterator());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_is_countable_after_created_from_maps()
     {
         $this->assertCount(3, ImmMap([1,2,3])->iterator());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_lets_you_access_map_elements_via_array_notation()
     {
         $this->assertIsLike(ImmMap([1,2,3])->iterator()[0], Some(1));
@@ -150,9 +127,7 @@ class IteratorSpec extends TestCase
         $this->assertIsLike(ImmMap($ob1, 1, $ob2, 2)->iterator()[$ob1], Some(1));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_is_immutable_after_created_from_maps()
     {
         $this->expectException(\TypeError::class);
@@ -160,9 +135,7 @@ class IteratorSpec extends TestCase
         $map[42] = 32;
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_lets_you_check_if_a_map_key_exists()
     {
         $this->assertTrue(isset(ImmMap([1,2,3])->iterator()[2]));
@@ -178,9 +151,7 @@ class IteratorSpec extends TestCase
         $this->assertTrue(isset(ImmMap($ob1, 1, $ob2, 2)->iterator()[$ob1]));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_is_foreachable_after_created_from_maps()
     {
         $dataProvider = [1, 2, 3];
@@ -191,9 +162,7 @@ class IteratorSpec extends TestCase
         }
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_is_foreachable_with_key_and_value_after_created_from_maps()
     {
         $map = [
@@ -213,35 +182,27 @@ class IteratorSpec extends TestCase
     // Sets            //
     /////////////////////
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_can_be_created_from_Sets()
     {
         $this->assertInstanceOf(Iterator::class, ImmSet(1, 2, 3, 4)->iterator());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_is_countable_after_created_from_sets()
     {
         $this->assertCount(3, ImmSet(1, 2, 3)->iterator());
         // expect(ImmSet(1, 2, 3)->iterator())->toHaveCount(3);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_is_array_access_after_created_from_sets()
     {
         $this->assertInstanceOf(\ArrayAccess::class, ImmSet(1, 2, 3)->iterator());
         // expect(ImmSet(1, 2, 3)->iterator())->toHaveType(\ArrayAccess::class);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_lets_you_access_sets_elements_via_array_notation()
     {
         $this->assertIsLike(ImmSet(1, 2, 3)->iterator()[0], Some(1));
@@ -250,9 +211,7 @@ class IteratorSpec extends TestCase
         $this->assertIsLike(ImmSet(1, 2, 3)->iterator()[3], None());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_is_immutable_after_created_from_sets()
     {
         $this->expectException(\TypeError::class);
@@ -262,18 +221,14 @@ class IteratorSpec extends TestCase
         // expect(ImmSet(1, 2, 3)->iterator())->toThrow()->duringOffsetUnset();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_lets_you_check_if_a_set_index_exists()
     {
         $this->assertTrue(isset(ImmSet(1, 2, 3)->iterator()[2]));
         $this->assertFalse(isset(ImmSet(1, 2, 3)->iterator()[3]));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_is_foreachable_after_created_from_sets()
     {
         $dataProvider = [1, 2, 3];
@@ -284,9 +239,7 @@ class IteratorSpec extends TestCase
         }
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_is_foreachable_with_key_and_value_after_created_from_sets()
     {
         $dataProvider = [

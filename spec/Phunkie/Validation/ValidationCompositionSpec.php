@@ -3,13 +3,12 @@
 namespace spec\Phunkie\Validation;
 
 use Md\Unit\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 use function Phunkie\Functions\applicative\map2;
 
 class ValidationCompositionSpec extends TestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function it_composes_validations_with_flatMap()
     {
         $trim = fn($s) => Success(trim($s));
@@ -29,9 +28,7 @@ class ValidationCompositionSpec extends TestCase
         $this->assertIsLike($result, Failure(Nel("Empty string")));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_combines_validations_with_map2()
     {
         $validateUsername = fn($u) => 

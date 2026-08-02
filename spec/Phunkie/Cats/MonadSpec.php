@@ -6,15 +6,14 @@ use Eris\TestTrait;
 use Phunkie\Laws\MonadLaws;
 use Phunkie\Types\Kind;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class MonadSpec extends TestCase
 {
     use TestTrait;
     use MonadLaws;
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_obeys_the_law_of_flatmap_associativity()
     {
         // Option
@@ -42,9 +41,7 @@ class MonadSpec extends TestCase
         $this->assertTrue($this->flatMapAssociativity($fa, $f, $g));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_obeys_the_law_of_left_identity()
     {
         // Option
@@ -72,9 +69,7 @@ class MonadSpec extends TestCase
         $this->assertTrue($this->leftIdentity($fa, $a, $f));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_obeys_the_law_of_right_identity()
     {
         // Option

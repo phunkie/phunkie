@@ -4,12 +4,11 @@ namespace spec\Phunkie\Cats;
 
 use Md\Unit\TestCase;
 use Phunkie\Cats\EitherT;
+use PHPUnit\Framework\Attributes\Test;
 
 class EitherTSpec extends TestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function it_implements_map()
     {
         $m = new EitherT(ImmList(Right(1), Left("error"), Right(2)));
@@ -21,9 +20,7 @@ class EitherTSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_implements_flatMap()
     {
         $m = new EitherT(ImmList(Right(1), Left("error"), Right(2)));
@@ -42,9 +39,7 @@ class EitherTSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_implements_isRight()
     {
         $m = new EitherT(ImmList(Right(1), Left("error"), Right(2)));
@@ -56,9 +51,7 @@ class EitherTSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_implements_isLeft()
     {
         $m = new EitherT(ImmList(Right(1), Left("error"), Right(2)));
@@ -70,9 +63,7 @@ class EitherTSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_implements_getOrElse()
     {
         $m = new EitherT(ImmList(Right(1), Left("error"), Right(2)));
@@ -84,9 +75,7 @@ class EitherTSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_implements_fold()
     {
         $m = new EitherT(ImmList(Right(5), Left("error"), Right(10)));
@@ -101,9 +90,7 @@ class EitherTSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_implements_swap()
     {
         $m = new EitherT(ImmList(Right(1), Left("error")));
@@ -115,9 +102,7 @@ class EitherTSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_implements_bimap()
     {
         $m = new EitherT(ImmList(Right(5), Left("error")));
@@ -132,9 +117,7 @@ class EitherTSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_implements_leftMap()
     {
         $m = new EitherT(ImmList(Right(5), Left("error")));
@@ -146,9 +129,7 @@ class EitherTSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_converts_to_optionT()
     {
         $m = new EitherT(ImmList(Right(1), Left("error"), Right(2)));
@@ -160,9 +141,7 @@ class EitherTSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_creates_from_optionT()
     {
         $optionList = ImmList(Some(1), None(), Some(2));
@@ -174,9 +153,7 @@ class EitherTSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_creates_pure_right_value()
     {
         $result = EitherT::pure(ImmList(), 42);
@@ -187,9 +164,7 @@ class EitherTSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_creates_left_value()
     {
         $result = EitherT::left(ImmList(), "error");
@@ -200,9 +175,7 @@ class EitherTSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_composes_multiple_transformations()
     {
         $m = new EitherT(ImmList(Right(1), Left("error"), Right(2)));
@@ -219,9 +192,7 @@ class EitherTSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_short_circuits_on_left()
     {
         $m = new EitherT(ImmList(Right(1), Left("error"), Right(2)));
@@ -236,9 +207,7 @@ class EitherTSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_implements_kind()
     {
         $m = new EitherT(ImmList(Right(42)));
@@ -248,9 +217,7 @@ class EitherTSpec extends TestCase
         $this->assertEquals(['F', 'L', 'R'], $m->getTypeVariables());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_preserves_the_outer_monad_structure()
     {
         // Using List as outer monad
@@ -268,9 +235,7 @@ class EitherTSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_chains_error_handling_computations()
     {
         $safeDivide = fn($a, $b) => $b === 0

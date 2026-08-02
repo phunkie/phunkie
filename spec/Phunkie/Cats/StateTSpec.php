@@ -8,21 +8,18 @@ use Phunkie\Cats\State;
 use Phunkie\Types\ImmList;
 use Phunkie\Types\Pair;
 use Phunkie\Types\Unit;
+use PHPUnit\Framework\Attributes\Test;
 
 class StateTSpec extends TestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function it_runs_function_under_a_context()
     {
         $s = new StateT(Some(new State(fn ($n) => Pair($n + 1, $n))));
         $this->assertIsLike($s->run(1), (Some(Pair(2, 1))));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_implements_map()
     {
         $state = ImmList(
@@ -40,9 +37,7 @@ class StateTSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_implements_flatMap()
     {
         $increment = new StateT(ImmList(
@@ -63,9 +58,7 @@ class StateTSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_implements_modify()
     {
         // Test with ImmList monad

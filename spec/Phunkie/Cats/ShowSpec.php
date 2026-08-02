@@ -4,14 +4,13 @@ namespace spec\Phunkie\Cats;
 
 use PHPUnit\Framework\TestCase;
 use stdClass;
+use PHPUnit\Framework\Attributes\Test;
 use function Phunkie\Functions\show\showType;
 use function Phunkie\Functions\show\showValue;
 
 class ShowSpec extends TestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function it_prints_types()
     {
         $this->assertEquals(showType(1), "Int");
@@ -47,9 +46,7 @@ class ShowSpec extends TestCase
         $this->assertEquals(showType(new class () extends SomeSuperClass {}), "AnonymousClass < " . SomeSuperClass::class);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_prints_value()
     {
         $this->assertEquals(showValue(1), "1");

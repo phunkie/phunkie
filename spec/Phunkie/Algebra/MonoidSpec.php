@@ -11,6 +11,7 @@ use Phunkie\Laws\MonoidLaws;
 use Md\PropertyTesting\Generator\RandomKindGenerator;
 use PHPUnit\Framework\TestCase;
 use Eris\Generator\ElementsGenerator as ElementsGen;
+use PHPUnit\Framework\Attributes\Test;
 
 class MonoidSpec extends TestCase
 {
@@ -23,9 +24,7 @@ class MonoidSpec extends TestCase
         $this->beAnInstanceOf(AMonoid::class);
     }*/
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_obeys_the_law_of_combine_left_identity_with_integers()
     {
         $this->forAll(
@@ -36,9 +35,7 @@ class MonoidSpec extends TestCase
         });
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_obeys_the_law_of_combine_right_identity_with_integers()
     {
         $this->forAll(
@@ -49,9 +46,7 @@ class MonoidSpec extends TestCase
         });
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_obeys_the_law_of_combine_left_identity_with_strings()
     {
         $this->forAll(
@@ -62,9 +57,7 @@ class MonoidSpec extends TestCase
         });
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_obeys_the_law_of_combine_right_identity_with_strings()
     {
         $this->forAll(
@@ -75,9 +68,7 @@ class MonoidSpec extends TestCase
         });
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_obeys_the_law_of_combine_left_identity_with_arrays()
     {
         $this->forAll(
@@ -88,9 +79,7 @@ class MonoidSpec extends TestCase
         });
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_obeys_the_law_of_combine_right_identity_with_arrays()
     {
         $this->forAll(
@@ -100,9 +89,7 @@ class MonoidSpec extends TestCase
         });
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_obeys_the_law_of_combine_left_identity_with_callables()
     {
         $this->forAll(
@@ -112,9 +99,7 @@ class MonoidSpec extends TestCase
         });
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_obeys_the_law_of_combine_right_identity_with_callables()
     {
         $this->forAll(
@@ -124,9 +109,7 @@ class MonoidSpec extends TestCase
         });
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_obeys_the_law_of_combine_left_identity_with_booleans()
     {
         $this->forAll(
@@ -136,9 +119,7 @@ class MonoidSpec extends TestCase
         });
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_obeys_the_law_of_combine_right_identity_with_booleans()
     {
         $this->forAll(
@@ -148,9 +129,7 @@ class MonoidSpec extends TestCase
         });
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_obeys_the_law_of_combine_left_identity_with_options()
     {
         $this->forAll(
@@ -160,9 +139,7 @@ class MonoidSpec extends TestCase
         });
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_obeys_the_law_of_combine_right_identity_with_options()
     {
         $this->forAll(
@@ -172,9 +149,7 @@ class MonoidSpec extends TestCase
         });
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_obeys_the_law_of_combine_left_identity_with_lists()
     {
         $this->forAll(
@@ -184,9 +159,7 @@ class MonoidSpec extends TestCase
         });
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_obeys_the_law_of_combine_right_identity_with_lists()
     {
         $this->forAll(
@@ -196,9 +169,7 @@ class MonoidSpec extends TestCase
         });
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_obeys_the_law_of_combine_left_identity_with_function1()
     {
         $this->forAll(
@@ -208,9 +179,7 @@ class MonoidSpec extends TestCase
         });
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_obeys_the_law_of_combine_right_identity_with_function1()
     {
         $this->forAll(

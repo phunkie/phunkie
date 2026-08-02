@@ -9,6 +9,7 @@ use Phunkie\Types\ImmSet;
 use Md\PropertyTesting\TestTrait;
 use Eris\Generator\SequenceGenerator as SeqGen;
 use Eris\Generator\IntegerGenerator as IntGen;
+use PHPUnit\Framework\Attributes\Test;
 use function Phunkie\Functions\applicative\ap;
 use function Phunkie\Functions\applicative\pure;
 use function Phunkie\Functions\applicative\map2;
@@ -25,36 +26,28 @@ class ImmSetSpec extends TestCase
 {
     use TestTrait;
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_is_initializable()
     {
         $ref = new \ReflectionClass(ImmSet::class);
         $this->assertEquals($ref->getName(), 'Phunkie\\Types\\ImmSet');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_does_not_keep_duplicates()
     {
         $set = ImmSet(1, 2, 3, 2);
         $this->assertIsLike($set, ImmSet(1, 2, 3));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_does_not_keep_object_duplicates()
     {
         $set = ImmSet(Item(1), Item(2), Item(3), Item(2));
         $this->assertIsLike($set, ImmSet(Item(1), Item(2), Item(3)));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_lets_you_test_if_an_element_is_part_of_the_set()
     {
         $set = ImmSet(1, 2, 3);
@@ -62,9 +55,7 @@ class ImmSetSpec extends TestCase
         $this->assertFalse($set->contains(42));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_has_minus()
     {
         $set = ImmSet(1, 2, 3);
@@ -72,9 +63,7 @@ class ImmSetSpec extends TestCase
         $this->assertIsLike($set->minus(42), ImmSet(1, 2, 3));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_has_minus_with_objects()
     {
         $set = ImmSet(Item(1), Item(2), Item(3));
@@ -85,9 +74,7 @@ class ImmSetSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_has_plus()
     {
         $set = ImmSet(1, 2, 3);
@@ -95,9 +82,7 @@ class ImmSetSpec extends TestCase
         $this->assertIsLike($set->plus(42), ImmSet(1, 2, 3, 42));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_has_plus_with_objects()
     {
         $set = ImmSet(Item(1), Item(2), Item(3));
@@ -111,9 +96,7 @@ class ImmSetSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_has_the_union_operation()
     {
         $set = ImmSet(1, 2, 3);
@@ -123,27 +106,21 @@ class ImmSetSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_has_the_intersect_operation()
     {
         $set = ImmSet(1, 2, 3);
         $this->assertIsLike($set->intersect(ImmSet(3, 4, 5)), ImmSet(3));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_has_the_diff_operation()
     {
         $set = ImmSet(1, 2, 3);
         $this->assertIsLike($set->diff(ImmSet(3, 4, 5)), ImmSet(1, 2, 4, 5));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_is_a_functor()
     {
         $set = ImmSet(1, 2, 3);
@@ -171,9 +148,7 @@ class ImmSetSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_is_an_applicative()
     {
         $xs = (ap(ImmSet(fn ($a) => $a +1)))(ImmSet(1));
@@ -186,9 +161,7 @@ class ImmSetSpec extends TestCase
         $this->assertIsLike($xs, ImmSet(3));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_is_a_monad()
     {
         $xs = (bind(fn ($a) => ImmSet($a +1)))(ImmSet(1));
@@ -208,9 +181,7 @@ class ImmSetSpec extends TestCase
         $this->assertIsLike($hello($xs), ImmSet("hello"));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_returns_an_empty_set_when_an_empty_set_is_applied()
     {
         $set = ImmSet();
@@ -220,9 +191,7 @@ class ImmSetSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_applies_the_result_of_the_function_to_a_Set()
     {
         $this->forAll(
@@ -236,18 +205,14 @@ class ImmSetSpec extends TestCase
         });
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_is_foldable()
     {
         $set = ImmSet(1, 2, 3);
         $this->assertInstanceOf(Foldable::class, $set);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_can_fold_left()
     {
         $set = ImmSet(1, 2, 3);
@@ -263,9 +228,7 @@ class ImmSetSpec extends TestCase
         $this->assertEquals(10, $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_can_fold_right()
     {
         $set = ImmSet(1, 2, 3);
@@ -281,9 +244,7 @@ class ImmSetSpec extends TestCase
         $this->assertEquals(10, $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_can_fold_map()
     {
         $set = ImmSet(1, 2, 3);
@@ -295,9 +256,7 @@ class ImmSetSpec extends TestCase
         $this->assertEquals("abc", $concat);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_can_fold()
     {
         $set = ImmSet(1, 2, 3);
@@ -310,9 +269,7 @@ class ImmSetSpec extends TestCase
         $this->assertEquals(42, $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_has_zero_as_empty_set()
     {
         $set = ImmSet(1, 2, 3);
@@ -321,9 +278,7 @@ class ImmSetSpec extends TestCase
         $this->assertTrue($zero->isEmpty());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_can_combine_sets()
     {
         $s1 = ImmSet(1, 2);
@@ -332,9 +287,7 @@ class ImmSetSpec extends TestCase
         $this->assertIsLike($combined, ImmSet(1, 2, 3));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function monoid_left_identity()
     {
         $set = ImmSet(1, 2, 3);
@@ -342,9 +295,7 @@ class ImmSetSpec extends TestCase
         $this->assertIsLike($zero->combine($set), $set);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function monoid_right_identity()
     {
         $set = ImmSet(1, 2, 3);
@@ -352,9 +303,7 @@ class ImmSetSpec extends TestCase
         $this->assertIsLike($set->combine($zero), $set);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function monoid_associativity()
     {
         $s1 = ImmSet(1, 2);
@@ -367,9 +316,7 @@ class ImmSetSpec extends TestCase
         $this->assertIsLike($left, $right);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_can_filter()
     {
         $set = ImmSet(1, 2, 3, 4, 5);
@@ -383,9 +330,7 @@ class ImmSetSpec extends TestCase
         $this->assertIsLike($none, ImmSet());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_can_filter_not()
     {
         $set = ImmSet(1, 2, 3, 4, 5);
@@ -399,9 +344,7 @@ class ImmSetSpec extends TestCase
         $this->assertIsLike($all, $set);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_can_partition()
     {
         $set = ImmSet(1, 2, 3, 4, 5);
@@ -411,9 +354,7 @@ class ImmSetSpec extends TestCase
         $this->assertIsLike($pair->_2, ImmSet(1, 3, 5));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_has_add_method()
     {
         $set = ImmSet(1, 2, 3);
@@ -421,9 +362,7 @@ class ImmSetSpec extends TestCase
         $this->assertIsLike($set->add(2), ImmSet(1, 2, 3));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_has_remove_method()
     {
         $set = ImmSet(1, 2, 3);
@@ -431,9 +370,7 @@ class ImmSetSpec extends TestCase
         $this->assertIsLike($set->remove(5), ImmSet(1, 2, 3));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_can_check_subset()
     {
         $s1 = ImmSet(1, 2);
@@ -447,9 +384,7 @@ class ImmSetSpec extends TestCase
         $this->assertTrue(ImmSet()->subsetOf($s1));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_can_check_proper_subset()
     {
         $s1 = ImmSet(1, 2);
@@ -460,9 +395,7 @@ class ImmSetSpec extends TestCase
         $this->assertFalse($s2->properSubsetOf($s1));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_can_check_superset()
     {
         $s1 = ImmSet(1, 2, 3, 4);
@@ -476,9 +409,7 @@ class ImmSetSpec extends TestCase
         $this->assertTrue($s1->supersetOf(ImmSet()));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_can_check_proper_superset()
     {
         $s1 = ImmSet(1, 2, 3);
@@ -489,9 +420,7 @@ class ImmSetSpec extends TestCase
         $this->assertFalse($s2->properSupersetOf($s1));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_can_find_min()
     {
         $set = ImmSet(3, 1, 4, 1, 5);
@@ -502,9 +431,7 @@ class ImmSetSpec extends TestCase
         $this->assertTrue($empty->min()->isEmpty());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_can_find_max()
     {
         $set = ImmSet(3, 1, 4, 1, 5);
@@ -515,9 +442,7 @@ class ImmSetSpec extends TestCase
         $this->assertTrue($empty->max()->isEmpty());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_can_convert_to_list()
     {
         $set = ImmSet(3, 1, 4);
@@ -525,9 +450,7 @@ class ImmSetSpec extends TestCase
         $this->assertIsLike($list, ImmList(3, 1, 4));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_has_size_method()
     {
         $set = ImmSet(1, 2, 3);
@@ -537,18 +460,14 @@ class ImmSetSpec extends TestCase
         $this->assertEquals(0, $empty->size());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_has_length_method()
     {
         $set = ImmSet(1, 2, 3);
         $this->assertEquals(3, $set->length());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_has_head_method()
     {
         $set = ImmSet(1, 2, 3);
@@ -559,9 +478,7 @@ class ImmSetSpec extends TestCase
         $this->assertTrue($empty->head()->isEmpty());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_can_check_disjoint()
     {
         $s1 = ImmSet(1, 2);
@@ -573,9 +490,7 @@ class ImmSetSpec extends TestCase
         $this->assertTrue(ImmSet()->disjoint($s1));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function functor_identity_law()
     {
         $this->forAll(
@@ -586,9 +501,7 @@ class ImmSetSpec extends TestCase
         });
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function functor_composition_law()
     {
         $this->forAll(
@@ -605,9 +518,7 @@ class ImmSetSpec extends TestCase
         });
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function foldable_left_fold_consistency()
     {
         $this->forAll(
@@ -630,9 +541,7 @@ class ImmSetSpec extends TestCase
         });
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function monoid_law_associativity_property()
     {
         $this->forAll(

@@ -16,6 +16,7 @@ use Phunkie\Cats\Foldable;
 use Md\Unit\TestCase;
 use Md\PropertyTesting\TestTrait;
 use Eris\Generator\IntegerGenerator as IntGen;
+use PHPUnit\Framework\Attributes\Test;
 use function Phunkie\Functions\function1\compose;
 use function Phunkie\Functions\functor\allAs;
 use function Phunkie\Functions\functor\asVoid;
@@ -28,9 +29,7 @@ class TupleSpec extends TestCase
 {
     use TestTrait;
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_lets_you_assign_the_return_values()
     {
         $name = $gender = $age = null;
@@ -45,9 +44,7 @@ class TupleSpec extends TestCase
         $this->assertEquals($age, 23);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_is_a_functor()
     {
         $tuple = Tuple(1, 2, 3);
@@ -72,18 +69,14 @@ class TupleSpec extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_is_foldable()
     {
         $tuple = Tuple(1, 2, 3, 4);
         $this->assertInstanceOf(Foldable::class, $tuple);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_supports_fold_left()
     {
         $tuple = Tuple(1, 2, 3, 4);
@@ -93,9 +86,7 @@ class TupleSpec extends TestCase
         $this->assertEquals(10, $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_supports_fold_right()
     {
         $tuple = Tuple(1, 2, 3, 4);
@@ -105,9 +96,7 @@ class TupleSpec extends TestCase
         $this->assertEquals([1, 2, 3, 4], $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_supports_fold_map()
     {
         $tuple = Tuple(1, 2, 3);
@@ -116,9 +105,7 @@ class TupleSpec extends TestCase
         $this->assertEquals([1, 2, 3], $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_converts_to_immlist()
     {
         $tuple = Tuple(1, 2, 3);
@@ -127,9 +114,7 @@ class TupleSpec extends TestCase
         $this->assertIsLike($list, ImmList(1, 2, 3));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_supports_get_by_index()
     {
         $tuple = Tuple("a", "b", "c");
@@ -138,9 +123,7 @@ class TupleSpec extends TestCase
         $this->assertEquals("c", $tuple->get(3));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function get_throws_on_invalid_index()
     {
         $tuple = Tuple("a", "b", "c");
@@ -149,9 +132,7 @@ class TupleSpec extends TestCase
         $tuple->get(4);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_supports_map_indexed()
     {
         $tuple = Tuple(1, 2, 3);
@@ -160,9 +141,7 @@ class TupleSpec extends TestCase
         $this->assertIsLike($result, Tuple(1, 4, 9));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_supports_foreach_indexed()
     {
         $tuple = Tuple("a", "b", "c");
@@ -174,9 +153,7 @@ class TupleSpec extends TestCase
         $this->assertEquals(["1:a", "2:b", "3:c"], $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_supports_forall()
     {
         $tuple = Tuple(2, 4, 6, 8);
@@ -186,9 +163,7 @@ class TupleSpec extends TestCase
         $this->assertFalse($tuple->forall(fn($x) => $x % 2 === 0));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_supports_exists()
     {
         $tuple = Tuple(1, 2, 3, 4);
@@ -198,9 +173,7 @@ class TupleSpec extends TestCase
         $this->assertFalse($tuple->exists(fn($x) => $x > 5));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_supports_contains()
     {
         $tuple = Tuple("a", 42, true);
@@ -209,9 +182,7 @@ class TupleSpec extends TestCase
         $this->assertFalse($tuple->contains(false));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_supports_find()
     {
         $tuple = Tuple(1, 2, 3, 4, 5);
@@ -223,27 +194,21 @@ class TupleSpec extends TestCase
         $this->assertIsLike($result, None());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_supports_head()
     {
         $tuple = Tuple("a", "b", "c");
         $this->assertEquals("a", $tuple->head());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_supports_last()
     {
         $tuple = Tuple("a", "b", "c");
         $this->assertEquals("c", $tuple->last());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_supports_tail()
     {
         $tuple = Tuple("a", "b", "c");
@@ -252,9 +217,7 @@ class TupleSpec extends TestCase
         $this->assertIsLike($tail, Tuple("b", "c"));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function tail_throws_on_single_element()
     {
         $tuple = Tuple("a");
@@ -262,9 +225,7 @@ class TupleSpec extends TestCase
         $tuple->tail();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_supports_init()
     {
         $tuple = Tuple("a", "b", "c");
@@ -273,9 +234,7 @@ class TupleSpec extends TestCase
         $this->assertIsLike($init, Tuple("a", "b"));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function init_throws_on_single_element()
     {
         $tuple = Tuple("a");
@@ -283,9 +242,7 @@ class TupleSpec extends TestCase
         $tuple->init();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_supports_take()
     {
         $tuple = Tuple("a", "b", "c", "d");
@@ -294,9 +251,7 @@ class TupleSpec extends TestCase
         $this->assertIsLike($result, Tuple("a", "b"));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function take_throws_on_invalid_n()
     {
         $tuple = Tuple("a", "b", "c");
@@ -305,9 +260,7 @@ class TupleSpec extends TestCase
         $tuple->take(0);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_supports_drop()
     {
         $tuple = Tuple("a", "b", "c", "d");
@@ -316,9 +269,7 @@ class TupleSpec extends TestCase
         $this->assertIsLike($result, Tuple("c", "d"));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function drop_throws_when_dropping_all()
     {
         $tuple = Tuple("a", "b", "c");
@@ -327,18 +278,14 @@ class TupleSpec extends TestCase
         $tuple->drop(3);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_converts_to_array()
     {
         $tuple = Tuple(1, 2, 3);
         $this->assertEquals([1, 2, 3], $tuple->toArray());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_gets_arity()
     {
         $tuple = Tuple(1, 2, 3);
@@ -348,9 +295,7 @@ class TupleSpec extends TestCase
         $this->assertEquals(2, $pair->getArity());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_supports_copy()
     {
         $original = Tuple("a", 1, true);
@@ -365,9 +310,7 @@ class TupleSpec extends TestCase
         $this->assertEquals(true, $copied->_3);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_is_immutable()
     {
         $tuple = Tuple("a", 1);
@@ -375,9 +318,7 @@ class TupleSpec extends TestCase
         $tuple->_1 = "b";
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function functor_identity_law()
     {
         $this->forAll(
@@ -391,9 +332,7 @@ class TupleSpec extends TestCase
         });
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function functor_composition_law()
     {
         $this->forAll(
@@ -412,18 +351,14 @@ class TupleSpec extends TestCase
         });
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_shows_correctly()
     {
         $tuple = Tuple("name", 25, true);
         $this->assertEquals('("name", 25, true)', $tuple->toString());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_shows_type_correctly()
     {
         $tuple = Tuple("hello", 42, true);
