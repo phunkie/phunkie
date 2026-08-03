@@ -23,7 +23,7 @@ namespace Phunkie\Functions\reader {
     use const Phunkie\Functions\function1\identity;
     use Phunkie\Cats\Reader;
 
-    const ask = "Md\\Phunkie\\Functions\\reader\\ask";
+    const ask = "\\Phunkie\\Functions\\reader\\ask";
 
     /**
      * Gets the environment from a Reader.

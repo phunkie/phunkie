@@ -132,12 +132,7 @@ namespace Phunkie\Functions\show {
     const showType = "\\Phunkie\\Functions\\show\\showType";
     function showType($value): string {return match (true) {
         is_showable($value) => $value->showType(),
-        is_integer($value) => "Int",
-        is_float($value), is_double($value) => "Double",
-        is_string($value) => "String",
-        is_resource($value) => "Resource",
-        is_bool($value) => "Boolean",
-        is_null($value) => "Null",
+        is_scalar($value), is_null($value), is_resource($value) => normaliseType(gettype($value)),
         is_array($value) => is_assoc($value) ? "Array<" . showArrayType(array_keys($value)) . ", " . showArrayType($value) . ">" : "Array<" . showArrayType($value) . ">",
         is_callable($value) => "Callable",
         is_object($value) && (new \ReflectionClass($value))->isAnonymous() =>
@@ -289,7 +284,6 @@ namespace Phunkie\Functions\show {
             'Boolean' => ['*', 0],
             'Bool' => ['*', 0],
             'Float' => ['*', 0],
-            'Double' => ['*', 0],
             'Mixed' => ['*', 0],
             'Void' => ['*', 0], 
             'Null' => ['*', 0],
@@ -350,7 +344,7 @@ namespace Phunkie\Functions\show {
 
         // 4. Default fallbacks from original logic
         return match ($normalized) {
-            "Int", "String", "Boolean", "Callable", "Null", "Double", "Float", "Resource"
+            "Int", "String", "Boolean", "Callable", "Null", "Float", "Resource"
                 => Some("*"),
             "List", "Map", "Set", "Option", "ImmList", "ImmMap", "ImmSet"
                 => Some("* -> *"),
