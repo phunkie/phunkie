@@ -48,10 +48,14 @@ const normaliseType = "Md\\Phunkie\\Functions\\type\\normaliseType";
  * ```php
  * normaliseType("integer");     // "Int"
  * normaliseType("boolean");     // "Boolean"
+ * normaliseType("double");      // "Float" (gettype spells floats "double")
  * normaliseType("array");       // "Array"
  * normaliseType("callable");    // "Callable"
  * normaliseType(Option::class); // "Option" (unchanged)
  * ```
+ *
+ * The lookup is case insensitive, so an already normalised name normalises to
+ * itself and the legacy spelling "Double" resolves to "Float".
  *
  * @param string $type Type name to normalize
  * @return string Normalized type name
@@ -66,7 +70,7 @@ function normaliseType($type)
         "boolean" => "Boolean",
         "callable" => "Callable",
         "null" => "Null",
-        "double" => "Double",
+        "double" => "Float",
         "float" => "Float",
         "resource" => "Resource",
         "mixed" => "Mixed",
@@ -75,5 +79,9 @@ function normaliseType($type)
         "object" => "Object",
     ];
 
-    return is_string($type) && isset($scalars[$type]) ? $scalars[$type] : $type;
+    if (!is_string($type)) {
+        return $type;
+    }
+
+    return $scalars[strtolower($type)] ?? $type;
 }

@@ -5,8 +5,10 @@ namespace spec\Phunkie\Cats;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 use PHPUnit\Framework\Attributes\Test;
+use function Phunkie\Functions\show\showKind;
 use function Phunkie\Functions\show\showType;
 use function Phunkie\Functions\show\showValue;
+use function Phunkie\Functions\type\normaliseType;
 
 class ShowSpec extends TestCase
 {
@@ -15,7 +17,7 @@ class ShowSpec extends TestCase
     {
         $this->assertEquals(showType(1), "Int");
         $this->assertEquals(showType("1"), "String");
-        $this->assertEquals(showType(27.23), "Double");
+        $this->assertEquals(showType(27.23), "Float");
         $this->assertEquals(showType(null), "Null");
         $this->assertEquals(showType(true), "Boolean");
         $this->assertEquals(showType(STDIN), "Resource");
@@ -44,6 +46,23 @@ class ShowSpec extends TestCase
 
         $this->assertEquals(showType(new class () {}), "AnonymousClass");
         $this->assertEquals(showType(new class () extends SomeSuperClass {}), "AnonymousClass < " . SomeSuperClass::class);
+    }
+
+    #[Test]
+    public function it_calls_the_php_float_type_float_everywhere()
+    {
+        $this->assertEquals("Float", showType(1.5));
+        $this->assertEquals("List<Float>", showType(ImmList(1.5)));
+        $this->assertEquals("Array<Float>", showType([1.5]));
+
+        // gettype() spells it "double", reflection spells it "float".
+        $this->assertEquals("Float", normaliseType("double"));
+        $this->assertEquals("Float", normaliseType("float"));
+
+        // The retired spelling still resolves, so ":kind Double" keeps working.
+        $this->assertEquals("Float", normaliseType("Double"));
+        $this->assertEquals("*", showKind("Float")->getOrElse("?"));
+        $this->assertEquals("*", showKind("Double")->getOrElse("?"));
     }
 
     #[Test]
