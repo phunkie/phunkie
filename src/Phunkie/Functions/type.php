@@ -14,7 +14,7 @@ namespace Phunkie\Functions\type;
 use Phunkie\Types\ImmInteger;
 use Phunkie\Types\ImmString;
 
-const promote = "Md\\Phunkie\\Functions\\type\\promote";
+const promote = "\\Phunkie\\Functions\\type\\promote";
 /**
  * Promotes primitive values to their immutable object equivalents.
  * 
@@ -37,7 +37,7 @@ function promote($value) { return match (gettype($value)) {
     default => $value };
 }
 
-const normaliseType = "Md\\Phunkie\\Functions\\type\\normaliseType";
+const normaliseType = "\\Phunkie\\Functions\\type\\normaliseType";
 /**
  * Normalizes a type name.
  * 

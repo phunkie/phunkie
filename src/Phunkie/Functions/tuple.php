@@ -47,7 +47,7 @@ namespace Phunkie\Functions\tuple {
 
     use Phunkie\Types\Tuple;
 
-    const assign = "Md\\Phunkie\\Functions\\tuple\\assign";
+    const assign = "\\Phunkie\\Functions\\tuple\\assign";
     /**
      * Assigns values from a tuple to variables.
      * 
