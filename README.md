@@ -457,28 +457,28 @@ phunkie > snd()->set(3, Pair(1,2))
 $var6: (Int, Int) = Pair(1, 3)
 
 phunkie > $s = ImmSet(1,2,3)
-$s : ImmSet<Int> = Set(1, 2, 3)
+$s : Set<Int> = Set(1, 2, 3)
 
 phunkie > contains(2)->get($s)
 $var7: Boolean = true
 
 phunkie > contains(4)->set($s, true)
-$var8: ImmSet<Int> = Set(1, 2, 3, 4)
+$var8: Set<Int> = Set(1, 2, 3, 4)
 
 phunkie > contains(3)->set($s, false)
-$var9: ImmSet<Int> = Set(1, 2)
+$var9: Set<Int> = Set(1, 2)
 
 phunkie > $m = ImmMap(["a" => 1, "b" => 2])
-$m : ImmMap<String, Int> = Map("a" -> 1, "b" -> 2)
+$m : Map<String, Int> = Map("a" -> 1, "b" -> 2)
 
 phunkie > member("b")->get($m)
 $var10: Option<Int> = Some(2)
 
 phunkie > member("b")->set($m, None())
-$var11: ImmMap<String, Int> = Map("a" -> 1)
+$var11: Map<String, Int> = Map("a" -> 1)
 
 phunkie > member("b")->set($m, Some(3))
-$var12: ImmMap<String, Int> = Map("a" -> 1, "b" -> 3)
+$var12: Map<String, Int> = Map("a" -> 1, "b" -> 3)
 ```
 
 ## For comprehension

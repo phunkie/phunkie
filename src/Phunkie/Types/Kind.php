@@ -25,7 +25,7 @@ namespace Phunkie\Types;
  * Option(42)->getTypeArity();  // 1
  * 
  * // Map<K,V> is a Kind with arity 2
- * ImmMap::kind;        // "ImmMap"
+ * ImmMap::kind;        // "Map"
  * ImmMap()->getTypeArity();    // 2
  * ```
  *

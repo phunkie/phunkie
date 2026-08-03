@@ -117,9 +117,7 @@ class FunctorComposite
      */
     public function toString(): string
     {
-        $covertImmListToList = fn ($kind) => $kind == ImmList::kind ? 'List' : $kind;
-        $kinds = array_map($covertImmListToList, $this->kinds);
-        return "Functor(" . implode("(", $kinds) . str_repeat(")", count($kinds));
+        return "Functor(" . implode("(", $this->kinds) . str_repeat(")", count($this->kinds));
     }
 
     /**

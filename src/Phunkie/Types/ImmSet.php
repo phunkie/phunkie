@@ -52,7 +52,7 @@ use function Phunkie\Functions\type\promote;
  */
 class ImmSet implements Kind, Applicative, Monad, Foldable
 {
-    public const kind = "ImmSet";
+    public const kind = "Set";
     use Show;
     use ImmSetFunctorOps;
     use ImmSetApplicativeOps;

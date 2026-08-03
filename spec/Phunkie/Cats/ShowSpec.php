@@ -3,7 +3,11 @@
 namespace spec\Phunkie\Cats;
 
 use PHPUnit\Framework\TestCase;
+use Phunkie\Types\ImmList;
+use Phunkie\Types\ImmMap;
+use Phunkie\Types\ImmSet;
 use stdClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use function Phunkie\Functions\show\showKind;
 use function Phunkie\Functions\show\showType;
@@ -12,6 +16,35 @@ use function Phunkie\Functions\type\normaliseType;
 
 class ShowSpec extends TestCase
 {
+    // A collection is called one thing, and `kind` is where that one thing is
+    // written down. `ImmMap` and `ImmSet` used to hold their class name there,
+    // so they announced themselves as ImmMap<String, Int> while rendering as
+    // Map("a" -> 1). `ImmList` escaped it only by overriding showType, which is
+    // why this is stated once for all three rather than three times.
+    #[Test]
+    #[DataProvider('collections')]
+    public function it_calls_a_collection_the_same_in_its_kind_its_type_and_its_value(
+        string $name,
+        string $type,
+        object $collection
+    ) {
+        $this->assertEquals($name, $collection::kind);
+        $this->assertEquals($type, showType($collection));
+        $this->assertStringStartsWith($name . "(", showValue($collection));
+    }
+
+    /**
+     * @return array<string, array{string, string, object}>
+     */
+    public static function collections(): array
+    {
+        return [
+            'list' => ['List', 'List<Int>', ImmList(1, 2)],
+            'set' => ['Set', 'Set<Int>', ImmSet(1, 2)],
+            'map' => ['Map', 'Map<String, Int>', ImmMap(["a" => 1])],
+        ];
+    }
+
     #[Test]
     public function it_prints_types()
     {

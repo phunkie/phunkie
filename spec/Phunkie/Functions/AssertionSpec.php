@@ -131,7 +131,7 @@ class AssertionSpec extends TestCase
     {
         $this->expectException(TypeError::class);
         $this->expectExceptionMessage(
-            'countOf(): Argument #1 ($counts) must be of type ImmMap<String, String>, ImmMap<String, Int> given'
+            'countOf(): Argument #1 ($counts) must be of type Map<String, String>, Map<String, Int> given'
         );
 
         assertTypeArguments(ImmMap(["a" => 1]), ['String', 'String'], 'countOf', 1, 'counts');
