@@ -64,7 +64,7 @@ class ImmList implements Kind, Applicative, Monad, Traverse, Foldable, Traversab
     use ImmListMonoidOps;
     use ImmListTraverseOps;
 
-    public const kind = ImmList;
+    public const kind = "List";
     private array $values;
 
     /**
@@ -154,21 +154,6 @@ class ImmList implements Kind, Applicative, Monad, Traverse, Foldable, Traversab
         return $this->isEmpty() ? ["Nothing"] : [showArrayType($this->toArray())];
     }
 
-    /**
-     * Returns a string representation of the list's type.
-     *
-     * Example:
-     * ```php
-     * ImmList(1, 2, 3)->showType(); // "List<Int>"
-     * ImmList()->showType();        // "List<Nothing>"
-     * ```
-     *
-     * @return string The type representation
-     */
-    public function showType(): string
-    {
-        return sprintf("List<%s>", $this->getTypeVariables()[0]);
-    }
 
     /**
      * Constructs a non-empty list.

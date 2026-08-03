@@ -13,7 +13,7 @@ The simplest kind, representing concrete types that have values. Examples:
 ### * -> * (Type Constructor)
 Takes one type parameter to create a concrete type. Examples:
 - `Option<A>`
-- `ImmList<A>`
+- `List<A>`
 - `Set<A>`
 
 ### * -> * -> * (Binary Type Constructor)
@@ -33,7 +33,7 @@ public const kind = "Option";
 // ...
 }
 class ImmList implements Kind {
-public const kind = ImmList;
+public const kind = "List";
 // ...
 }
 ```
