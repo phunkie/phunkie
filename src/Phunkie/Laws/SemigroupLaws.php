@@ -76,10 +76,16 @@ trait SemigroupLaws
         if (usesTrait($x, Eq::class)) {
             return combine(combine($x, $y), $z)->eqv(combine($x, combine($y, $z)), 42);
         } else {
-            if (is_callable($x) && (!is_string($x) || function_exists($x))) {
+            // Combining functions composes them, so the only way to compare the
+            // two sides is to apply them. Strings are excluded even when they
+            // name a function, because combine concatenates strings rather than
+            // composing them: "DL" is callable, PHP having a dl(), but combining
+            // it yields a longer string and not something to call.
+            if (is_callable($x) && !is_string($x)) {
                 return call_user_func(combine(combine($x, $y), $z), 42) ==
                        call_user_func(combine($x, combine($y, $z)), 42);
             }
+
             return combine(combine($x, $y), $z) == combine($x, combine($y, $z));
         }
     }
