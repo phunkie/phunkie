@@ -13,8 +13,8 @@ namespace {
 
     use function Phunkie\Functions\assertion\local\asTypeNames;
     use function Phunkie\Functions\assertion\local\promisedType;
+    use function Phunkie\Functions\assertion\local\reportedType;
     use function Phunkie\Functions\assertion\local\typeArgumentsSatisfy;
-    use function Phunkie\Functions\show\showType;
 
     /**
      * Asserts that an argument carries the type arguments its signature promised.
@@ -61,8 +61,8 @@ namespace {
             $function,
             $position,
             $parameter,
-            promisedType($expected, showType($value)),
-            showType($value)
+            promisedType($expected, reportedType($value)),
+            reportedType($value)
         ));
     }
 
@@ -100,8 +100,8 @@ namespace {
         throw new TypeError(sprintf(
             '%s(): Return value must be of type %s, %s returned',
             $function,
-            promisedType($expected, showType($value)),
-            showType($value)
+            promisedType($expected, reportedType($value)),
+            reportedType($value)
         ));
     }
 }
@@ -168,10 +168,14 @@ namespace Phunkie\Functions\assertion {
 
 namespace Phunkie\Functions\assertion\local {
 
+    use Generator;
     use Phunkie\Types\ImmList;
     use Phunkie\Types\ImmMap;
     use Phunkie\Types\ImmSet;
     use Phunkie\Types\Kind;
+    use Traversable;
+    use function Phunkie\Functions\show\showArrayType;
+    use function Phunkie\Functions\show\showType;
 
     /**
      * The bottom type. A container reporting it has committed to nothing, so it
@@ -237,6 +241,59 @@ namespace Phunkie\Functions\assertion\local {
     }
 
     /**
+     * The type arguments a value carries, or null where it carries none that
+     * can be known.
+     *
+     * A phunkie type answers for itself. A class from someone else's package
+     * cannot be made to, so what it holds is worked out by looking at it, which
+     * is the only way a type argument on it can mean anything: left unread it
+     * would be accepted without ever being checked.
+     *
+     * Looking is free on a collection that can be walked more than once. A one
+     * shot iterator cannot be, and reading it to check it would leave the
+     * function nothing to work with, so it is passed over unread.
+     *
+     * @return list<string>|null
+     */
+    function typeArgumentsOf(mixed $value): ?array
+    {
+        return argumentsFrom($value);
+    }
+
+    /**
+     * @return list<string>|null
+     */
+    function argumentsFrom(mixed $value): ?array
+    {
+        if ($value instanceof Kind) {
+            return $value->getTypeVariables();
+        }
+
+        // Implementing Iterator is a claim to rewind, so a collection making it
+        // is taken at its word rather than being asked which class it is.
+        // Generator is the one type PHP documents as unable to, and reading it
+        // to check it would leave the function nothing to work with.
+        $elements = match (true) {
+            is_array($value) => $value,
+            $value instanceof Generator => null,
+            $value instanceof Traversable => iterator_to_array($value),
+            default => null,
+        };
+
+        if ($elements === null) {
+            return null;
+        }
+
+        if ($elements === []) {
+            return [];
+        }
+
+        return array_is_list($elements)
+            ? [showArrayType($elements)]
+            : [showArrayType(array_keys($elements)), showArrayType($elements)];
+    }
+
+    /**
      * Whether a value carries the type arguments a signature promised.
      *
      * Only the arguments are compared, never the whole type. The constructor
@@ -253,11 +310,13 @@ namespace Phunkie\Functions\assertion\local {
      */
     function typeArgumentsSatisfy(mixed $value, array $expected): bool
     {
-        if (!$value instanceof Kind) {
+        $actual = typeArgumentsOf($value);
+
+        // Nothing knowable about it, so nothing to say. The native declaration
+        // beside the guard has already had its say about the constructor.
+        if ($actual === null) {
             return true;
         }
-
-        $actual = $value->getTypeVariables();
 
         // An empty container named no arguments at all. None is this case
         // rather than the Nothing one, because Option's arity follows whether
@@ -277,6 +336,27 @@ namespace Phunkie\Functions\assertion\local {
         }
 
         return true;
+    }
+
+    /**
+     * How a value describes itself, including what it holds where that had to
+     * be worked out rather than asked for.
+     */
+    function reportedType(mixed $value): string
+    {
+        $rendered = showType($value);
+
+        if (str_contains($rendered, '<')) {
+            return $rendered;
+        }
+
+        $arguments = typeArgumentsOf($value);
+
+        if ($arguments === null || $arguments === []) {
+            return $rendered;
+        }
+
+        return $rendered . '<' . implode(', ', $arguments) . '>';
     }
 
     /**

@@ -4,6 +4,8 @@ namespace spec\Phunkie\Functions;
 
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+use ArrayIterator;
+use ArrayObject;
 use TypeError;
 
 /**
@@ -186,6 +188,139 @@ class AssertionSpec extends TestCase
         assertTypeArguments(ImmList(1, 2), ['String', 'Int'], 'countOf', 1, 'counts');
     }
 
+    // A class from someone else's package cannot be made to implement Kind, so
+    // what it holds has to be worked out by looking. Otherwise a type argument
+    // on it would be accepted without ever being checked, which is worse than
+    // refusing to check it.
+    #[Test]
+    public function it_works_out_what_a_foreign_collection_holds()
+    {
+        $this->expectNotToPerformAssertions();
+
+        assertTypeArguments(new ArrayObject([1, 2, 3]), ['Int'], 'countOf', 1, 'xs');
+    }
+
+    #[Test]
+    public function it_refuses_a_foreign_collection_holding_something_else()
+    {
+        $this->expectException(TypeError::class);
+        $this->expectExceptionMessage(
+            'countOf(): Argument #1 ($xs) must be of type ArrayObject<Int>, ArrayObject<String> given'
+        );
+
+        assertTypeArguments(new ArrayObject(["a", "b"]), ['Int'], 'countOf', 1, 'xs');
+    }
+
+    #[Test]
+    public function it_accepts_an_empty_foreign_collection()
+    {
+        $this->expectNotToPerformAssertions();
+
+        assertTypeArguments(new ArrayObject([]), ['Int'], 'countOf', 1, 'xs');
+    }
+
+    #[Test]
+    public function it_reads_a_keyed_foreign_collection_as_two_arguments()
+    {
+        $this->expectNotToPerformAssertions();
+
+        assertTypeArguments(new ArrayObject(["ada" => 1815]), ['String', 'Int'], 'bornIn', 1, 'born');
+    }
+
+    #[Test]
+    public function it_refuses_a_keyed_foreign_collection_whose_keys_differ()
+    {
+        $this->expectException(TypeError::class);
+
+        assertTypeArguments(new ArrayObject(["ada" => 1815]), ['Int', 'Int'], 'bornIn', 1, 'born');
+    }
+
+    // Looking costs nothing on a collection that can be walked twice. A one shot
+    // iterator cannot, and consuming it to check it would leave the function
+    // nothing to work with.
+    #[Test]
+    public function it_leaves_a_one_shot_iterator_unread()
+    {
+        $this->expectNotToPerformAssertions();
+
+        $generator = (function () { yield "a"; yield "b"; })();
+
+        assertTypeArguments($generator, ['Int'], 'countOf', 1, 'xs');
+    }
+
+    // Implementing Iterator is a claim to rewind, so anything that makes it is
+    // taken at its word and read. Only Generator is documented as unable to,
+    // which is what makes it the exception rather than iterators in general.
+    #[Test]
+    public function it_reads_an_iterator_that_can_be_walked_again()
+    {
+        $this->expectException(TypeError::class);
+        $this->expectExceptionMessage(
+            'countOf(): Argument #1 ($xs) must be of type ArrayIterator<Int>, ArrayIterator<String> given'
+        );
+
+        assertTypeArguments(new ArrayIterator(["a", "b"]), ['Int'], 'countOf', 1, 'xs');
+    }
+
+    #[Test]
+    public function it_leaves_an_iterator_it_read_where_it_found_it()
+    {
+        $numbers = new ArrayIterator([1, 2, 3]);
+
+        assertTypeArguments($numbers, ['Int'], 'countOf', 1, 'xs');
+
+        $this->assertSame([1, 2, 3], iterator_to_array($numbers));
+    }
+
+    // An array carries no type of its own to ask, so it is read the same way a
+    // foreign collection is. This is the widest case of all: before a signature
+    // could promise an argument on one, every array was accepted unread.
+    #[Test]
+    public function it_works_out_what_an_array_holds()
+    {
+        $this->expectNotToPerformAssertions();
+
+        assertTypeArguments([1, 2, 3], ['Int'], 'countOf', 1, 'xs');
+    }
+
+    #[Test]
+    public function it_refuses_an_array_holding_something_else()
+    {
+        $this->expectException(TypeError::class);
+        $this->expectExceptionMessage(
+            'countOf(): Argument #1 ($xs) must be of type Array<Int>, Array<String> given'
+        );
+
+        assertTypeArguments(["a", "b"], ['Int'], 'countOf', 1, 'xs');
+    }
+
+    #[Test]
+    public function it_accepts_an_empty_array_whatever_was_promised()
+    {
+        $this->expectNotToPerformAssertions();
+
+        assertTypeArguments([], ['Int'], 'countOf', 1, 'xs');
+    }
+
+    #[Test]
+    public function it_reads_a_keyed_array_as_two_arguments()
+    {
+        $this->expectNotToPerformAssertions();
+
+        assertTypeArguments(["ada" => 1815], ['String', 'Int'], 'bornIn', 1, 'born');
+    }
+
+    #[Test]
+    public function it_refuses_a_keyed_array_whose_keys_differ()
+    {
+        $this->expectException(TypeError::class);
+        $this->expectExceptionMessage(
+            'bornIn(): Argument #1 ($born) must be of type Array<Int, Int>, Array<String, Int> given'
+        );
+
+        assertTypeArguments(["ada" => 1815], ['Int', 'Int'], 'bornIn', 1, 'born');
+    }
+
     // The constructor is PHP's business. A value that reports no type arguments
     // is not something the guard has anything to say about, and the native
     // declaration beside it has already had its say.
@@ -223,5 +358,37 @@ class AssertionSpec extends TestCase
         $empty = ImmList();
 
         $this->assertSame($empty, assertReturnTypeArguments($empty, ['Int'], 'firstTwo'));
+    }
+
+    // A return is worked out the same way an argument is, so a value with no
+    // type of its own to ask is read on the way out as well as on the way in.
+    #[Test]
+    public function it_works_out_what_a_returned_collection_holds()
+    {
+        $names = new ArrayObject(["ada", "alan"]);
+
+        $this->assertSame($names, assertReturnTypeArguments($names, ['String'], 'namesOf'));
+    }
+
+    #[Test]
+    public function it_refuses_a_returned_collection_holding_something_else()
+    {
+        $this->expectException(TypeError::class);
+        $this->expectExceptionMessage(
+            'namesOf(): Return value must be of type ArrayObject<String>, ArrayObject<Int> returned'
+        );
+
+        assertReturnTypeArguments(new ArrayObject([1, 2]), ['String'], 'namesOf');
+    }
+
+    #[Test]
+    public function it_refuses_a_returned_array_holding_something_else()
+    {
+        $this->expectException(TypeError::class);
+        $this->expectExceptionMessage(
+            'namesOf(): Return value must be of type Array<String>, Array<Int> returned'
+        );
+
+        assertReturnTypeArguments([1, 2], ['String'], 'namesOf');
     }
 }
