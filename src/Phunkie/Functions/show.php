@@ -11,6 +11,8 @@
 
 namespace Phunkie\Functions\show {
 
+    use Phunkie\Types\Kind;
+
     use Phunkie\Cats\Show;
     use Phunkie\Types\Option;
     use function Phunkie\Functions\type\normaliseType;
@@ -137,7 +139,27 @@ namespace Phunkie\Functions\show {
         is_callable($value) => "Callable",
         is_object($value) && (new \ReflectionClass($value))->isAnonymous() =>
             get_parent_class($value) === false ? "AnonymousClass" : "AnonymousClass < " . get_parent_class($value),
+        $value instanceof Kind => showKindType($value),
         is_object($value) => get_class($value) };
+    }
+
+    /**
+     * Shows a type constructor and what it is holding.
+     *
+     * A Kind knows both without needing the Show trait, so one that does not use
+     * it still says what it is rather than falling back to its class name. The
+     * name comes from `kind` where the class declares one, that being where a
+     * type's name is written down.
+     */
+    function showKindType(Kind $value): string
+    {
+        $name = defined($value::class . '::kind')
+            ? $value::kind
+            : substr((string) strrchr('\\' . $value::class, '\\'), 1);
+
+        $variables = $value->getTypeVariables();
+
+        return $variables === [] ? $name : $name . '<' . implode(', ', $variables) . '>';
     }
 
     /**
