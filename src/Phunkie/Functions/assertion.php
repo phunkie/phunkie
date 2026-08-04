@@ -11,6 +11,7 @@
 
 namespace {
 
+    use function Phunkie\Functions\assertion\local\asTypeNames;
     use function Phunkie\Functions\assertion\local\promisedType;
     use function Phunkie\Functions\assertion\local\typeArgumentsSatisfy;
     use function Phunkie\Functions\show\showType;
@@ -46,6 +47,8 @@ namespace {
      */
     function assertTypeArguments(mixed $value, array $expected, string $function, int $position, string $parameter): void
     {
+        $expected = asTypeNames($expected);
+
         if (typeArgumentsSatisfy($value, $expected)) {
             return;
         }
@@ -87,6 +90,8 @@ namespace {
      */
     function assertReturnTypeArguments(mixed $value, array $expected, string $function): mixed
     {
+        $expected = asTypeNames($expected);
+
         if (typeArgumentsSatisfy($value, $expected)) {
             return $value;
         }
@@ -163,6 +168,9 @@ namespace Phunkie\Functions\assertion {
 
 namespace Phunkie\Functions\assertion\local {
 
+    use Phunkie\Types\ImmList;
+    use Phunkie\Types\ImmMap;
+    use Phunkie\Types\ImmSet;
     use Phunkie\Types\Kind;
 
     /**
@@ -170,6 +178,63 @@ namespace Phunkie\Functions\assertion\local {
      * satisfies whatever was asked of it.
      */
     const NOTHING = "Nothing";
+
+    /**
+     * The type names of the classes that are not called what they are.
+     *
+     * Read off `kind`, which is where a type's name is written down, so this
+     * follows those classes rather than repeating them. Only the ones that
+     * differ get an entry: a class already called by its type name needs none,
+     * and drops out of here the day it is renamed.
+     *
+     * @return array<string, string>
+     */
+    function typeNames(): array
+    {
+        $names = [];
+
+        foreach ([ImmList::class, ImmMap::class, ImmSet::class] as $class) {
+            $written = substr((string) strrchr($class, '\\'), 1);
+
+            if ($written !== $class::kind) {
+                $names[$written] = $class::kind;
+            }
+        }
+
+        return $names;
+    }
+
+    /**
+     * Reads what a signature promised in the names values answer in.
+     *
+     * A signature names a class, because the class is what PHP enforces, and a
+     * value reports a type: `ImmMap<String, Int>` and `Map<String, Int>` are
+     * one type written two ways. At the top level this never showed, the guard
+     * taking the constructor from the value and comparing only the arguments,
+     * but one level down the written text is the whole of what gets compared,
+     * and `ImmList<ImmMap<String, Int>>` promised something no value could ever
+     * report.
+     *
+     * Every name in the argument is read, however deep, so a type nested inside
+     * a type is covered by the same pass.
+     *
+     * @param list<string> $expected
+     *
+     * @return list<string>
+     */
+    function asTypeNames(array $expected): array
+    {
+        $names = typeNames();
+
+        return array_map(
+            static fn (string $argument): string => (string) preg_replace_callback(
+                '/[A-Za-z_][A-Za-z0-9_]*/',
+                static fn (array $match): string => $names[$match[0]] ?? $match[0],
+                $argument
+            ),
+            $expected
+        );
+    }
 
     /**
      * Whether a value carries the type arguments a signature promised.

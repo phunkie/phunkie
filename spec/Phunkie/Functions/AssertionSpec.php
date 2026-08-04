@@ -118,6 +118,47 @@ class AssertionSpec extends TestCase
         assertTypeArguments(ImmList(1, 2), ['Option<Int>'], 'firstDefined', 1, 'options');
     }
 
+    // A signature names the class, because the class is what PHP enforces. A
+    // value reports its type. ImmMap and Map are the same type written two
+    // ways, and at the top level it never showed, the guard reading the
+    // constructor off the value and comparing only the arguments. One level
+    // down the written text is what gets compared, so it has to be read as a
+    // type name before anything is compared to it.
+    #[Test]
+    public function it_accepts_a_nested_argument_written_with_its_class_name()
+    {
+        $this->expectNotToPerformAssertions();
+
+        assertTypeArguments(ImmList(ImmMap(["a" => 1])), ['ImmMap<String, Int>'], 'rowsOf', 1, 'rows');
+    }
+
+    #[Test]
+    public function it_accepts_a_deeply_nested_argument_written_with_class_names()
+    {
+        $this->expectNotToPerformAssertions();
+
+        assertTypeArguments(ImmList(Some(ImmList(1, 2))), ['Option<ImmList<Int>>'], 'deep', 1, 'xs');
+    }
+
+    #[Test]
+    public function it_names_the_type_rather_than_the_class_when_it_refuses()
+    {
+        $this->expectException(TypeError::class);
+        $this->expectExceptionMessage(
+            'rowsOf(): Argument #1 ($rows) must be of type List<Map<String, Int>>, List<Option<Int>> given'
+        );
+
+        assertTypeArguments(ImmList(Some(1)), ['ImmMap<String, Int>'], 'rowsOf', 1, 'rows');
+    }
+
+    #[Test]
+    public function it_reads_a_returned_nested_argument_as_a_type_name_too()
+    {
+        $rows = ImmList(ImmMap(["a" => 1]));
+
+        $this->assertSame($rows, assertReturnTypeArguments($rows, ['ImmMap<String, Int>'], 'rowsOf'));
+    }
+
     #[Test]
     public function it_accepts_every_argument_of_a_type_that_takes_more_than_one()
     {
