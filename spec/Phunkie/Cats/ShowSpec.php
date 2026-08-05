@@ -6,6 +6,7 @@ use PHPUnit\Framework\TestCase;
 use Phunkie\Types\ImmList;
 use Phunkie\Types\ImmMap;
 use Phunkie\Types\ImmSet;
+use Phunkie\Types\Kind;
 use stdClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
@@ -98,6 +99,30 @@ class ShowSpec extends TestCase
         $this->assertEquals("*", showKind("Double")->getOrElse("?"));
     }
 
+    // A generic class of your own is a Kind, because the compiler makes it one,
+    // but nothing makes it use the Show trait. Falling back to its class name
+    // there would have it announce itself as Stack while every phunkie type
+    // beside it says what it is holding.
+    #[Test]
+    public function it_calls_a_kind_by_its_type_without_the_show_trait()
+    {
+        $this->assertEquals("Stack<Int>", showType(new Stack(1, 2)));
+    }
+
+    #[Test]
+    public function it_names_a_kind_holding_nothing_without_its_arguments()
+    {
+        $this->assertEquals("Stack", showType(new Stack()));
+    }
+
+    // `kind` is where a type's name is written down, so a class that says it is
+    // called something else is called that, exactly as ImmMap and ImmSet are.
+    #[Test]
+    public function it_prefers_the_name_a_kind_writes_down_to_its_class_name()
+    {
+        $this->assertEquals("Heap<String>", showType(new PriorityQueue("a")));
+    }
+
     #[Test]
     public function it_prints_value()
     {
@@ -136,4 +161,33 @@ class ShowSpec extends TestCase
 
 class SomeSuperClass
 {
+}
+
+/**
+ * What `final class Stack<T>` compiles to: a Kind, with no Show trait and no
+ * name of its own written down.
+ */
+class Stack implements Kind
+{
+    private array $items;
+
+    public function __construct(...$items)
+    {
+        $this->items = $items;
+    }
+
+    public function getTypeArity(): int
+    {
+        return 1;
+    }
+
+    public function getTypeVariables(): array
+    {
+        return $this->items === [] ? [] : [showType($this->items[0])];
+    }
+}
+
+class PriorityQueue extends Stack
+{
+    public const kind = "Heap";
 }
