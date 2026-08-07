@@ -365,9 +365,29 @@ namespace Phunkie\Functions\assertion\local {
             return [];
         }
 
-        return array_is_list($elements)
+        // Numbered means the keys are numbers, not that they run from zero
+        // without a gap. `array_filter` keeps the keys it was given, and an
+        // array that has been through it still holds what it held: reading the
+        // gap as a second argument let a filter change a value's type.
+        return isNumbered($elements)
             ? [showArrayType($elements)]
             : [showArrayType(array_keys($elements)), showArrayType($elements)];
+    }
+
+    /**
+     * Whether an array is one of a thing rather than one of keys and values.
+     *
+     * @param array<array-key, mixed> $elements
+     */
+    function isNumbered(array $elements): bool
+    {
+        foreach (array_keys($elements) as $key) {
+            if (!is_int($key)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -459,6 +479,13 @@ namespace Phunkie\Functions\assertion\local {
         // it holds anything, and both mean the same thing to a guard.
         if ($actual === []) {
             return true;
+        }
+
+        // `array<Int, User>` and `array<User>` are the same promise: the keys
+        // of a numbered array are numbers, so saying so adds nothing. Both
+        // spellings are read, so that neither is a trap for whoever writes it.
+        if (is_array($value) && count($expected) === 2 && count($actual) === 1 && namesTheSameType('Int', $expected[0])) {
+            $expected = [$expected[1]];
         }
 
         if (count($actual) !== count($expected)) {

@@ -315,6 +315,46 @@ class AssertionSpec extends TestCase
         assertTypeArguments([true, false], ['bool'], 'flagsOf', 1, 'flags');
     }
 
+    /**
+     * A numbered array is one whose keys are numbers, not one whose keys happen
+     * to run from zero without a gap. `array_filter` keeps the keys it was
+     * given, so an array that has been through it is still an array of what it
+     * holds, and saying otherwise made a filter change a value's type.
+     */
+    #[Test]
+    public function it_counts_a_gappy_numbered_array_as_holding_one_thing()
+    {
+        $this->expectNotToPerformAssertions();
+
+        assertTypeArguments([5 => "a", 9 => "b"], ['String'], 'namesOf', 1, 'names');
+        assertTypeArguments(array_filter([1, 0, 2]), ['Int'], 'countsOf', 1, 'counts');
+    }
+
+    /**
+     * `array<Int, User>` and `array<User>` are the same promise, because the
+     * keys of a numbered array are numbers and saying so adds nothing. Both
+     * spellings are accepted so that neither is a trap.
+     */
+    #[Test]
+    public function it_reads_a_numbered_array_written_with_its_keys()
+    {
+        $this->expectNotToPerformAssertions();
+
+        assertTypeArguments(["a", "b"], ['Int', 'String'], 'namesOf', 1, 'names');
+        assertTypeArguments([5 => "a"], ['int', 'string'], 'namesOf', 1, 'names');
+    }
+
+    #[Test]
+    public function it_still_reads_a_keyed_array_by_its_keys()
+    {
+        $this->expectException(TypeError::class);
+        $this->expectExceptionMessage(
+            'bornIn(): Argument #1 ($born) must be of type Array<String>, Array<String, Int> given'
+        );
+
+        assertTypeArguments(["ada" => 1815], ['String'], 'bornIn', 1, 'born');
+    }
+
     #[Test]
     public function it_refuses_an_array_holding_something_else()
     {
