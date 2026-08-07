@@ -466,12 +466,35 @@ namespace Phunkie\Functions\assertion\local {
         }
 
         foreach ($actual as $position => $argument) {
-            if ($argument !== $expected[$position] && $argument !== NOTHING) {
+            if ($argument !== NOTHING && !namesTheSameType($argument, $expected[$position])) {
                 return false;
             }
         }
 
         return true;
+    }
+
+    /**
+     * Whether two type names name the same type.
+     *
+     * Case is not one of the ways they can differ, because it is not one of the
+     * ways PHP lets a type name differ: `INT` and `Foo` and `foo` all resolve
+     * the way you would expect there, and a reader writing `array<string>`, the
+     * spelling PHP taught them, is not writing a different type from
+     * `array<String>`.
+     *
+     * `bool` is the one that case cannot reach. PHP calls it `bool` and this
+     * library renders it `Boolean`, so the two have to be said to be the same
+     * rather than folded into each other.
+     */
+    function namesTheSameType(string $actual, string $expected): bool
+    {
+        $names = static fn (string $name): string => match (strtolower($name)) {
+            'bool' => 'boolean',
+            default => strtolower($name),
+        };
+
+        return $names($actual) === $names($expected);
     }
 
     /**

@@ -284,6 +284,37 @@ class AssertionSpec extends TestCase
         assertTypeArguments([1, 2, 3], ['Int'], 'countOf', 1, 'xs');
     }
 
+    /**
+     * PHP writes its own types in lower case and phunkie renders them
+     * capitalised, so a reader who writes `array<string>`, which is the
+     * spelling PHP taught them, was told their array of strings was an
+     * `Array<String>` and refused. PHP resolves a type name without regard to
+     * case and so does this.
+     */
+    #[Test]
+    public function it_reads_a_type_name_the_way_php_does_whatever_the_case()
+    {
+        $this->expectNotToPerformAssertions();
+
+        assertTypeArguments(["a", "b"], ['string'], 'namesOf', 1, 'names');
+        assertTypeArguments([1, 2], ['INT'], 'countOf', 1, 'counts');
+        assertTypeArguments([1.5], ['float'], 'sizesOf', 1, 'sizes');
+        assertTypeArguments([new Stack()], ['stack'], 'stacksOf', 1, 'stacks');
+    }
+
+    /**
+     * `bool` is not `Boolean` in any case at all. It is the one type PHP names
+     * differently from the way phunkie renders it, so it is the one that needs
+     * saying rather than folding.
+     */
+    #[Test]
+    public function it_knows_bool_and_boolean_are_the_same_type()
+    {
+        $this->expectNotToPerformAssertions();
+
+        assertTypeArguments([true, false], ['bool'], 'flagsOf', 1, 'flags');
+    }
+
     #[Test]
     public function it_refuses_an_array_holding_something_else()
     {
