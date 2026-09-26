@@ -300,6 +300,17 @@ $map = ImmMap(["hi" => "here", "hello" => "there"]);
 echo $map->toString();  // Map("hi" -> "here", "hello" -> "there")
 ```
 
+## JSON Representation
+
+`ImmMap` implements `JsonSerializable`. When every key is a string or an int the map encodes as a JSON object. When any key is another type, JSON objects cannot represent it, so the map encodes as a list of `[key, value]` pairs instead:
+
+```php
+json_encode(ImmMap(["a" => 1, "b" => ImmList(2)]));   // {"a":1,"b":[2]}
+json_encode(ImmMap([1 => "x", 2 => "y"]));            // {"1":"x","2":"y"}
+json_encode(ImmMap());                                // {}
+json_encode(ImmMap(Pair(1, 2), "v"));                 // [[[1,2],"v"]]
+```
+
 ## Best Practices
 
 1. Use ImmMap when you need a key-value structure that won't change

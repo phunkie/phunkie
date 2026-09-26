@@ -24,6 +24,7 @@ use TypeError;
 use function Phunkie\Functions\functor\fmap;
 use const Phunkie\Functions\show\showType;
 use const Phunkie\Functions\show\showValue;
+use JsonSerializable;
 
 /**
  * Tuples in Phunkie are immutable ordered collections of elements where each element
@@ -62,7 +63,7 @@ use const Phunkie\Functions\show\showValue;
  * @template TN
  * @implements Foldable<mixed>
  */
-class Tuple implements Copiable, Functor, Foldable, Kind
+class Tuple implements Copiable, Functor, Foldable, Kind, JsonSerializable
 {
     use Show;
     use TupleFunctorOps;
@@ -151,6 +152,14 @@ class Tuple implements Copiable, Functor, Foldable, Kind
     public function toArray(): array
     {
         return $this->values;
+    }
+
+    /**
+     * @return list<mixed>
+     */
+    public function jsonSerialize(): array
+    {
+        return array_values($this->values);
     }
 
     /**

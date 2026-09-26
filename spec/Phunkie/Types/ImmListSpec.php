@@ -15,6 +15,7 @@ use Phunkie\Cats\Show;
 use Phunkie\Cats\Traverse;
 use Phunkie\Ops\ImmList\ImmListApplicativeOps;
 use Phunkie\Types\Nil;
+use Phunkie\Types\NonEmptyList;
 use Md\Unit\TestCase;
 use Md\PropertyTesting\TestTrait;
 use Eris\Generator\SequenceGenerator as SeqGen;
@@ -359,6 +360,16 @@ class ImmListSpec extends TestCase
     {
         $this->assertIsLike(ImmList(1, 2, 3)->prepend(0), ImmList(0, 1, 2, 3));
     }
+
+    #[Test]
+    public function it_is_json_serializable()
+    {
+        $this->assertSame('[1,2,3]', json_encode(ImmList(1, 2, 3)));
+        $this->assertSame('[]', json_encode(Nil()));
+        $this->assertSame('[[1],[]]', json_encode(ImmList(ImmList(1), Nil())));
+        $this->assertSame('[1,2]', json_encode(new NonEmptyList(1, 2)));
+    }
+
 }
 
 class User

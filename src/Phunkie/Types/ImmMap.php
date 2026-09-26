@@ -32,6 +32,7 @@ use Phunkie\Utils\Iterator;
 use function Phunkie\Functions\show\showArrayType;
 use function Phunkie\Functions\show\showValue;
 use function Phunkie\Functions\type\promote;
+use JsonSerializable;
 
 /**
  * An immutable key-value map implementation.
@@ -65,7 +66,7 @@ use function Phunkie\Functions\type\promote;
  * @implements Traverse
  * @implements Kind<ImmMap, K, V>
  */
-final class ImmMap implements ArrayAccess, Copiable, Applicative, Monad, Foldable, Traverse, Kind
+final class ImmMap implements ArrayAccess, Copiable, Applicative, Monad, Foldable, Traverse, Kind, JsonSerializable
 {
     public const kind = "Map";
     use Show;
@@ -356,6 +357,31 @@ final class ImmMap implements ArrayAccess, Copiable, Applicative, Monad, Foldabl
             $result[$key] = $this->values[$k];
         }
         return $result;
+    }
+
+    /**
+     * A JSON object when every key is a string or an int, otherwise a list of [key, value] pairs.
+     *
+     * @return object|list<array{0: K, 1: V}>
+     */
+    public function jsonSerialize(): object|array
+    {
+        if ($this->hasOnlyScalarKeys()) {
+            return (object) $this->toArray();
+        }
+
+        return array_map(fn ($key, $value) => [$key, $value], $this->keys(), $this->values());
+    }
+
+    private function hasOnlyScalarKeys(): bool
+    {
+        foreach ($this->keys() as $key) {
+            if (!is_string($key) && !is_int($key)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**

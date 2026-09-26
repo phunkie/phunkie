@@ -30,6 +30,7 @@ use TypeError;
 use function Phunkie\Functions\show\showArrayType;
 use function Phunkie\Functions\type\promote;
 use const Phunkie\Functions\show\showValue;
+use JsonSerializable;
 
 /**
  * An immutable list implementation that preserves type information.
@@ -53,7 +54,7 @@ use const Phunkie\Functions\show\showValue;
  * @implements Foldable<A>
  * @implements Traversable<A>
  */
-class ImmList implements Kind, Applicative, Monad, Traverse, Foldable, Traversable
+class ImmList implements Kind, Applicative, Monad, Traverse, Foldable, Traversable, JsonSerializable
 {
     use Show;
     use ImmListOps;
@@ -118,6 +119,14 @@ class ImmList implements Kind, Applicative, Monad, Traverse, Foldable, Traversab
     public function toArray(): array
     {
         return $this->values;
+    }
+
+    /**
+     * @return list<A>
+     */
+    public function jsonSerialize(): array
+    {
+        return array_values($this->values);
     }
 
     /**

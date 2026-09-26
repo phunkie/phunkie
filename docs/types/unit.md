@@ -116,6 +116,14 @@ $result = $list->foldLeft(Unit(), fn($acc, $x) => {
 });
 ```
 
+## JSON Representation
+
+`Unit` is the empty tuple, so it encodes as an empty JSON array:
+
+```php
+json_encode(Unit());   // []
+```
+
 ## Best Practices
 
 1. Use Unit instead of `null` or `void` when you need to represent the absence of a value

@@ -448,6 +448,22 @@ class ImmMapSpec extends TestCase
         $empty = ImmMap();
         $this->assertEquals(0, $empty->size());
     }
+
+    #[Test]
+    public function it_is_json_serializable_as_an_object_when_keys_are_strings_or_ints()
+    {
+        $this->assertSame('{"a":1,"b":[2]}', json_encode(ImmMap(["a" => 1, "b" => ImmList(2)])));
+        $this->assertSame('{"1":"x","2":"y"}', json_encode(ImmMap([1 => "x", 2 => "y"])));
+        $this->assertSame('{}', json_encode(ImmMap()));
+    }
+
+    #[Test]
+    public function it_is_json_serializable_as_pairs_when_a_key_is_not_a_string_or_int()
+    {
+        $this->assertSame('[[[1,2],"v"]]', json_encode(ImmMap(Pair(1, 2), "v")));
+        $this->assertSame('[["a",1],[[1,2],"v"]]', json_encode(ImmMap("a", 1, Pair(1, 2), "v")));
+    }
+
 }
 
 class AccountNumber

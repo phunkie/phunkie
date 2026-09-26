@@ -305,6 +305,15 @@ $pair->duplicate()->map(fn($p) => $p->extract()) === $pair
 // Associativity: duplicate(duplicate(wa)) == map(duplicate)(duplicate(wa))
 ```
 
+## JSON Representation
+
+`Tuple` and `Pair` implement `JsonSerializable` and encode positionally as a JSON array:
+
+```php
+json_encode(Tuple(1, "a", true));   // [1,"a",true]
+json_encode(Pair(1, "a"));          // [1,"a"]
+```
+
 ## Best Practices
 
 1. **Use Pairs for context/value patterns**: The first element provides context, the second is the value
