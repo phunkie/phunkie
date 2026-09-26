@@ -166,6 +166,16 @@ Lists in Phunkie maintain type information and implement various type classes:
 
 The type system helps ensure type-safe operations across transformations.
 
+## JSON Representation
+
+`ImmList` and `NonEmptyList` implement `JsonSerializable` and encode as a JSON array:
+
+```php
+json_encode(ImmList(1, 2, 3));                // [1,2,3]
+json_encode(Nil());                           // []
+json_encode(ImmList(ImmList(1), Nil()));      // [[1],[]]
+```
+
 ## Best Practices
 
 1. Use ImmList when you need an ordered, immutable collection

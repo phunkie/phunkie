@@ -27,6 +27,7 @@ use Phunkie\Utils\Iterator;
 use function Phunkie\Functions\show\showArrayType;
 use function Phunkie\Functions\show\showValue;
 use function Phunkie\Functions\type\promote;
+use JsonSerializable;
 
 /**
  * An immutable set implementation.
@@ -50,7 +51,7 @@ use function Phunkie\Functions\type\promote;
  * @implements Monad<ImmSet, A>
  * @implements Foldable<A>
  */
-class ImmSet implements Kind, Applicative, Monad, Foldable
+class ImmSet implements Kind, Applicative, Monad, Foldable, JsonSerializable
 {
     public const kind = "Set";
     use Show;
@@ -149,6 +150,14 @@ class ImmSet implements Kind, Applicative, Monad, Foldable
     public function toArray(): array
     {
         return $this->elements;
+    }
+
+    /**
+     * @return list<A>
+     */
+    public function jsonSerialize(): array
+    {
+        return array_values($this->elements);
     }
 
     /**

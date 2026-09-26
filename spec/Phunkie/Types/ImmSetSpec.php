@@ -559,6 +559,14 @@ class ImmSetSpec extends TestCase
             $this->assertIsLike($left, $right);
         });
     }
+
+    #[Test]
+    public function it_is_json_serializable()
+    {
+        $this->assertSame('[1,2,3]', json_encode(ImmSet(1, 2, 2, 3)));
+        $this->assertSame('[]', json_encode(ImmSet()));
+    }
+
 }
 
 class Item

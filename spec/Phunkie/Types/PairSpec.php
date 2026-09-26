@@ -419,4 +419,10 @@ class PairSpec extends TestCase
         $pair = Pair("hello", 42);
         $this->assertEquals('(String, Int)', $pair->showType());
     }
+
+    #[Test]
+    public function it_is_json_serializable()
+    {
+        $this->assertSame('[1,"a"]', json_encode(Pair(1, "a")));
+    }
 }

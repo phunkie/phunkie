@@ -233,6 +233,15 @@ Sets maintain type information and implement various type classes:
 - Monoid - zero, combine
 - Eq - equality comparison
 
+## JSON Representation
+
+`ImmSet` implements `JsonSerializable` and encodes as a JSON array of its elements:
+
+```php
+json_encode(ImmSet(1, 2, 2, 3));   // [1,2,3]
+json_encode(ImmSet());             // []
+```
+
 ## Best Practices
 
 1. Use ImmSet when you need a collection of unique elements

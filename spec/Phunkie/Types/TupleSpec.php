@@ -364,4 +364,10 @@ class TupleSpec extends TestCase
         $tuple = Tuple("hello", 42, true);
         $this->assertEquals('(String, Int, Boolean)', $tuple->showType());
     }
+
+    #[Test]
+    public function it_is_json_serializable()
+    {
+        $this->assertSame('[1,"a",true]', json_encode(Tuple(1, "a", true)));
+    }
 }

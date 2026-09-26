@@ -274,4 +274,10 @@ class UnitSpec extends TestCase
             $this->assertEquals("()", (string)$unit);
         }
     }
+
+    #[Test]
+    public function it_is_json_serializable()
+    {
+        $this->assertSame('[]', json_encode(Unit()));
+    }
 }
